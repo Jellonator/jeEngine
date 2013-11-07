@@ -1,6 +1,8 @@
 jeEngine
 ========
 
+About
+--------
 
 Features
 --------
@@ -15,3 +17,10 @@ Features
 
 
 ###Collision###
+
+Todo
+--------
+-[ ] Collision grid
+-[ ] Nested groups
+-[ ] Documentation
+-[ ] Filesystem
