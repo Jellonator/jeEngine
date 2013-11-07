@@ -20,7 +20,7 @@ Features
 
 Todo
 --------
--[ ] Collision grid
--[ ] Nested groups
--[ ] Documentation
--[ ] Filesystem
+- [ ] Collision grid
+- [ ] Nested groups
+- [ ] Documentation
+- [ ] Filesystem
