@@ -17,7 +17,7 @@ void jeWorld::update(jeWorld* world, int group){
 	//Update all of the entities
 	if (world->updateMode == JE_WORLD_MODE_ALL){
 		for (unsigned int i = 0; i < world->entities.size(); i ++){
-			if (world->__EREMOVED__[i] == false) world->entities[i]->update();
+			if (world->__EREMOVED__[i] == false) world->entities[i]->OnUpdate();
 		}
 	} else if (world->updateMode == JE_WORLD_MODE_GROUP){
 	//Update by group.
@@ -38,7 +38,7 @@ void jeWorld::draw(jeWorld* world, int group){
 	//same as the update function
 	if (world->drawMode == JE_WORLD_MODE_ALL){
 		for (unsigned int i = 0; i < world->entities.size(); i ++){
-			if (world->__EREMOVED__[i] == false) world->entities[i]->draw();
+			if (world->__EREMOVED__[i] == false) world->entities[i]->OnDraw();
 		}
 	} else if (world->drawMode == JE_WORLD_MODE_GROUP){
 		if (group < 0){
@@ -74,17 +74,15 @@ void jeWorld::add(jeWorld* world, jeEntity* entity){
 		world->__EREMOVED__.push_back(false);
 	}
 	//Tell the entity is was added
-	entity->add();
+	entity->OnAdd();
 }
 
 void jeWorld::remove(jeWorld* world, jeEntity* entity){
 	//Tell the entity that it is being removed
-	entity->remove();
-
+	entity->OnRemove();
 	for (unsigned int i = 0; i < entity->__GROUPS__.size(); i ++){
 		if (entity->__GROUPS__[i] >= 0) jeGroup::remove(JE::world->groups[i], entity);
 	}
-
 	if (world->order == JE_ORDER_FULL){
 		world->entities.erase(world->entities.begin() + entity->__INDEX__);
 		for (unsigned int i = entity->__INDEX__; i < world->entities.size(); i ++){
@@ -104,7 +102,6 @@ void jeWorld::remove(jeWorld* world, jeEntity* entity){
 		world->entities[entity->__INDEX__]->__INDEX__ = entity->__INDEX__;
 		world->entities.pop_back();
 	}
-
 	delete entity;
 	world->needOrder = true;
 }

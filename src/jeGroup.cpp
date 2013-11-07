@@ -13,24 +13,14 @@ jeGroup::~jeGroup(){
 void jeGroup::begin(){};
 
 void jeGroup::update(){
-	/*if (order == JE_ORDER_FULL && needOrder){
-		if (this->__IREMOVED__.size() > 0){
-			for (unsigned int i = 0; i < __IREMOVED__.size(); i ++){
-				entities.erase(entities.begin()+i);
-				__EREMOVED__[i] = false;
-			}
-			__EREMOVED__.resize(entities.size(), false);
-			__IREMOVED__.clear();
-		}
-	}*/
 	for (unsigned int i = 0; i < entities.size(); i ++){
-		if (this->world->__EREMOVED__[i] == false) entities[i]->update();
+		if (this->world->__EREMOVED__[i] == false) entities[i]->OnUpdate();
 	}
 };
 
 void jeGroup::draw(){
 	for (unsigned int i = 0; i < entities.size(); i ++){
-		entities[i]->draw();
+		entities[i]->OnDraw();
 	}
 };
 
@@ -87,17 +77,17 @@ void jeGroup::remove(jeGroup* group, jeEntity* entity){
 
 void jeGroup::changeOrder(jeGroup* group, int order){
 
-	if (world->order == JE_ORDER_FULL && world->needOrder){
+	if (group->order == JE_ORDER_FULL && group->needOrder){
 		//Check again.
-		if (world->__IREMOVED__.size() > 0){
+		if (group->__IREMOVED__.size() > 0){
 			//Loop through all of the missing entities
-			for (unsigned int i = 0; i < world->__IREMOVED__.size(); i ++){
+			for (unsigned int i = 0; i < group->__IREMOVED__.size(); i ++){
 				//loop through all entities past this point and decrease their index
-				for (unsigned int j = world->__IREMOVED__[i]+1; j < world->entities.size(); j ++){
-					if (world->__EREMOVED__[j] == false) world->entities[j]->__INDEX__ --;
+				for (unsigned int j = group->__IREMOVED__[i]+1; j < group->entities.size(); j ++){
+					if (group->__EREMOVED__[j] == false) group->entities[j]->__INDEX__ --;
 				}
 				//erase that entity
-				group->entities.erase(world->entities.begin()+world->__IREMOVED__[i]);
+				group->entities.erase(group->entities.begin()+group->__IREMOVED__[i]);
 				//and mark is as existent
 				group->__EREMOVED__[i] = false;
 			}

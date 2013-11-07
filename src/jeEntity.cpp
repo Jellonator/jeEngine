@@ -4,7 +4,7 @@ jeEntity::jeEntity()
 {
 	x = 0;
 	y = 0;
-	this->create();
+	this->OnCreate();
 }
 
 jeEntity::~jeEntity()
@@ -12,12 +12,16 @@ jeEntity::~jeEntity()
 	//dtor
 }
 
-void jeEntity::create(){};
+void jeEntity::OnCreate(){};
 
-void jeEntity::add(){};
+void jeEntity::OnAdd(){};
 
-void jeEntity::update(){};
+void jeEntity::OnUpdate(){};
 
-void jeEntity::draw(){};
+void jeEntity::OnDraw(){};
 
-void jeEntity::remove(){};
+void jeEntity::OnRemove(){};
+
+void jeEntity::setMask(jeMask* mask){
+	this->mask = mask;
+}
