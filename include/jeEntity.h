@@ -11,15 +11,16 @@ class jeEntity
 
 		int __INDEX__;
 
-		std::vector<unsigned int> __GROUPS__;
+		std::vector<int> __GROUPS__;
 
-		virtual void create();
-		virtual void add();
-		virtual void update();
-		virtual void draw();
-		virtual void remove();
+		virtual void OnCreate();
+		virtual void OnAdd();
+		virtual void OnUpdate();
+		virtual void OnDraw();
+		virtual void OnRemove();
 
-		void setMask(jeMask* mask);
+		static void setMask(jeEntity* entity, jeMask* mask);
+		inline void setMask(jeMask* mask);
 	protected:
 	private:
 };

@@ -30,17 +30,17 @@ class jeGroup
          * \param entity jeEntity*
          */
 		static void add(jeGroup* group, jeEntity* entity);
-		static inline void add(unsigned int group, jeEntity* entity){jeGroup::add(JE::world->groups[group], entity);}
+		//static inline void add(unsigned int group, jeEntity* entity){jeGroup::add(JE::world->groups[group], entity);}
 
         /** \brief Removes an entity from the specified group.
          * \param group jeGroup*, the group to remove from.
          * \param entity jeEntity*, the entity to remove.
          */
 		static void remove(jeGroup* group, jeEntity* entity);
-		static inline void remove(unsigned int group, jeEntity* entity){jeGroup::remove(JE::world->groups[group], entity);}
+		//static inline void remove(unsigned int group, jeEntity* entity){jeGroup::remove(JE::world->groups[group], entity);}
 
 		static void changeOrder(jeGroup* group, int order);
-		static inline void changeOrder(unsigned int group, int order){jeGroup::changeOrder(JE::world->groups[group], order);};
+		//static inline void changeOrder(unsigned int group, int order){jeGroup::changeOrder(JE::world->groups[group], order);};
 	protected:
 	private:
 };
