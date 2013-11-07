@@ -5,6 +5,7 @@ jeEntity::jeEntity()
 	x = 0;
 	y = 0;
 	this->OnCreate();
+	this->__INDEX__ = -1;
 }
 
 jeEntity::~jeEntity()
@@ -21,7 +22,3 @@ void jeEntity::OnUpdate(){};
 void jeEntity::OnDraw(){};
 
 void jeEntity::OnRemove(){};
-
-void jeEntity::setMask(jeMask* mask){
-	this->mask = mask;
-}

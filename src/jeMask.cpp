@@ -17,7 +17,7 @@ bool jeMask::collide(jeMask* m1, jeMask* m2, float x, float y, bool sweep){
 	if (m1 == NULL || m2 == NULL) return false;
 	//Doesn't matter if the next line is commented or not, I prefer it to be though.  I mean, who declares a their mask as an empty mask?  Actually now that I think about it a lot of people do.
 	//if (m1->type == JE_MASK_NONE || m2->type == JE_MASK_NONE) return false;
-	if (m1->type == JE_MASK_BOX && m2->type == JE_MASK_BOX) return jeHitBox::collideBox(static_cast<jeHitBox*>(m1), static_cast<jeHitBox*>(m2));
+	if (m1->type == JE_MASK_BOX && m2->type == JE_MASK_BOX) return jeHitBox::collideBox(static_cast<jeHitBox*>(m1), static_cast<jeHitBox*>(m2), x, y, sweep);
 	return false;
 }
 

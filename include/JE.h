@@ -25,7 +25,7 @@ class jeGroup;
 class JE
 {
 	public:
-		static jeWorld* world;
+		static jeWorld* world;/**< \brief jeWorld* world, the active world. */
 		JE();
 		virtual ~JE();
 	protected:
