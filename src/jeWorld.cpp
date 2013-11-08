@@ -108,8 +108,6 @@ void jeWorld::remove(jeWorld* world, jeEntity* entity){
 
 void jeWorld::addGroup(jeWorld* world, unsigned int group, int order){
 	//Adds a group
-	//Add the entity to the world if it's not already there.
-	if (entity->__INDEX__ < 0) jeWorld::add(entity);
 	//If an order is unspecified, default to the world's order.
 	if (order < 0) order = world->order;
 	//Now calculate the difference in size before and after resizing
@@ -129,6 +127,9 @@ void jeWorld::addGroup(jeWorld* world, unsigned int group, int order){
 void jeWorld::addToGroup(jeWorld* world, jeEntity* entity, unsigned int group){
 	//Test if group exists, if not then resize
 	if (world->groups.size() < group+1) addGroup(group);
+	//Add the entity to the world if it's not already there.
+	if (entity->__INDEX__ < 0) jeWorld::add(entity);
+	//Then add to the group
 	jeGroup::add(world->groups[group], entity);
 }
 
