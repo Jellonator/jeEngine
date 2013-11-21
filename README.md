@@ -33,7 +33,7 @@ void MyEntity::OnUpdate(){
 	std::cout << "Hello World!" << std::endl;
 }
 int main(){
-	jeWorld::set(new jeWorld(JE_ORDER_NONE));
+	jeWorld::set(new jeWorld());
 	JE::world->add(new MyEntity());
 	JE::world->update();
 	return 0;
