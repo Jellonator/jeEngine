@@ -18,25 +18,24 @@ class jeWorld;
 class jeEntity;
 class jeGraphic;
 class jePoint;
-class JE;
 class jeMask;
 class jeHitBox;
-class jeGroup;
-class JE
+#include "jeGroup.h"
+
+namespace JE
 {
-	public:
-		static jeWorld* world;/**< \brief jeWorld* world, the active world. */
-		JE();
-		virtual ~JE();
-	protected:
-	private:
+	extern jeWorld* world;/**< \brief jeWorld* world, the active world. */
+	extern std::vector<jeGroup*> groups;
+	extern std::vector<bool> __GREMOVED__;
+	extern std::vector<unsigned int> __IREMOVED__;
 };
+void jeAddGroup(jeGroup* group);
+void jeRemoveGroup(jeGroup* group);
 
 #include "jeEntity.h"
 #include "jeWorld.h"
 #include "jeGraphic.h"
 #include "jePoint.h"
 #include "jeMask.h"
-#include "jeGroup.h"
 
 #endif // JE_H

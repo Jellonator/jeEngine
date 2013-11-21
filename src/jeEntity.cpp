@@ -5,7 +5,6 @@ jeEntity::jeEntity()
 	x = 0;
 	y = 0;
 	this->OnCreate();
-	this->__INDEX__ = -1;
 }
 
 jeEntity::~jeEntity()

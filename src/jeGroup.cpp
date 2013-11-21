@@ -1,103 +1,105 @@
-#include "jeGroup.h"
+#include "JE.h"
 
 jeGroup::jeGroup(int order, jeWorld* world){
 	this->order = order;
-	this->world = world;
+	this->parent = world;
 	this->inWorld = true;
+	this->__PINDEX__ = -1;
+	//jeAddGroup(this);
 }
 
 jeGroup::~jeGroup(){
 	//dtor
 }
 
-void jeGroup::begin(){};
+void jeGroup::begin(){jeAddGroup(this);};
 
-void jeGroup::update(){
+void jeGroup::update(int group){
 	for (unsigned int i = 0; i < entities.size(); i ++){
-		if (this->world->__EREMOVED__[i] == false) entities[i]->OnUpdate();
+		entities[i]->OnUpdate();
 	}
 };
 
-void jeGroup::draw(){
+void jeGroup::draw(int group){
 	for (unsigned int i = 0; i < entities.size(); i ++){
 		entities[i]->OnDraw();
 	}
 };
 
-void jeGroup::end(){};
+void jeGroup::end(){jeRemoveGroup(this);};
 
-void jeGroup::add(jeGroup* group, jeEntity* entity){
+void jeGroup::add(jeEntity* entity){
 	//Function that adds an entity.
-	entity->__GROUPS__.resize(group->world->groups.size(), -1);
-	if (group->__IREMOVED__.size() > 0){
-	//If there is free space
+	if (this->__IREMOVED__.size() > 0){//If there is free space
 		//Set the entity's index
-		entity->__GROUPS__[group->__INDEX__] = group->__IREMOVED__.back();
+		entity->__INDEXES__[this->__INDEX__] = this->__IREMOVED__.back();
 		//Add it to the empty spot
-		group->entities[group->__IREMOVED__.back()] = entity;
+		this->entities[this->__IREMOVED__.back()] = entity;
 		//Clean up the removal vectors
-		group->__EREMOVED__[group->__IREMOVED__.back()] = false;
-		group->__IREMOVED__.pop_back();
-	}else{
-	//Otherwise push it to the back
-		//set the entity's index to the back
-		entity->__GROUPS__[group->__INDEX__] = group->entities.size();
+		this->__EREMOVED__[this->__IREMOVED__.back()] = false;
+		this->__IREMOVED__.pop_back();
+	}else{//otherwise make room
+		entity->__INDEXES__[this->__INDEX__] = this->entities.size();
 		//And push it to the back
-		group->entities.push_back(entity);
-		group->__EREMOVED__.push_back(false);
+		this->entities.push_back(entity);
+		this->__EREMOVED__.push_back(false);
 	}
+	entity->__GROUPS__[this->__INDEX__] = this;
+	entity->__GCOUNT__ ++;
 	//Tell the entity is was added
 	//entity->add();
 }
 
-void jeGroup::remove(jeGroup* group, jeEntity* entity){
-	//Tell the entity that it is being removed
-	if (group->order == JE_ORDER_FULL){
-		group->entities.erase(group->entities.begin() + entity->__GROUPS__[group->__INDEX__]);
-		for (unsigned int i = entity->__INDEX__; i < group->entities.size(); i ++){
-			if(group->__EREMOVED__[i] == false) group->entities[i]->__GROUPS__[group->__INDEX__] --;
+void jeGroup::remove(jeEntity* entity){
+	if (this->order == JE_ORDER_FULL){
+		this->entities.erase(this->entities.begin() + entity->__INDEXES__[this->__INDEX__]);
+		for (unsigned int i = entity->__INDEXES__[this->__INDEX__]; i < this->entities.size(); i ++){
+			if(this->__EREMOVED__[i] == false) this->entities[i]->__INDEXES__[this->__INDEX__] --;
 		}
 	}
-	if (group->order == JE_ORDER_HALF){
+	if (this->order == JE_ORDER_HALF){
 	//If there is a half order
 		//Tell the world that entity is long gone
-		group->__EREMOVED__[entity->__GROUPS__[group->__INDEX__]] = true;
-		group->__IREMOVED__.push_back(entity->__GROUPS__[group->__INDEX__]);
+		this->__EREMOVED__[entity->__INDEXES__[this->__INDEX__]] = true;
+		this->__IREMOVED__.push_back(entity->__INDEXES__[this->__INDEX__]);
 	}
-	if (group->order == JE_ORDER_NONE){
+	if (this->order == JE_ORDER_NONE){
 	//If there is not an order
 		//Just pop it, and place the entity at the back to it's position
-		group->entities[entity->__GROUPS__[group->__INDEX__]] = group->entities[group->entities.size()-1];
-		group->entities[entity->__GROUPS__[group->__INDEX__]]->__INDEX__ = entity->__GROUPS__[group->__INDEX__];
-		group->entities.pop_back();
-	}
 
-	group->needOrder = true;
+		this->entities[entity->__INDEXES__[this->__INDEX__]] = this->entities[this->entities.size()-1];
+		this->entities[entity->__INDEXES__[this->__INDEX__]]->__INDEXES__[this->__INDEX__] = entity->__INDEXES__[this->__INDEX__];
+		this->entities.pop_back();
+	}
+	entity->__GCOUNT__ --;
+	if (entity->__GCOUNT__ <= 0) delete entity;
+	this->needOrder = true;
 }
 
-void jeGroup::changeOrder(jeGroup* group, int order){
+void jeGroup::changeOrder( int order){
 
-	if (group->order == JE_ORDER_FULL && group->needOrder){
+	if (this->order == JE_ORDER_FULL && this->needOrder){
 		//Check again.
-		if (group->__IREMOVED__.size() > 0){
+		if (this->__IREMOVED__.size() > 0){
 			//Loop through all of the missing entities
-			for (unsigned int i = 0; i < group->__IREMOVED__.size(); i ++){
+			for (unsigned int i = 0; i < this->__IREMOVED__.size(); i ++){
 				//loop through all entities past this point and decrease their index
-				for (unsigned int j = group->__IREMOVED__[i]+1; j < group->entities.size(); j ++){
-					if (group->__EREMOVED__[j] == false) group->entities[j]->__INDEX__ --;
+				for (unsigned int j = this->__IREMOVED__[i]+1; j < this->entities.size(); j ++){
+					if (this->__EREMOVED__[j] == false) this->entities[j]->__INDEXES__[this->__INDEX__] --;
 				}
 				//erase that entity
-				group->entities.erase(group->entities.begin()+group->__IREMOVED__[i]);
+				this->entities.erase(this->entities.begin()+this->__IREMOVED__[i]);
 				//and mark is as existent
-				group->__EREMOVED__[i] = false;
+				this->__EREMOVED__[i] = false;
 			}
 			//finalize, make sure to keep those arrays clean, boys!
-			group->__EREMOVED__.resize(group->entities.size(), false);
-			group->__IREMOVED__.clear();
+			this->__EREMOVED__.resize(this->entities.size(), false);
+			this->__IREMOVED__.clear();
 		}
 		//remove the need for order.
-		group->needOrder = false;
+		this->needOrder = false;
 	}
 
-	group->order = order;
+	this->order = order;
 }
+
