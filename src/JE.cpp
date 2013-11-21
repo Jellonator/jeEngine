@@ -30,14 +30,15 @@ void jeAddGroup(jeGroup* group){
 }
 
 void jeRemoveGroup(jeGroup* group){
+	//remove all of it's entities
 	for (unsigned int i = 0; i < group->entities.size(); i ++){
 		group->remove(group->entities[i]);
 	}
-
+	//assign the group to NULL and make sure the engine knows it's gone
 	JE::groups[group->__INDEX__] = NULL;
 	JE::__GREMOVED__[group->__INDEX__] = true;
 	JE::__IREMOVED__.push_back(group->__INDEX__);
-
+	//remove all of the NULL groups starting from the back, until it runs into a group
 	for (int i = JE::groups.size() - 1; i >= 0; i --){
 		if (JE::groups[i] == NULL) {
 			JE::groups.pop_back();
@@ -46,6 +47,7 @@ void jeRemoveGroup(jeGroup* group){
 	}
 	bool done = false;
 	int i = 0;
+	//Now make sure to update IREMOVED
 	while (done == false){
 		if (JE::__IREMOVED__[i] >= JE::groups.size()){
 			JE::__IREMOVED__.erase(JE::__IREMOVED__.begin() + i);
@@ -54,6 +56,7 @@ void jeRemoveGroup(jeGroup* group){
 		i ++;
 		if (i >= JE::__IREMOVED__.size()) done = true;
 	}
+	//Cleanup
 	delete group;
 	group = NULL;
 }

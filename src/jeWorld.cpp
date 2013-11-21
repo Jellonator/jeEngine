@@ -55,9 +55,7 @@ void jeWorld::draw(int group){
 
 void jeWorld::add(jeEntity* entity){
 	entity->__INDEXES__.resize(JE::groups.size(), -1);
-	entity->__GROUPS__.resize(JE::groups.size(), NULL);
-	std::cout << "foo0" << std::endl;
-	std::cout << "foo1" << std::endl;
+	//entity->__GROUPS__.resize(JE::groups.size(), NULL);
 	//entity->__INDEXES__.reserve(JE::groups.size());
 	//std::cout << "foo2" << std::endl;
 	//std::cout << entity->__INDEXES__.max_size() << std::endl;
@@ -70,10 +68,10 @@ void jeWorld::add(jeEntity* entity){
 void jeWorld::remove(jeEntity* entity){
 	//Tell the entity that it is being removed
 	entity->OnRemove();
-	entity->__GROUPS__.resize(JE::groups.size(), NULL);
+	//entity->__GROUPS__.resize(JE::groups.size(), NULL);
 	entity->__INDEXES__.resize(JE::groups.size(), -1);
-	for (unsigned int i = 0; i < entity->__GROUPS__.size(); i ++){
-		if (entity->__INDEXES__[i] >= 0 && entity->__GROUPS__[i] != this) jeWorld::removeFromGroup(entity, i);
+	for (unsigned int i = 0; i < entity->__INDEXES__.size(); i ++){
+		if (entity->__INDEXES__[i] >= 0) jeWorld::removeFromGroup(entity, i);
 	}
 	jeGroup::remove(entity);
 }
@@ -118,7 +116,6 @@ void jeWorld::changeOrder(int order){
 }
 
 void jeWorld::removeGroup(unsigned int group){
-	//this->groups[group]->begin();
 	this->groups.erase(this->groups.begin()+group);
 	jeRemoveGroup(this->groups[group]);
 }

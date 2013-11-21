@@ -3,6 +3,8 @@
 
 class jeEntity
 {
+	friend class jeGroup;
+	friend class jeWorld;
 	public:
 		jeEntity();
 		virtual ~jeEntity();
@@ -12,9 +14,6 @@ class jeEntity
 
 		//int __INDEX__;/**< \brief The entity's position in the world. */
 
-		std::vector<jeGroup*> __GROUPS__;/**< \brief An array of groups, showing that entity's position in it. */
-		std::vector<int> __INDEXES__;
-		int __GCOUNT__ = 0;
 		virtual void OnCreate();/**< \brief Called when the entity is created. */
 		virtual void OnAdd();/**< \brief Called when the entity is added to the world. */
 		virtual void OnUpdate();/**< \brief Called when the entity is updated. */
@@ -31,6 +30,6 @@ class jeEntity
 		 * \param jeMask* mask, the mask to use
 		 */
 		inline void setMask(jeMask* mask){this->mask = mask;};
-	protected:
-	private:
+		std::vector<int> __INDEXES__;
+		int __GCOUNT__ = 0;
 };

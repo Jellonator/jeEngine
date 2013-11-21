@@ -18,6 +18,5 @@ class jeGraphic
 
 		/** \brief Updates the graphic. */
 		virtual void update();
-	protected:
-	private:
+
 };

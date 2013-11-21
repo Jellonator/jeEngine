@@ -44,7 +44,7 @@ void jeGroup::add(jeEntity* entity){
 		this->entities.push_back(entity);
 		this->__EREMOVED__.push_back(false);
 	}
-	entity->__GROUPS__[this->__INDEX__] = this;
+	//entity->__GROUPS__[this->__INDEX__] = this;
 	entity->__GCOUNT__ ++;
 	//Tell the entity is was added
 	//entity->add();

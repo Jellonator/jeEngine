@@ -7,8 +7,6 @@ class jeWorld : public jeGroup
 		jeWorld(int order = JE_ORDER_NONE, int drawmode = JE_WORLD_MODE_ALL, int updatemode = JE_WORLD_MODE_ALL);
 		virtual ~jeWorld();
 		std::vector<jeGroup*> groups;
-		//int order;/**< \brief JE_ORDER order, the entity order. */
-		//bool needOrder;/**< \brief bool needOrder, whether the world needs order or not. */
 		int drawMode;/**< \brief JE_WORLD_MODE drawMode, the drawing mode. */
 		int updateMode;/**< \brief JE_WORLD_MODE updateMode, the update mode. */
 
@@ -62,6 +60,10 @@ class jeWorld : public jeGroup
 		 * \param int order, the order to use.
 		 */
 		void addGroup(unsigned int group, int order = -1);
+
+        /** \brief Removes a group form the world
+         * \param unsigned int group, the group to remove.
+         */
 		void removeGroup(unsigned int group);
 
         /** \brief Adds an entity to a group.
@@ -83,6 +85,4 @@ class jeWorld : public jeGroup
          * \param JE_ORDER order, the order to use.
          */
 		void changeOrder(int order);
-	protected:
-	private:
 };
