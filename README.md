@@ -38,7 +38,7 @@ More examples comming soon.
 
 Todo
 --------
-- [ ] Collision grid
 - [x] Nested groups
 - [x] Documentation
+- [ ] Collision grid
 - [ ] Filesystem
