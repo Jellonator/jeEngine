@@ -1,9 +1,7 @@
 #include "jeWorld.h"
 
-jeWorld::jeWorld(int order, int drawmode, int updatemode) : jeGroup(order){
+jeWorld::jeWorld(int order, int drawmode, int updatemode) : jeGroup(order, drawmode, updatemode){
 	//this->order = order;
-	this->drawMode = drawmode;
-	this->updateMode = updatemode;
 	this->needOrder = false;
 }
 
@@ -11,44 +9,17 @@ jeWorld::~jeWorld(){
 	//dtor
 }
 void jeWorld::begin(){this->OnBegin();}
-void jeWorld::end(){}
+void jeWorld::end(){this->onEnd();}
 
 void jeWorld::update(int group){
 	//Update all of the entities
-	if (this->updateMode == JE_WORLD_MODE_ALL && group < 0){
-		for (unsigned int i = 0; i < this->entities.size(); i ++){
-			if (this->__EREMOVED__[i] == false) this->entities[i]->OnUpdate();
-		}
-	} else if (this->updateMode == JE_WORLD_MODE_GROUP || group >= 0){
-	//Update by group.
-		if (group < 0){
-			//update them all
-			for (unsigned int i = 0; i < this->groups.size(); i ++){
-				this->groups[i]->update();
-			}
-		}else{
-			//update only one
-			this->groups[group]->update();
-		}
-	}
+	jeGroup::update(group);
 	this->onUpdate();
 };
 
 void jeWorld::draw(int group){
 	//same as the update function
-	if (this->drawMode == JE_WORLD_MODE_ALL){
-		for (unsigned int i = 0; i < this->entities.size(); i ++){
-			if (this->__EREMOVED__[i] == false) this->entities[i]->OnDraw();
-		}
-	} else if (this->drawMode == JE_WORLD_MODE_GROUP){
-		if (group < 0){
-			for (unsigned int i = 0; i < this->groups.size(); i ++){
-				this->groups[i]->draw();
-			}
-		}else{
-			this->groups[group]->draw();
-		}
-	}
+	jeGroup::update(group);
 	this->OnDraw();
 };
 

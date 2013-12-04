@@ -3,16 +3,12 @@
 
 class jeEntity
 {
-	friend class jeGroup;
-	friend class jeWorld;
 	public:
 		jeEntity();
 		virtual ~jeEntity();
 		float x = 0;/**< \brief float x, the entity's x position. */
 		float y = 0;/**< \brief float y, he entity's y position. */
 		jeMask* mask;/**< \brief jeMask* mask, he entity's mask. */
-
-		//int __INDEX__;/**< \brief The entity's position in the world. */
 
 		virtual void OnCreate();/**< \brief Called when the entity is created. */
 		virtual void OnAdd();/**< \brief Called when the entity is added to the world. */
@@ -21,14 +17,9 @@ class jeEntity
 		virtual void OnRemove();/**< \brief Called when the entity is removed from the world. */
 
 		/** \brief Sets the specified entity's mask
-		 * \param jeEntity* entity, the entity to modify
-		 * \param jeMask* mask, the mask to use
-		 */
-		static void setMask(jeEntity* entity, jeMask* mask);
-
-		/** \brief Sets the specified entity's mask
 		 * \param jeMask* mask, the mask to use
 		 */
 		inline void setMask(jeMask* mask){this->mask = mask;};
-		int __GCOUNT__ = 0;
+		void destroy();/**< \brief Use to destroy this entity, removes it from all existing worlds and deletes it. */
+		std::vector<jeGroup*> __GROUPS__;
 };

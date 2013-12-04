@@ -6,8 +6,6 @@ class jeWorld : public jeGroup
 	public:
 		jeWorld(int order = JE_ORDER_NONE, int drawmode = JE_WORLD_MODE_ALL, int updatemode = JE_WORLD_MODE_ALL);
 		virtual ~jeWorld();
-		int drawMode;/**< \brief JE_WORLD_MODE drawMode, the drawing mode. */
-		int updateMode;/**< \brief JE_WORLD_MODE updateMode, the update mode. */
 
 		virtual void OnBegin(){};/**< \brief Called when the world starts. */
 		virtual void onUpdate(){};/**< \brief Called when the world is updated. */

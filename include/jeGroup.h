@@ -8,21 +8,25 @@ class jeEntity;
 class jeGroup
 {
 	public:
-		friend class jeWorld;
-		jeGroup(int order);
+		jeGroup(int order = JE_ORDER_NONE, int drawmode = JE_WORLD_MODE_ALL, int updatemode = JE_WORLD_MODE_ALL);
 		virtual ~jeGroup();
 		std::vector<jeGroup*> groups;
-		//jeGroup* parent;/**< \brief jeWorld* world, the world this group is in. */
-		bool inWorld;/**< \brief bool inWorld, Whether the group is actually in a world or not(Currently not in use) */
-
 		std::vector<jeEntity*> entities;/**< \brief vector<jeEntity*> entities, a list of entities in the group. */
 
 		int order;/**< \brief JE_ORDER order, the entity order. */
 		bool needOrder;/**< \brief bool needOrder, whether the group needs order or not. */
+		int drawMode;/**< \brief JE_WORLD_MODE drawMode, the drawing mode. */
+		int updateMode;/**< \brief JE_WORLD_MODE updateMode, the update mode. */
 
 		void begin();/**< \brief Initiates the group. */
-		void update(int group = -1);/**< \brief Updates all of the entities in the group. */
-		void draw(int group = -1);/**< \brief Draws all of the entities in the group. */
+		/** \brief Updates all entities in the group or sub-group.
+         * \param int group, the group to update, if not specified it instead updates all of this group's entities.
+         */
+		void update(int group = -1);
+		/** \brief Draws all entities in the group or sub-group.
+         * \param int group, the group to draw, if not specified it instead draws all of this group's entities.
+         */
+		void draw(int group = -1);
 		void end();/**< \brief Closes the group. */
 
         /** \brief Adds an entity to the specified Group.
@@ -39,20 +43,24 @@ class jeGroup
          * \param JE_ORDER order, the order to use.
 		 */
 		void changeOrder(int order);
-        /** \brief Adds an entity to a group.
-         * \param jeWorld* world, the world to add the entity to.
-         * \param jeEntity* entity, the entity to add
-         * \param unsigned int group, the group to add the entity to.
+
+        /** \brief Adds an entity to a sub-group.
+         * \param jeEntity* entity, the entity to add.
+         * \param unsigned int group, the sub-group to add the entity to.
 		 */
 		void addToGroup(jeEntity* entity, unsigned int group);
 
-        /** \brief Removes an entity from a group.
-         * \param jeWorld* world, the world to remove the entity from.
+        /** \brief Removes an entity from a sub-group.
          * \param jeEntity* entity, the entity to remove.
-         * \param unsigned int group, the group to remove from.
+         * \param unsigned int group, the sub-group to remove from.
 		 */
 		void removeFromGroup(jeEntity* entity, unsigned int group);
 
+        /** \brief
+         * \param
+         * \param
+         * \return
+         */
 		jeGroup* getGroup(unsigned int index);
 
 		/** \brief Adds/resets a group to/in the world, automatically called by jeWorld::addToGroup()
@@ -60,14 +68,16 @@ class jeGroup
 		 * \param unsigned int group, the group to add.
 		 * \param int order, the order to use.
 		 */
-		void addGroup(unsigned int group, int order = -1);
+		void addGroup(unsigned int group, int order = -1, int drawmode = -1, int updatemode = -1);
 
         /** \brief Removes a group form the world
          * \param unsigned int group, the group to remove.
 		 */
 		void removeGroup(unsigned int group);
-		//int __INDEX__;
-		//int __PINDEX__;
+        /** \brief Clears the world of all entities.
+         * \param int level. 0 means entities in this group only. 1 means entities and sub-groups in this group only. 2 means all entities will be removed from their assosiated groups this group.  Sub-groups are also removed.
+         */
+		void clear(int level = 0);
 		std::vector<bool> __EREMOVED__;
 		std::vector<unsigned int> __IREMOVED__;
 };
