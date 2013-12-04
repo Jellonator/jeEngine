@@ -2,7 +2,7 @@ jeEngine
 ========
 jeEngine is a platform-independent game engine written in C++.
 Using it is meant to be simple, and the engine is meant to be as small and flexible as possible.
-
+Current Version: 0.1
 Features
 --------
 - Worlds
@@ -35,6 +35,14 @@ int main(){
 ```
 
 More examples comming soon.
+
+Update log
+--------
+### Version 0.1 ###
+- Initial release
+- Added worlds and groups
+- Added entities
+- Added collision
 
 Todo
 --------
