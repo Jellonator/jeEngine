@@ -30,6 +30,5 @@ class jeEntity
 		 * \param jeMask* mask, the mask to use
 		 */
 		inline void setMask(jeMask* mask){this->mask = mask;};
-		std::vector<int> __INDEXES__;
 		int __GCOUNT__ = 0;
 };

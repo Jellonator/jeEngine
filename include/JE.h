@@ -25,12 +25,7 @@ class jeHitBox;
 namespace JE
 {
 	extern jeWorld* world;/**< \brief jeWorld* world, the active world. */
-	extern std::vector<jeGroup*> groups;
-	extern std::vector<bool> __GREMOVED__;
-	extern std::vector<unsigned int> __IREMOVED__;
 };
-void jeAddGroup(jeGroup* group);
-void jeRemoveGroup(jeGroup* group);
 
 #include "jeEntity.h"
 #include "jeWorld.h"

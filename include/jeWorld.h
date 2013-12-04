@@ -6,7 +6,6 @@ class jeWorld : public jeGroup
 	public:
 		jeWorld(int order = JE_ORDER_NONE, int drawmode = JE_WORLD_MODE_ALL, int updatemode = JE_WORLD_MODE_ALL);
 		virtual ~jeWorld();
-		std::vector<jeGroup*> groups;
 		int drawMode;/**< \brief JE_WORLD_MODE drawMode, the drawing mode. */
 		int updateMode;/**< \brief JE_WORLD_MODE updateMode, the update mode. */
 
@@ -53,32 +52,6 @@ class jeWorld : public jeGroup
          * \param jeWorld* world, the world to use.
          */
 		static void set(jeWorld* world);
-
-		/** \brief Adds/resets a group to/in the world, automatically called by jeWorld::addToGroup()
-		 * \param jeWorld* world, the world to add the group to.
-		 * \param unsigned int group, the group to add.
-		 * \param int order, the order to use.
-		 */
-		void addGroup(unsigned int group, int order = -1);
-
-        /** \brief Removes a group form the world
-         * \param unsigned int group, the group to remove.
-         */
-		void removeGroup(unsigned int group);
-
-        /** \brief Adds an entity to a group.
-         * \param jeWorld* world, the world to add the entity to.
-         * \param jeEntity* entity, the entity to add
-         * \param unsigned int group, the group to add the entity to.
-         */
-		void addToGroup(jeEntity* entity, unsigned int group);
-
-        /** \brief Removes an entity from a group.
-         * \param jeWorld* world, the world to remove the entity from.
-         * \param jeEntity* entity, the entity to remove.
-         * \param unsigned int group, the group to remove from.
-         */
-		void removeFromGroup(jeEntity* entity, unsigned int group);
 
         /** \brief Changes the order mode of a world.
          * \param jeWorld* world, the world to change the order of.
