@@ -19,7 +19,7 @@ void jeWorld::update(int group){
 
 void jeWorld::draw(int group){
 	//same as the update function
-	jeGroup::update(group);
+	jeGroup::draw(group);
 	this->OnDraw();
 };
 

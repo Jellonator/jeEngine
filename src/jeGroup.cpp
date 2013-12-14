@@ -11,7 +11,6 @@ jeGroup::~jeGroup(){
 }
 
 void jeGroup::begin(){};
-
 void jeGroup::update(int group){
 	if (this->updateMode == JE_WORLD_MODE_ALL && group < 0){
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
@@ -159,6 +158,7 @@ void jeGroup::addGroup(unsigned int group, int order, int drawmode, int updatemo
 		//this->groups[i]->__PINDEX__ = a;
 		this->groups[i]->begin();
 	}
+	//cout << this->groups[group] << endl;
 }
 
 jeGroup* jeGroup::getGroup(unsigned int index){
