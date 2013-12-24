@@ -45,10 +45,10 @@ More examples comming soon.
 
 Todo
 --------
--[ ] Collision grid
--[ ] Tilemap and/or Canvas
--[ ] Particle system
--[ ] Collision groups
+- [ ] Collision grid
+- [ ] Tilemap and/or Canvas
+- [ ] Particle system
+- [ ] Collision groups
 
 Update log
 --------
