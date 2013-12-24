@@ -11,6 +11,7 @@ jeGroup::~jeGroup(){
 }
 
 void jeGroup::begin(){};
+
 void jeGroup::update(int group){
 	if (this->updateMode == JE_WORLD_MODE_ALL && group < 0){
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
@@ -67,6 +68,7 @@ void jeGroup::add(jeEntity* entity){
 }
 
 void jeGroup::remove(jeEntity* entity){
+	//If full order then 'erase' it
 	if (this->order == JE_ORDER_FULL){
 		unsigned int j = this->entities.size();
 		for (unsigned int i = 0; i < j; i ++){
@@ -79,7 +81,7 @@ void jeGroup::remove(jeEntity* entity){
 	}
 	else if (this->order == JE_ORDER_HALF){
 	//If there is a half order
-		//Tell the world that entity is long gon
+	//then remove it, leaving behind a hole for other entities
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
 			if (entity == this->entities[i]) {
 				this->__EREMOVED__[i] = true;
@@ -98,6 +100,8 @@ void jeGroup::remove(jeEntity* entity){
 			}
 		}
 	}
+	//now remove it from all groups
+	/// TODO: Remove from world's groups, not the entity's.
 	unsigned int j = entity->__GROUPS__.size();
 	for (unsigned int i = 0; i < j; i ++){
 		if (entity->__GROUPS__[i] == this){
@@ -158,7 +162,6 @@ void jeGroup::addGroup(unsigned int group, int order, int drawmode, int updatemo
 		//this->groups[i]->__PINDEX__ = a;
 		this->groups[i]->begin();
 	}
-	//cout << this->groups[group] << endl;
 }
 
 jeGroup* jeGroup::getGroup(unsigned int index){

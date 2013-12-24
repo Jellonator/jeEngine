@@ -56,10 +56,9 @@ class jeGroup
 		 */
 		void removeFromGroup(jeEntity* entity, unsigned int group);
 
-        /** \brief
-         * \param
-         * \param
-         * \return
+        /** \brief Get a sub-group pointer from a group.
+         * \param unsigned int index, the index of the sub-group to retrieve.
+         * \return jeGroup*, a pointer to a group.
          */
 		jeGroup* getGroup(unsigned int index);
 

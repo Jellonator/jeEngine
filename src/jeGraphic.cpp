@@ -2,13 +2,22 @@
 //Not commenting this file, should be easy enough to understand
 jeGraphic::jeGraphic()
 {
-	//ctor
+	this->x = 0;
+	this->y = 0;
+	this->angle = 0;
+	this->ox = 0;
+	this->oy = 0;
 }
 
 jeGraphic::~jeGraphic()
 {
-	//dtor
+
 }
 
-void jeGraphic::draw(float x, float y){}
+void jeGraphic::draw(float x, float y, jeCamera* camera, jeEntity* entity){}
 void jeGraphic::update(){}
+
+void jeGraphic::setOrigin(float x, float y){
+	this->ox = x;
+	this->oy = y;
+}
