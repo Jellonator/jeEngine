@@ -16,8 +16,7 @@ Features
 
 Examples
 --------
-```
-C++
+```C++
 //Hello world
 #include "JE.h"
 class MyEntity : public jeEntity{
