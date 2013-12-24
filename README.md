@@ -5,7 +5,9 @@ Using it is meant to be simple, and the engine is meant to be as small and flexi
 Libraries/dependancies:
 - SDL2
 - SDL2_image
+- 
 Current Version: 0.2
+
 Features
 --------
 - Worlds
@@ -39,6 +41,13 @@ int main(){
 ```
 
 More examples comming soon.
+
+Todo
+--------
+[ ] Collision grid
+[ ] Tilemap and/or Canvas
+[ ] Particle system
+[ ] Collision groups
 
 Update log
 --------
