@@ -47,6 +47,7 @@ Update log
 - Added jeSpritemap, to load and display animated images/spritemaps.
 - Added jeCamera, to change the way images are displayed.
 - Several bugfixes.
+
 ### Version 0.1 ###
 - Initial release
 - Added worlds and groups
