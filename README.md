@@ -2,10 +2,11 @@ jeEngine
 ========
 jeEngine is a cross-platform game engine written in C++, currently supporting whatever SDL supports.
 Using it is meant to be simple, and the engine is meant to be as small and flexible as possible.
-Libraries/dependancies:
+
+######Libraries/dependancies:######
 - SDL2
 - SDL2_image
-- 
+
 Current Version: 0.2
 
 Features
