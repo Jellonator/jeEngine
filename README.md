@@ -7,7 +7,7 @@ Using it is meant to be simple, and the engine is meant to be as small and flexi
 - SDL2
 - SDL2_image
 
-Current Version: 0.2
+Current Version: 0.3
 
 Features
 --------
@@ -45,13 +45,16 @@ More examples comming soon.
 
 Todo
 --------
-- [ ] Collision grid
-- [ ] Tilemap and/or Canvas
 - [ ] Particle system
-- [ ] Collision groups
 
 Update log
 --------
+### Version 0.3 ###
+- Added jeGrid, a grid collision system.  Supports oddly sized rectangles.
+- Added jeCanvas, a graphic you can draw to and from.
+- Added jeTilemap, a graphic that you can use to draw with tilesets.
+- Added collision with groups, supports collision sweeping.
+
 ### Version 0.2 ###
 - Added jeImage, to load and display images.
 - Added jeSpritemap, to load and display animated images/spritemaps.
