@@ -1,5 +1,5 @@
 #include "jeEntity.h"
-//Not commenting this file, should be easy enough to understand
+
 jeEntity::jeEntity()
 {
 	x = 0;

@@ -1,5 +1,4 @@
 #include "jeSpritemap.h"
-using namespace std;
 jeFrame::jeFrame(){
 	this->rect = new SDL_Rect();
 	this->length = 0;

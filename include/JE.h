@@ -16,10 +16,11 @@ enum JE_MASK_TYPE{JE_MASK_NONE, JE_MASK_BOX, JE_MASK_GRID, JE_MASK_LIST};
 class jeWorld;
 class jeEntity;
 class jePoint;
-class jeMask;
 class jeHitBox;
 class jeCamera;
-class jeSpritemap;
+class jeTilemap;
+class jeGrid;
+#include "jeMask.h"
 #include "jeGraphic.h"
 #include "jeGroup.h"
 
@@ -27,6 +28,7 @@ namespace JE
 {
 	extern SDL_Window* window;/**< \brief SDL_Window* window, the global window. */
 	extern SDL_Renderer* renderer;/**< \brief SDL_Renderer* renderer, the global renderer. */
+	extern SDL_Renderer* _renderer;
     extern int time;/**< \brief int time, the time of the current frame. */
 	extern int frames;/**< \brief int frames, frame count.  Used to calculate FPS.  Reset when seconds == 1. */
 	extern float seconds;/**< \brief float seconds.  Not really useful, just used to calculate FPS once a second. */
@@ -36,10 +38,12 @@ namespace JE
 	extern jeWorld* world;/**< \brief jeWorld* world, the active world. */
 };
 #include "jeImage.h"
+#include "jeCanvas.h"
 void jeInit();/**< \brief Initiates jelloEngine. */
 void jeCalcTime();/**< \brief Calculates time, called automatically by jeUpdate(); */
 void jeUpdate();/**< \brief Updates the engine and the active world. */
 void jeDraw();/**< \brief Draws the engine and the active world. */
+void jeFlip();/**< \brief Flips the screen. */
 /** \brief Initiates the global window and renderer.
  * \param name std::string, The name of the window.
  * \param SDL_WINDOWPOS_CENTERED int x, The X position of the window.
@@ -56,4 +60,6 @@ void jeInitWindow(std::string name, int x = SDL_WINDOWPOS_CENTERED, int y = SDL_
 #include "jeMask.h"
 #include "jeCamera.h"
 #include "jeSpritemap.h"
+#include "jeTilemap.h"
+#include "jeGrid.h"
 

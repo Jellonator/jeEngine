@@ -6,6 +6,7 @@ namespace JE
 	#ifdef _SDL_H
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+	SDL_Renderer* _renderer;
 	#endif
     int time = 0;
 	int frames = 0;
@@ -29,6 +30,7 @@ void jeInitWindow(std::string name, int x, int y, int w, int h, int wflags, int 
     if (JE::window == NULL) {std::cout << SDL_GetError() << std::endl;}
 	JE::renderer = SDL_CreateRenderer(JE::window, -1, rflags);
     if (JE::renderer == NULL) {std::cout << SDL_GetError() << std::endl;}
+    JE::_renderer = JE::renderer;
 }
 void jeCalcTime(){
 	JE::frames ++;
@@ -58,6 +60,8 @@ void jeDraw(){
 	SDL_RenderClear(JE::renderer);
 	#endif // _SDL_H
 	JE::world->draw();
+}
+void jeFlip(){
 	#ifdef _SDL_H
 	SDL_RenderPresent(JE::renderer);
 	#endif

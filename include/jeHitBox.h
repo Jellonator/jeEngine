@@ -1,6 +1,5 @@
 #pragma once
 #include "JE.h"
-#include "jeHitBox.h"
 
 class jeHitBox : public jeMask
 {
@@ -14,18 +13,9 @@ class jeHitBox : public jeMask
 		float top();/**< \return float, the top of the box. */
 		float bottom();/**< \return float, the bottom of the box. */
 		virtual ~jeHitBox();
-
-        /** \brief Checks for collision against two boxes
-         * \param jeMask* b1, the first box.
-         * \param jeMask* b2, the second box.
-         * \param float x, the x offset.
-         * \param float y, the y offset.
-         * \param bool sweep, whether the collision should sweep.
-         * \param float width, adds to the first box's width.
-         * \param float height, adds to the first box's height.
-         * \return bool, if the two boxes collided or not.
-         */
-		static bool collideBox(jeHitBox* b1, jeHitBox* b2, float x = 0, float y = 0, bool sweep = false, float width = 0, float height = 0);
 	protected:
 	private:
 };
+
+bool jeCollideBox(jeHitBox* m1, jeHitBox* m2, float x = 0, float y = 0, bool sweep = false);
+bool jeCollideBox(jeEntity* e1, jeEntity* e2, float x = 0, float y = 0, bool sweep = false);

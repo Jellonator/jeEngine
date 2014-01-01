@@ -1,6 +1,6 @@
 #pragma once
-#include "JE.h"
-
+class jeGroup;
+class jeEntity;
 class jeMask
 {
 	public:
@@ -18,31 +18,13 @@ class jeMask
          * \param bool sweep, whether the collision should sweep.
          * \return bool, if the two masks collided or not.
          */
-		bool collide(jeMask* m1, jeMask* m2, float x = 0, float y = 0, bool sweep = false);
-
-        /** \brief Checks for collision against an entire group.
-         * \param jeMask* mask, the mask.
-         * \param jeGroup* group, the group.
-         * \param float x, the x offset.
-         * \param float y, the y offset.
-         * \param bool sweep, whether the collision should sweep.
-         * \return bool, if the mask collided with any entities in the group.
-         */
-		bool collideGroup(jeMask* mask, jeGroup* group, float x = 0, float y = 0, bool sweep = false);
-
-        /** \brief Checks for collision against an entity.
-         * \param jeMask* mask, the mask.
-         * \param jeEntity* entity, the entity.
-         * \param float x, the x offset.
-         * \param float y, the y offset.
-         * \param bool sweep, whether the collision should sweep.
-         * \return bool, if the mask collided with the entity.
-         */
-		bool collideEntity(jeMask* mask, jeEntity* entity, float x = 0, float y = 0, bool sweep = false);
 	protected:
 	private:
 };
 
-
+bool jeCollide(jeEntity* e1, jeEntity* e2, float x = 0, float y = 0, bool sweep = false);
+bool jeCollide(jeMask* e1, jeMask* e2, float x = 0, float y = 0, bool sweep = false);
+bool jeCollideGroup(jeEntity* e, jeGroup* group, float x = 0, float y = 0, bool sweep = false);
+bool jeCollideGroup(jeEntity* e, int group, float x = 0, float y = 0, bool sweep = false);
 
 #include "jeHitBox.h"

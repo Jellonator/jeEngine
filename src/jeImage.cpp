@@ -11,7 +11,7 @@ jeImage::jeImage() : jeGraphic()
 
 jeImage::~jeImage()
 {
-	//SDL_DestroyTexture(this->texture);
+	SDL_DestroyTexture(this->texture);
 	delete this->clip;
 }
 
@@ -93,6 +93,7 @@ void jeImage::load(std::string file, SDL_Renderer* renderer){
 	int w, h;
 	SDL_QueryTexture(this->texture, NULL, NULL, &w, &h);
 	this->setClip(0,0,w,h);
+	SDL_FreeSurface(img);
 }
 
 void jeImage::setClip(float x, float y, float w, float h){
@@ -104,10 +105,9 @@ void jeImage::setClip(float x, float y, float w, float h){
 }
 
 void jeImage::setScale(float x, float y){
-	int w;
-	int h;
+	int w = this->clip->w;
+	int h = this->clip->h;
 	if (y < 0) y = x;
-	SDL_QueryTexture(this->texture, NULL, NULL, &w, &h);
 	this->setSize(w*x, h*y);
 }
 

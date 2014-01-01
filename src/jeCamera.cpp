@@ -1,6 +1,5 @@
 #include "jeCamera.h"
 
-using namespace std;
 jeCamera::jeCamera()
 {
 	this->x = 0;
@@ -72,19 +71,15 @@ void jeCamera::letterbox(float width, float height, float x, float y){
 	int iw;
 	int ih;
 	SDL_GetWindowSize(JE::window, &iw, &ih);
-	cout << "Window width: " << iw << "  height: " << ih << endl;
 	float w = iw;
 	float h = ih;
 
 	float wratio = w/width;
 	float hratio = h/height;
-	cout << "Ratio width: " << wratio << "  height: " << hratio << endl;
 
 	float ratio = w/h;
-	cout << "Window ratio: " << ratio << endl;
 
 	float tratio = width/height;
-	cout << "Target ratio: " << tratio << endl;
 
 	float fratio = 1;
 	if (ratio < tratio) {
@@ -93,15 +88,9 @@ void jeCamera::letterbox(float width, float height, float x, float y){
 		fratio = hratio;
 	}
 
-	cout << "Size width: " << width << "  height: " << height << endl;
 	x = (w - width*fratio)*x;
 	y = (h - height*fratio)*y;
-	cout << "position x: " << x << " y: " << y << endl;
 	this->setScale(fratio,fratio);
-	//float rx;
-	//float ry;
-	//this->getRatio(&rx, &ry);
 	this->setPosition(x/fratio, y/fratio);
 	this->setClip(x, y, width*fratio, height*fratio);
-	//cout << "ratio x: " << rx << " y: " << ry << endl;
 }
