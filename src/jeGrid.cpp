@@ -136,10 +136,11 @@ bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x, float y, bool sweep){
 
 void jeGrid::newTile(float x1, float y1, float x2, float y2, int ID){
 	jeGridTile* tile;
-	tile = new jeGridTile(x2, y1, x2, y2, false);
+	tile = new jeGridTile(x1, y1, x2, y2, false);
 	if (ID < 0) {
 		this->types.push_back(tile);
 	}else{
+		if (ID > this->types.size()-1) this->types.resize(ID+1,NULL);
 		if (this->types[ID] != NULL) delete this->types[ID];
 		this->types[ID] = tile;
 	}
