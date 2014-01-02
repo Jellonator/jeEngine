@@ -3,7 +3,7 @@
 
 class jeGridTile{
 	public:
-	jeGridTile(float x1, float x2, float y1, float y2, bool empty = false);
+	jeGridTile(float x1, float y1, float x2, float y2, bool empty = false);
 	bool empty;
 	float x1, x2, y1, y2;
 };
@@ -22,7 +22,8 @@ class jeGrid : public jeMask
 
 		void setTile(int x, int y, int value);
 		void setRect(int x, int y, int w, int h, int value);
-		void newTIle(float x1, float x2, float y1, float y2, int ID = -1);
+		void newTile(float x1, float y1, float x2, float y2, int ID = -1);
+		void emptyTile(int ID);
 
 		void draw();
 	protected:

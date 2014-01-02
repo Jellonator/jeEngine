@@ -17,8 +17,8 @@ jeGrid::jeGrid(int width, int height, int twidth, int theight) : jeMask(), tiles
 	this->height = height;
 	this->type = JE_MASK_GRID;
 	this->types.resize(2,NULL);
-	this->types[0] = new jeGridTile(10,10,twidth-20,theight-20,true);
-	this->types[1] = new jeGridTile(10,10,twidth-20,theight-20,false);
+	this->types[0] = new jeGridTile(0,0,twidth,theight,true);
+	this->types[1] = new jeGridTile(0,0,twidth,theight,false);
 }
 
 jeGrid::~jeGrid()
@@ -133,4 +133,16 @@ bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x, float y, bool sweep){
 	}
 	return c;
 }
+
+void jeGrid::newTile(float x1, float y1, float x2, float y2, int ID){
+	jeGridTile* tile;
+	tile = new jeGridTile(x2, y1, x2, y2, false);
+	if (ID < 0) {
+		this->types.push_back(tile);
+	}else{
+		if (this->types[ID] != NULL) delete this->types[ID];
+		this->types[ID] = tile;
+	}
+}
+
 bool jeCollideBoxGrid(jeHitBox* box, jeGrid* grid, float x, float y, bool sweep){return false;}
