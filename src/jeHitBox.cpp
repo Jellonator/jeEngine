@@ -62,7 +62,7 @@ bool jeCollideBox(jeEntity* e1, jeEntity* e2, float x, float y, bool sweep){
 			}else e1->y += y;
 		}
 	//And set C to CX or CY
-		c = cx || cy;
+		c = cx | cy;
 	}else{
 		if (m1->left()+e1->x < m2->right()+e2->x && m2->left()+e2->x < m1->right()+e1->x
 		&&  m1->top()+e1->y < m2->bottom()+e2->y && m2->top()+e2->y < m1->bottom()+e1->y){c = true;}

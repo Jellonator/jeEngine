@@ -4,12 +4,13 @@ jeEntity::jeEntity()
 {
 	x = 0;
 	y = 0;
+	this->mask = NULL;
 	this->OnCreate();
 }
 
 jeEntity::~jeEntity()
 {
-	delete this->mask;
+	if(this->mask != NULL) delete this->mask;
 }
 
 void jeEntity::OnCreate(){};
