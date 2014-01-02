@@ -146,4 +146,36 @@ void jeGrid::newTile(float x1, float y1, float x2, float y2, int ID){
 	}
 }
 
+void jeGrid::newTileF(float x1, float y1, float x2, float y2, int ID){
+	this->newTile(x1*this->tileWidth,y1*this->tileHeight,x2*this->tileWidth,y2*this->tileHeight,ID);
+}
+
+void jeGrid::emptyTile(int ID, bool empty){
+	this->types[ID]->empty = empty;
+}
+
+void jeGrid::resize(int width, int height, float twidth, float theight){
+	if (width != this->width){
+		this->tiles.resize(width, std::vector<int>(height));
+	}
+	if (height != this->height){
+		for (unsigned int i = 0; i < this->tiles.size(); i ++){
+			this->tiles[i].resize(height, 0);
+		}
+	}
+	if (twidth > 0 || theight > 0){
+		float difx = twidth / this->tileWidth;
+		float dify = theight / this->tileHeight;
+
+		for (unsigned int i = 0; i < this->types.size(); i ++){
+			if (twidth > 0){this->types[i]->x1 *= difx;
+							this->types[i]->x2 *= difx;}
+			if (theight> 0){this->types[i]->y1 *= dify;
+							this->types[i]->y2 *= dify;}
+		}
+		if (twidth > 0) this->tileWidth = twidth;
+		if (theight> 0) this->tileHeight = theight;
+	}
+}
+
 bool jeCollideBoxGrid(jeHitBox* box, jeGrid* grid, float x, float y, bool sweep){return false;}

@@ -23,7 +23,10 @@ class jeGrid : public jeMask
 		void setTile(int x, int y, int value);
 		void setRect(int x, int y, int w, int h, int value);
 		void newTile(float x1, float y1, float x2, float y2, int ID = -1);
-		void emptyTile(int ID);
+		void newTileF(float x1, float y1, float x2, float y2, int ID = -1);
+		void emptyTile(int ID, bool empty = true);
+
+		void resize(int width, int height, float twidth = -1, float theight = -1);
 
 		void draw();
 	protected:
