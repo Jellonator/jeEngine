@@ -6,8 +6,8 @@ class jeEntity
 	public:
 		jeEntity();
 		virtual ~jeEntity();
-		float x = 0;/**< \brief float x, the entity's x position. */
-		float y = 0;/**< \brief float y, he entity's y position. */
+		float x;/**< \brief float x, the entity's x position. */
+		float y;/**< \brief float y, he entity's y position. */
 		jeMask* mask;/**< \brief jeMask* mask, he entity's mask. */
 
 		virtual void OnCreate();/**< \brief Called when the entity is created. */

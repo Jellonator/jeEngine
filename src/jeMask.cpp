@@ -46,7 +46,7 @@ bool jeCollideGroup(jeEntity* e, jeGroup* group, float x, float y, bool sweep){
 		float py = e->y;
 		bool c = false;
 		//Move X
-		for (int i = 0; i < group->entities.size(); i ++){
+		for (unsigned int i = 0; i < group->entities.size(); i ++){
 			if (jeCollide(e, group->entities[i], x, y, true)) c = true;
 			if (i == 0) {X = e->x; Y = e->y;}
 			else {
@@ -60,22 +60,10 @@ bool jeCollideGroup(jeEntity* e, jeGroup* group, float x, float y, bool sweep){
 		}
 		e->x = X;
 		e->y = Y;
-		/*/Move Y
-		for (int i = 0; i < group->entities.size(); i ++){
-			c = c || jeCollide(e, group->entities[i], 0, y, true);
-			if (i == 0) Y = e->y;
-			else {
-				if (y > 0) Y = min(Y, e->y);
-				if (y < 0) Y = max(Y, e->y);
-			}
-			e->x = px;
-			e->y = py;
-		}
-		e->y = Y;*/
 		return c;
 	}else{
-		for (int i = 0; i < group->entities.size(); i ++){
-			if (jeCollide(e, group->entities[i]), x, y, false) return true;
+		for (unsigned int i = 0; i < group->entities.size(); i ++){
+			if (jeCollide(e, group->entities[i], x, y, false)) return true;
 		}
 	}
 	return false;

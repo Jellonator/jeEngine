@@ -11,7 +11,7 @@ class jeGridTile{
 class jeGrid : public jeMask
 {
 	public:
-		std::vector<std::vector<int>> tiles;
+		std::vector<std::vector<int> > tiles;
 		std::vector<jeGridTile*> types;
 		int width;
 		int height;
