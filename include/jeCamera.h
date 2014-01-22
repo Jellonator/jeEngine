@@ -1,5 +1,6 @@
 #pragma once
 #include "JE.h"
+
 #ifdef _SDL_H
 
 class jeCamera
@@ -9,6 +10,7 @@ class jeCamera
 		float sx, sy;
 		SDL_Point* size;
 		float x, y;
+		float mx, my;
 
 		jeCamera();
 		virtual ~jeCamera();
@@ -27,6 +29,9 @@ class jeCamera
 		void border(float x, float y = -1);
 
 		void getRatio(float* x, float* y);
+
+		void moveTo(float x, float y, float step = JE::dt);
+		void moveToShake(float x, float y, float range, float intensity, float step = JE::dt);
 	protected:
 	private:
 };

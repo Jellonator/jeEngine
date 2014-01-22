@@ -1,9 +1,18 @@
 #pragma once
-
 #include <SDL2/SDL_image.h>
 class jeEntity;
 class jeCamera;
-
+struct jeColor{
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
+	Uint8 a;
+};
+namespace JE{
+	extern SDL_Renderer* renderer;
+	extern jeColor* backcolor;
+	extern jeColor* forecolor;
+}
 class jeGraphic
 {
 	public:
@@ -32,3 +41,9 @@ class jeGraphic
 		void setOrigin(float x, float y);
 
 };
+
+void jeSetColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, SDL_Renderer* renderer = JE::renderer);
+void jeSetColorF(float r, float g, float b, float a = 1.0f, SDL_Renderer* renderer = JE::renderer);
+
+void jeSetBackgroundColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, SDL_Renderer* renderer = JE::renderer);
+void jeSetBackgroundColorF(float r, float g, float b, float a = 1.0f, SDL_Renderer* renderer = JE::renderer);

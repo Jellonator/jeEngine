@@ -15,15 +15,19 @@ namespace JE
 	float dt = 0;
 	float fps = 0;
 	jeWorld* world;/**< \brief jeWorld* world, the active world. */
+	jeColor* backcolor;
+	jeColor* forecolor;
 }
 
 void jeInit(){
 	jeWorld::set(new jeWorld());
-	#ifdef _SDL_H
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {std::cout << SDL_GetError() << std::endl;}
-	#endif // _SDL_H
+	JE::backcolor = new jeColor();
+	JE::forecolor = new jeColor();
+	jeSetColor(255,255,255,255);
+	jeSetBackgroundColor(0,0,0,255);
 }
-#ifdef _SDL_H
+
 void jeInitWindow(std::string name, int x, int y, int w, int h, int wflags, int rflags){
 	jeInit();
 	JE::window = SDL_CreateWindow(name.c_str(), x, y, w, h, wflags);
@@ -48,21 +52,24 @@ void jeCalcTime(){
 	//cout << time << endl;
 	JE::ptime = JE::time;
 }
-#endif // _SDL_H
+
 void jeUpdate(){
-	#ifdef _SDL_H
+
 	jeCalcTime();
-	#endif // _SDL_H
+
 	JE::world->update();
 }
 void jeDraw(){
-	#ifdef _SDL_H
+	SDL_SetRenderDrawColor(JE::renderer,JE::backcolor->r,JE::backcolor->g,JE::backcolor->b,JE::backcolor->a);
 	SDL_RenderClear(JE::renderer);
-	#endif // _SDL_H
+	SDL_SetRenderDrawColor(JE::renderer,JE::forecolor->r,JE::forecolor->g,JE::forecolor->b,JE::forecolor->a);
 	JE::world->draw();
 }
 void jeFlip(){
-	#ifdef _SDL_H
 	SDL_RenderPresent(JE::renderer);
-	#endif
+}
+
+float jeGetSign(float f){
+    if (f == 0) return 0;
+    return (f > 0) ? 1 : -1;
 }

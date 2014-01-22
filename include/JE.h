@@ -7,7 +7,10 @@
 #include <cmath>
 #include <cstring>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL.h>
+
 void jePrint(std::string s);
+float jeGetSign(float f);
 
 enum JE_ORDER{JE_ORDER_NONE, JE_ORDER_HALF, JE_ORDER_FULL};
 enum JE_WORLD_MODE{JE_WORLD_MODE_NONE, JE_WORLD_MODE_ALL, JE_WORLD_MODE_GROUP};
@@ -36,6 +39,8 @@ namespace JE
 	extern float dt;/**< \brief float dt, the delta time.  The time between the last frame and the current frame */
 	extern float fps;/**< \brief float fps, the frames per second.  Used for benchmarking. */
 	extern jeWorld* world;/**< \brief jeWorld* world, the active world. */
+	extern jeColor* backcolor;
+	extern jeColor* forecolor;
 };
 #include "jeImage.h"
 #include "jeCanvas.h"

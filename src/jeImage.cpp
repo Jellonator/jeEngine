@@ -1,6 +1,6 @@
 #include "jeImage.h"
-#include "jeEntity.h"
-
+#include "JE.h"
+#include <SDL2/SDL_image.h>
 jeImage::jeImage() : jeGraphic()
 {
 	this->flip = SDL_FLIP_NONE;
@@ -85,15 +85,13 @@ void jeImage::draw(float x, float y, jeCamera* camera, jeEntity* parent, SDL_Ren
 }
 
 void jeImage::load(std::string file, SDL_Renderer* renderer){
-    SDL_Surface* img = IMG_Load(file.c_str());
-    if (img == NULL) {std::cout << SDL_GetError() << std::endl;}else{
-		this->texture = SDL_CreateTextureFromSurface(renderer, img);
-		if (this->texture == NULL) {std::cout << SDL_GetError() << std::endl;}
-    }
+	SDL_Surface* s = IMG_Load(file.c_str());
+	if (s == NULL) {std::cout << SDL_GetError() << std::endl;}
+	this->texture = SDL_CreateTextureFromSurface(JE::renderer, s);
+	if (this->texture == NULL) {std::cout << SDL_GetError() << std::endl;}
 	int w, h;
 	SDL_QueryTexture(this->texture, NULL, NULL, &w, &h);
 	this->setClip(0,0,w,h);
-	SDL_FreeSurface(img);
 }
 
 void jeImage::setClip(float x, float y, float w, float h){

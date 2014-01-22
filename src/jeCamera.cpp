@@ -3,6 +3,9 @@
 jeCamera::jeCamera()
 {
 	this->x = 0;
+	this->y = 0;
+	this->mx = 0;
+	this->my = 0;
 	this->clip = NULL;
 	this->size = NULL;
 	this->reset();
@@ -48,12 +51,12 @@ void jeCamera::setSize(float w, float h){
 }
 
 void jeCamera::disableSize(){
-	delete this->size;
+	if(this->size != NULL) delete this->size;
 	this->size = NULL;
 }
 
 void jeCamera::disableClip(){
-	delete this->clip;
+	if (this->clip != NULL) delete this->clip;
 	this->clip = NULL;
 }
 
@@ -93,4 +96,18 @@ void jeCamera::letterbox(float width, float height, float x, float y){
 	this->setScale(fratio,fratio);
 	this->setPosition(x/fratio, y/fratio);
 	this->setClip(x, y, width*fratio, height*fratio);
+}
+
+void jeCamera::moveTo(float x, float y, float step){
+    float sx = jeGetSign(x);
+    float sy = jeGetSign(y);
+    if(sx != 0){
+        this->x += sx * step;
+		if ((sx == 1) ? (this->x >= x) : (this->x <= x)) this->x = x;
+    }
+    if(sy != 0){
+        this->y += sy * step;
+		if ((sy == 1) ? (this->y >= y) : (this->y <= y)) this->y = y;
+    }
+
 }
