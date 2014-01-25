@@ -57,6 +57,7 @@ Update log
 - Added jeCopyImage, copies an image.
 - Clipping rectangle is no longer automatically generated, and instead will use the texture's size if clip is NULL(jeImage)
 - Added jeSetColor and jeSetBackgroundColor, which sets SDL drawing color and background color, respectively.
+
 ### Version 0.3 ###
 - Added jeGrid, a grid collision system.  Supports oddly sized rectangles.
 - Added jeCanvas, a graphic you can draw to and from.
