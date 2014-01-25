@@ -2,13 +2,24 @@
 
 #include "jeGraphic.h"
 #include <string>
+#include <memory>
+#include "jeData.h"
 namespace JE{
 	extern SDL_Renderer* renderer;
 }
+class jeImage;
+class jeTexture : public jeData{
+	public:
+	jeTexture(void* owner = NULL);
+	SDL_Texture* texture;
+	virtual ~jeTexture();
+	void load(std::string file, SDL_Renderer* renderer = JE::renderer);
+};
+
 class jeImage : public jeGraphic
 {
 	public:
-		SDL_Texture* texture;/**< The texture. */
+		jeTexture* texture;/**< The texture. */
 		SDL_RendererFlip flip;/**< Flipping. */
 		SDL_Rect* clip;/**< Clipping rectangle. */
 		float w;/**< The width of the image. */
@@ -45,7 +56,9 @@ class jeImage : public jeGraphic
          * \param -1 float y, the Y scale, defaults to the X scale.
          */
 		void setScale(float x, float y = -1);
+		void useTexture(jeTexture* texture);
 	protected:
 	private:
 };
 
+jeImage* jeCopyImage(jeImage* image);

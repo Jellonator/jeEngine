@@ -3,7 +3,7 @@
 //The smallest 'useful' class in the engine.  Let's face it, jePoint is useless.
 jeCanvas::jeCanvas(int width, int height) : jeImage()
 {
-	this->texture = SDL_CreateTexture(JE::renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, width, height);
+	this->texture->texture = SDL_CreateTexture(JE::renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, width, height);
 	this->bind();
 	SDL_RenderClear(JE::renderer);//otherwise you get some weird white noise crap
 	this->unbind();
@@ -16,7 +16,7 @@ jeCanvas::~jeCanvas()
 }
 
 void jeCanvas::bind(){
-	SDL_SetRenderTarget(JE::renderer, this->texture);
+	SDL_SetRenderTarget(JE::renderer, this->texture->texture);
 }
 
 void jeCanvas::unbind(){
