@@ -7,7 +7,7 @@ Using it is meant to be simple, and the engine is meant to be as small and flexi
 - SDL2
 - SDL2_image
 
-Current Version: 0.3
+Current Version: 0.4
 
 Features
 --------
@@ -49,6 +49,14 @@ Todo
 
 Update log
 --------
+### Version 0.4 ###
+- Added jeData, a class for storing data.
+- Added jeSpritemapData, an implimentation of jeData for jeSpritemap.
+- Added jeTexture, an implimentation of jeData for jeImage.
+- Fixed memory leak in jeImage::load()
+- Added jeCopyImage, copies an image.
+- Clipping rectangle is no longer automatically generated, and instead will use the texture's size if clip is NULL(jeImage)
+- Added jeSetColor and jeSetBackgroundColor, which sets SDL drawing color and background color, respectively.
 ### Version 0.3 ###
 - Added jeGrid, a grid collision system.  Supports oddly sized rectangles.
 - Added jeCanvas, a graphic you can draw to and from.
