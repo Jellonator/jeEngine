@@ -49,6 +49,13 @@ Todo
 
 Update log
 --------
+### Version 0.5 ###
+- Added jeEvent*, a class for comparing against SDL_Event and other such things.
+- Added jeLine*, experimental, not reccomended for use.
+- Reminder that jePoint* and jeCamera* are also experimental and not reccomended for use.
+- Added jeEventContainer*, a class for containing jeEvent*s and polling inputs and stuff.
+- bugfixes
+
 ### Version 0.4 ###
 - Added jeData, a class for storing data.
 - Added jeSpritemapData, an implimentation of jeData for jeSpritemap.
