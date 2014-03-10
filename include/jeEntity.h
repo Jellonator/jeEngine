@@ -11,10 +11,10 @@ class jeEntity
 		jeMask* mask;/**< \brief jeMask* mask, he entity's mask. */
 
 		virtual void OnCreate();/**< \brief Called when the entity is created. */
-		virtual void OnAdd();/**< \brief Called when the entity is added to the world. */
+		virtual void OnAdd(jeWorld* world = NULL);/**< \brief Called when the entity is added to the world. */
 		virtual void OnUpdate();/**< \brief Called when the entity is updated. */
 		virtual void OnDraw();/**< \brief Called when the entity is drawn. */
-		virtual void OnRemove();/**< \brief Called when the entity is removed from the world. */
+		virtual void OnRemove(jeWorld* world = NULL);/**< \brief Called when the entity is removed from the world. */
 
 		/** \brief Sets the specified entity's mask
 		 * \param jeMask* mask, the mask to use

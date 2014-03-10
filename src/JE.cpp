@@ -37,15 +37,19 @@ void jeInitWindow(std::string name, int x, int y, int w, int h, int wflags, int 
     JE::_renderer = JE::renderer;
 }
 void jeCalcTime(){
+	//add 1 to frame count; get the time.
 	JE::frames ++;
 	JE::time = SDL_GetTicks();
+	//calculate the delta time.
 	JE::dt = float(JE::time - JE::ptime)/1000;
-	if (JE::dt > 0){
+	//if dt is non-zero
+	if (JE::dt != 0){
+		//add dt to seconds, then calculate the FPS(This is why dt must be non-zero)
 		JE::seconds += JE::dt;
 		JE::fps = (float(JE::frames)/float(JE::seconds));
 	}
+	//If a second has passed, then reset seconds and frames to 0.
 	if (JE::seconds > 1){
-		//cout << "FPS:  " << JE::fps << endl;
 		JE::seconds = 0;
 		JE::frames = 0;
 	}
@@ -54,9 +58,7 @@ void jeCalcTime(){
 }
 
 void jeUpdate(){
-
 	jeCalcTime();
-
 	JE::world->update();
 }
 void jeDraw(){

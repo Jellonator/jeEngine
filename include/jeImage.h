@@ -2,7 +2,6 @@
 
 #include "jeGraphic.h"
 #include <string>
-#include <memory>
 #include "jeData.h"
 namespace JE{
 	extern SDL_Renderer* renderer;

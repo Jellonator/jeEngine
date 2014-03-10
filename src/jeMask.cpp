@@ -72,3 +72,4 @@ bool jeCollideGroup(jeEntity* e, jeGroup* group, float x, float y, bool sweep){
 bool jeCollideGroup(jeEntity* e, int group, float x, float y, bool sweep){
 	return jeCollideGroup(e, JE::world->groups[group], x, y, sweep);
 }
+

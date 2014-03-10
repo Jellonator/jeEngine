@@ -15,13 +15,13 @@ jeEntity::~jeEntity()
 
 void jeEntity::OnCreate(){};
 
-void jeEntity::OnAdd(){};
+void jeEntity::OnAdd(jeWorld* world){};
 
 void jeEntity::OnUpdate(){};
 
 void jeEntity::OnDraw(){};
 
-void jeEntity::OnRemove(){};
+void jeEntity::OnRemove(jeWorld* world){};
 
 void jeEntity::destroy(){
 	//tell the entity it is being removed

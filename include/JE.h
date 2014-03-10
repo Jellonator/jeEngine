@@ -8,6 +8,11 @@
 #include <cstring>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
+#define jeRAD 0.0174532925
+#define jeDEG 57.295779515
+#define jeInput SDL_Event
+
+typedef void (*function_pointer)(void);
 
 void jePrint(std::string s);
 float jeGetSign(float f);
@@ -15,6 +20,7 @@ float jeGetSign(float f);
 enum JE_ORDER{JE_ORDER_NONE, JE_ORDER_HALF, JE_ORDER_FULL};
 enum JE_WORLD_MODE{JE_WORLD_MODE_NONE, JE_WORLD_MODE_ALL, JE_WORLD_MODE_GROUP};
 enum JE_MASK_TYPE{JE_MASK_NONE, JE_MASK_BOX, JE_MASK_GRID, JE_MASK_LIST};
+enum JE_EVENTCOMPARE_MODE{JE_EVENTCOMPARE_TYPE,JE_EVENTCOMPARE_FULL,JE_EVENTCOMPARE_AUTO};
 
 class jeWorld;
 class jeEntity;
@@ -23,6 +29,7 @@ class jeHitBox;
 class jeCamera;
 class jeTilemap;
 class jeGrid;
+
 #include "jeMask.h"
 #include "jeGraphic.h"
 #include "jeGroup.h"
@@ -31,7 +38,6 @@ namespace JE
 {
 	extern SDL_Window* window;/**< \brief SDL_Window* window, the global window. */
 	extern SDL_Renderer* renderer;/**< \brief SDL_Renderer* renderer, the global renderer. */
-	extern SDL_Renderer* _renderer;
     extern int time;/**< \brief int time, the time of the current frame. */
 	extern int frames;/**< \brief int frames, frame count.  Used to calculate FPS.  Reset when seconds == 1. */
 	extern float seconds;/**< \brief float seconds.  Not really useful, just used to calculate FPS once a second. */
@@ -39,8 +45,8 @@ namespace JE
 	extern float dt;/**< \brief float dt, the delta time.  The time between the last frame and the current frame */
 	extern float fps;/**< \brief float fps, the frames per second.  Used for benchmarking. */
 	extern jeWorld* world;/**< \brief jeWorld* world, the active world. */
-	extern jeColor* backcolor;
-	extern jeColor* forecolor;
+	extern jeColor* backcolor;/**< \brief the background color */
+	extern jeColor* forecolor;/**< \brief the foreground color */
 };
 #include "jeImage.h"
 #include "jeCanvas.h"
@@ -67,4 +73,5 @@ void jeInitWindow(std::string name, int x = SDL_WINDOWPOS_CENTERED, int y = SDL_
 #include "jeSpritemap.h"
 #include "jeTilemap.h"
 #include "jeGrid.h"
-
+#include "jeEvent.h"
+#include "jeLine.h"

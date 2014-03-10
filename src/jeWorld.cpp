@@ -27,12 +27,12 @@ void jeWorld::add(jeEntity* entity){
 	//Function that adds an entity.
 	jeGroup::add(entity);
 	//Tell the entity is was added
-	entity->OnAdd();
+	entity->OnAdd(this);
 }
 
 void jeWorld::remove(jeEntity* entity){
 	//Tell the entity that it is being removed
-	entity->OnRemove();
+	entity->OnRemove(this);
 	//entity->__GROUPS__.resize(JE::groups.size(), NULL);
 	jeGroup::remove(entity);
 }
