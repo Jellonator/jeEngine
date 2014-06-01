@@ -1,7 +1,7 @@
 #pragma once
 #include "JE.h"
-
-class jeTileset{
+namespace JE{namespace GRAPHICS{
+class Tileset{
 	public:
 	int tileWidth;/**< \brief Width of each tile. */
 	int tileHeight;/**< \brief Height of each tile. */
@@ -9,14 +9,14 @@ class jeTileset{
 	int tileOffsetY;/**< \brief Y offset of the tileset. */
 	int tileSpaceX;/**< \brief X spacing between tiles. */
 	int tileSpaceY;/**< \brief Y spacing between tiles. */
-	jeImage* image;/**< \brief The tileset's image. */
+	Image* image;/**< \brief The tileset's image. */
 	std::vector<SDL_Rect*> tiles;/**< \brief A list of tiles in the tileset. */
 };
 
-class jeTilemap : public jeCanvas
+class Tilemap : public Canvas
 {
 	public:
-		std::vector<jeTileset*> tilesets;/**<  */
+		std::vector<Tileset*> tilesets;/**<  */
 		int tileWidth;/**< \brief Width of each tile. */
 		int tileHeight;/**< \brief Height of each tile. */
 		int tileOffsetX;/**< \brief X offset of the tileset. */
@@ -36,7 +36,7 @@ class jeTilemap : public jeCanvas
          * \param 0 int spaceX, default X spacing between tiles in the tileset.
          * \param 0 int spaceY, default Y spacing between tiles in the tileset.
          */
-		jeTilemap(int width, int height, int twidth = 1, int theight = 1, int offsetX = 0, int offsetY = 0, int spaceX = 0, int spaceY = 0);
+		Tilemap(int width, int height, int twidth = 1, int theight = 1, int offsetX = 0, int offsetY = 0, int spaceX = 0, int spaceY = 0);
 
         /** \brief Creates a new tileset for the tilemap.
          * \param file std::string, the file to load.
@@ -77,20 +77,21 @@ class jeTilemap : public jeCanvas
          * \param y float, the Y position to draw to, in tiles.
          */
 		void drawTile(int tileset, int tile, float x, float y);
+		void drawTile(int tileset, int tx, int ty, float x, float y);
 
         /** \brief Draw a freeform tile to the tilemap.
          * \param tileset int, the ID of the tileset to use.
          * \param tile int, the ID of the tile to draw.
          * \param x float
          * \param y float
-         * \param NULL jeCamera* camera, the camera to use.
-         * \param NULL jeEntity* parent, the parent entity to use.
+         * \param NULL Camera* camera, the camera to use.
+         * \param NULL Entity* parent, the parent entity to use.
          * \param 1 float sx, the X scaling factor.
          * \param 1 float sy, the Y scaling factor.
          */
-		void drawFreeformTile(int tileset, int tile, float x, float y, jeCamera* camera = NULL, jeEntity* parent = NULL, float sx = 1, float sy = 1);
-		virtual ~jeTilemap();
+		void drawFreeformTile(int tileset, int tile, float x, float y, Camera* camera = NULL, Entity* parent = NULL, float sx = 1, float sy = 1);
+		virtual ~Tilemap();
 	protected:
 	private:
 };
-
+};};

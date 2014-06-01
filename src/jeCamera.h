@@ -1,21 +1,18 @@
 #pragma once
 #include "JE.h"
-
-#ifdef _SDL_H
-
-class jeCamera
+namespace JE{namespace GRAPHICS{
+class Camera : public Point
 {
 	public:
 		SDL_Rect* clip;
 		float sx, sy;
 		SDL_Point* size;
-		float x, y;
-		float mx, my;
 
-		jeCamera();
-		virtual ~jeCamera();
+		Camera();
+		virtual ~Camera();
 
-		void setScale(float x, float y);
+		void setScale(float x, float y=-1);
+		void pushScale(float x, float y=-1);
 		void setClip(float x, float y, float w, float h);
 		void setPosition(float x, float y);
 		void setSize(float w, float h);
@@ -30,14 +27,9 @@ class jeCamera
 
 		void getRatio(float* x, float* y);
 
-		void moveTo(float x, float y, float step = JE::dt);
-		void moveToShake(float x, float y, float range, float intensity, float step = JE::dt);
+		//void moveTo(float x, float y, float step = JE::dt);
+		//void moveToShake(float x, float y, float range, float intensity, float step = JE::dt);
 	protected:
 	private:
 };
-#else
-class jeCamera
-{
-
-}
-#endif // _SDL_H
+};};

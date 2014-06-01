@@ -2,14 +2,16 @@
 #include <cstddef>
 #include <string>
 #include <iostream>
-class jeData
+namespace JE{
+class Data
 {
 	public:
 		void* owner;
 		bool independent;
 		bool getKill(void* killer = NULL);
-		jeData(void* owner);
-		virtual ~jeData();
+		Data(void* owner);
+		virtual ~Data();
 	protected:
 	private:
+};
 };

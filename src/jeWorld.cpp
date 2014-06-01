@@ -1,49 +1,50 @@
 #include "jeWorld.h"
-
-jeWorld::jeWorld(int order, int drawmode, int updatemode) : jeGroup(order, drawmode, updatemode){
+namespace JE{
+World::World(int order, int drawmode, int updatemode) : Group(order, drawmode, updatemode){
 	//this->order = order;
 	this->needOrder = false;
 }
 
-jeWorld::~jeWorld(){
+World::~World(){
 	//dtor
 }
-void jeWorld::begin(){this->OnBegin();}
-void jeWorld::end(){this->onEnd();}
+void World::begin(){this->OnBegin();}
+void World::end(){this->onEnd();}
 
-void jeWorld::update(int group){
+void World::update(int group){
 	//Update all of the entities
-	jeGroup::update(group);
+	Group::update(group);
 	this->onUpdate();
 };
 
-void jeWorld::draw(int group){
+void World::draw(int group){
 	//same as the update function
-	jeGroup::draw(group);
+	Group::draw(group);
 	this->OnDraw();
 };
 
-void jeWorld::add(jeEntity* entity){
+void World::add(Entity* entity){
 	//Function that adds an entity.
-	jeGroup::add(entity);
+	Group::add(entity);
 	//Tell the entity is was added
 	entity->OnAdd(this);
 }
 
-void jeWorld::remove(jeEntity* entity){
+void World::remove(Entity* entity){
 	//Tell the entity that it is being removed
 	entity->OnRemove(this);
 	//entity->__GROUPS__.resize(JE::groups.size(), NULL);
-	jeGroup::remove(entity);
+	Group::remove(entity);
 }
 
-void jeWorld::set(jeWorld* world){
+void World::set(World* world){
 	if(JE::world != NULL) JE::world->end();
 	JE::world = world;
 	JE::world->begin();
 }
 
-void jeWorld::changeOrder(int order){
+void World::changeOrder(int order){
 	this->changeOrder(order);
 	this->order = order;
 }
+};

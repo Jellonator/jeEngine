@@ -1,24 +1,24 @@
 #pragma once
 #include "JE.h"
-
-class jeGridTile{
+namespace JE{namespace MASK{
+class GridTile{
 	public:
-	jeGridTile(float x1, float y1, float x2, float y2, bool empty = false);
+	GridTile(float x1, float y1, float x2, float y2, bool empty = false);
 	bool empty;
 	float x1, x2, y1, y2;
 };
 
-class jeGrid : public jeMask
+class Grid : public Mask
 {
 	public:
 		std::vector<std::vector<int> > tiles;/**< \brief a 2D list of tiles in the grid. */
-		std::vector<jeGridTile*> types;/**< \brief a list of tile types in the grid. */
+		std::vector<GridTile*> types;/**< \brief a list of tile types in the grid. */
 		int width;/**< \brief the width of the grid in tiles. */
 		int height;/**< \brief the height of the grid in tiles. */
-		int tileWidth;/**< \brief the width of a tile. */
-		int tileHeight;/**< \brief the height of a tile. */
-		jeGrid(int width, int height, int twidth, int theight);
-		virtual ~jeGrid();
+		float tileWidth;/**< \brief the width of a tile. */
+		float tileHeight;/**< \brief the height of a tile. */
+		Grid(int width, int height, int twidth, int theight);
+		virtual ~Grid();
 
         /** \brief sets a tile to the value
          * \param x int; the x position of the tile.
@@ -44,7 +44,7 @@ class jeGrid : public jeMask
          * \param y2 float; the second y position.
          * \param int ID; The ID of the tile type.
          */
-		void newTile(float x1, float y1, float x2, float y2, int ID = -1);
+		void newTile(float x1, float y1, float x2, float y2, bool empty=false, int ID = -1);
 
         /** \brief Creates a new tile type, with 0 and 1 being the min/max values.
          * \param x1 float; the first x position.
@@ -53,7 +53,7 @@ class jeGrid : public jeMask
          * \param y2 float; the second y position.
          * \param int ID; The ID of the tile type.
          */
-		void newTileF(float x1, float y1, float x2, float y2, int ID = -1);
+		void newTileF(float x1, float y1, float x2, float y2, bool empty=false, int ID = -1);
 
         /** \brief Makes a tile ID empty, or blank.
          * \param ID int; the Tile ID to empty.
@@ -68,11 +68,14 @@ class jeGrid : public jeMask
          * \param float theight; the new tile height.
          */
 		void resize(int width, int height, float twidth = -1, float theight = -1);
+		void fill(int type, int x, int y);
 
-		void draw();/**< \brief draws the grid, for debug purposes. */
+		void draw(float x = 0, float y = 0, GRAPHICS::Camera* camera = NULL, bool outline = false, bool include_empty = false);/**< \brief draws the grid, for debug purposes. */
+		void drawTile(float x, float y, int type, GRAPHICS::Camera* camera = NULL, float width=-1, float height=-1);
 	protected:
 	private:
 };
 
-bool jeCollideBoxGrid(jeHitBox* box, jeGrid* grid, float x = 0, float y = 0, bool sweep = false);
-bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x = 0, float y = 0, bool sweep = false);
+bool collideBoxGrid(HitBox* box, Grid* grid, float x = 0, float y = 0, bool sweep = false);
+bool collideBoxGrid(Entity* eb, Entity* eg, float x = 0, float y = 0, bool sweep = false);
+};};

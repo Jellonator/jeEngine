@@ -1,7 +1,7 @@
+#include "jeHitBox.h"
 #include "jeGrid.h"
-using namespace std;
-
-jeGridTile::jeGridTile(float x1, float y1, float x2, float y2, bool empty){
+namespace JE{namespace MASK{
+GridTile::GridTile(float x1, float y1, float x2, float y2, bool empty){
 	this->empty = empty;
 	this->x1 = x1;
 	this->x2 = x2;
@@ -9,7 +9,7 @@ jeGridTile::jeGridTile(float x1, float y1, float x2, float y2, bool empty){
 	this->y2 = y2;
 }
 
-jeGrid::jeGrid(int width, int height, int twidth, int theight) : jeMask(), tiles(width, std::vector<int>(height, 0))
+Grid::Grid(int width, int height, int twidth, int theight) : Mask(), tiles(width, std::vector<int>(height, 0))
 {
 	this->tileWidth = twidth;
 	this->tileHeight = theight;
@@ -17,51 +17,126 @@ jeGrid::jeGrid(int width, int height, int twidth, int theight) : jeMask(), tiles
 	this->height = height;
 	this->type = JE_MASK_GRID;
 	this->types.resize(2,NULL);
-	this->types[0] = new jeGridTile(0,0,twidth,theight,true);
-	this->types[1] = new jeGridTile(0,0,twidth,theight,false);
+	this->types[0] = new GridTile(0,0,twidth,theight,true);
+	this->types[1] = new GridTile(0,0,twidth,theight,false);
 }
 
-jeGrid::~jeGrid()
+Grid::~Grid()
 {
 	for (unsigned int i = 0; i < this->tiles.size(); i ++){
 		this->tiles[i].clear();
 	}
 	this->tiles.clear();
+	for (unsigned int i = 0; i < this->types.size(); i ++){
+		delete this->types[i];
+	}
+	this->types.clear();
 }
 
-void jeGrid::setTile(int x, int y, int value){
+void Grid::setTile(int x, int y, int value){
 	if (x < 0 || y < 0 || x >= this->width || y >= this->height) return;
 	this->tiles[x][y] = value;
 }
 
-void jeGrid::setRect(int x, int y, int w, int h, int value){
-	for (int ix = max(0,x); ix < min(this->width, x+w); ix ++){
-		for (int iy = max(0,y); iy < min(this->height, y+h); iy ++){
+void Grid::setRect(int x, int y, int w, int h, int value){
+	for (int ix = std::max(0,x); ix < std::min(this->width, x+w); ix ++){
+		for (int iy = std::max(0,y); iy < std::min(this->height, y+h); iy ++){
 			this->tiles[ix][iy] = value;
 		}
 	}
 }
 
-void jeGrid::draw(){
-	SDL_Rect* rect = new SDL_Rect();
+void Grid::fill(int type, int x, int y){
+	if (x >= 0 && y >= 0 && x < this->width && y < this->height){
+		int t = this->tiles[x][y];
+		if (t != type){
+			this->tiles[x][y] = type;
+			if (x-1 >= 0) {if (this->tiles[x-1][y] == t) this->fill(type,x-1,y);}
+			if (y-1 >= 0) {if (this->tiles[x][y-1] == t) this->fill(type,x,y-1);}
+			if (x+1 < this->width) {if (this->tiles[x+1][y] == t) this->fill(type,x+1,y);}
+			if (y+1 < this->height) {if (this->tiles[x][y+1] == t) this->fill(type,x,y+1);}
+		}
+	}
+}
+
+void Grid::draw(float x, float y, GRAPHICS::Camera* camera, bool outline, bool include_empty){
 	for (unsigned int ix = 0; ix < this->tiles.size(); ix ++){
 		for (unsigned int iy = 0; iy < this->tiles[ix].size(); iy ++){
 			int t = this->tiles[ix][iy];
+			GridTile* tile = this->types[t];
+			if (include_empty){
+				float rx = (this->x + float(ix)*this->tileWidth + x);
+				float ry = (this->y + float(iy)*this->tileHeight + y);
+				float rw = (this->tileWidth);
+				float rh = (this->tileHeight);
+				if (!outline) fillRect(rx,ry,rw,rh,camera);
+				else drawRect(rx,ry,rw,rh,camera);
+			}
 			if(this->types[t]->empty == false){
-				rect->x = this->x + ix*this->tileWidth + this->types[t]->x1;
-				rect->y = this->y + iy*this->tileHeight + this->types[t]->y1;
-				rect->w = this->types[t]->x2 - this->types[t]->x1;
-				rect->h = this->types[t]->y2 - this->types[t]->y1;
-				SDL_RenderDrawRect(JE::renderer, rect);
+				float rx = (this->x + tile->x1+(float(ix))*this->tileWidth + x);
+				float ry = (this->y + tile->y1+(float(iy))*this->tileHeight + y);
+				float rw = ((tile->x2 - tile->x1));
+				float rh = ((tile->y2 - tile->y1));
+				if (!outline) fillRect(rx,ry,rw,rh,camera);
+				else drawRect(rx,ry,rw,rh,camera);
 			}
 		}
 	}
-	delete rect;
+	SDL_RenderSetClipRect(GRAPHICS::renderer, NULL);
 }
 
-bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x, float y, bool sweep){
-	jeHitBox* box = static_cast<jeHitBox*>(eb->mask);
-	jeGrid* grid = static_cast<jeGrid*>(eg->mask);
+void Grid::drawTile(float x, float y, int type, GRAPHICS::Camera* camera, float width, float height){
+		//create two rectangles
+		SDL_Rect* dstrect = new SDL_Rect();
+		GridTile*t = this->types[type];
+		float dx = t->x1/this->tileWidth;
+		float dy = t->y1/this->tileHeight;
+		float dw = std::abs(t->x2-t->x1)/this->tileWidth;
+		float dh = std::abs(t->y2-t->y1)/this->tileHeight;
+
+		dx *= (width < 0) ? this->tileWidth : width;
+		dy *= (height < 0) ? this->tileHeight : height;
+		dw *= (width < 0) ? this->tileWidth : width;
+		dh *= (height < 0) ? this->tileHeight : height;
+
+		dx += x;
+		dy += y;
+
+		if(camera){
+			float sw = 1;
+			float sh = 1;
+			if (camera->size) camera->getRatio(&sw,&sh);
+			dx -= camera->x;
+			dy -= camera->y;
+			dx *= camera->sx * sw;
+			dy *= camera->sy * sh;
+			dw *= camera->sx * sw;
+			dh *= camera->sy * sh;
+			if (camera->clip) {
+				if (camera->size){
+					SDL_Rect* cliprect = new SDL_Rect();
+					cliprect->x = camera->clip->x * sw;
+					cliprect->y = camera->clip->y * sh;
+					cliprect->w = camera->clip->w * sw;
+					cliprect->h = camera->clip->h * sh;
+					SDL_RenderSetClipRect(GRAPHICS::renderer, cliprect);
+					delete cliprect;
+				} else SDL_RenderSetClipRect(GRAPHICS::renderer, camera->clip);
+			}
+		}
+		dstrect->x = dx;
+		dstrect->y = dy;
+		dstrect->w = dw;
+		dstrect->h = dh;
+		if (t->empty) SDL_RenderDrawRect(GRAPHICS::renderer, dstrect);
+		else SDL_RenderFillRect(GRAPHICS::renderer, dstrect);
+		SDL_RenderSetClipRect(GRAPHICS::renderer, NULL);
+		delete dstrect;
+}
+
+bool collideBoxGrid(Entity* eb, Entity* eg, float x, float y, bool sweep){
+	HitBox* box = static_cast<HitBox*>(eb->mask);
+	Grid* grid = static_cast<Grid*>(eg->mask);
 	bool c = false;
 	if(sweep == true){
 		bool cx = false;
@@ -70,8 +145,8 @@ bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x, float y, bool sweep){
 			if(x < 0)box->x += x;
 			box->width += abs(x);
 			float X = eb->x + x;
-			for (	 int ix = max(float(0),floor((box->x + eb->x - grid->x - eg->x)/grid->tileWidth )); ix < min(float(grid->width ),ceil((box->x + box->width + eb->x - grid->x - eg->x)/grid->tileWidth )); ix ++){
-				for (int iy = max(float(0),floor((box->y + eb->y - grid->y - eg->y)/grid->tileHeight)); iy < min(float(grid->height),ceil((box->y + box->height+ eb->y - grid->y - eg->y)/grid->tileHeight)); iy ++){
+			for (	 int ix = std::max(double(0),floor((box->x + eb->x - grid->x - eg->x)/grid->tileWidth )); ix < std::min(double(grid->width ),ceil((box->x + box->width + eb->x - grid->x - eg->x)/grid->tileWidth )); ix ++){
+				for (int iy = std::max(double(0),floor((box->y + eb->y - grid->y - eg->y)/grid->tileHeight)); iy < std::min(double(grid->height),ceil((box->y + box->height+ eb->y - grid->y - eg->y)/grid->tileHeight)); iy ++){
 					int t = grid->tiles[ix][iy];
 					if(grid->types[t]->empty == false) {
 						if(box->left() + eb->x - grid->x - eg->x 		< ix*grid->tileWidth + grid->types[t]->x2
@@ -79,8 +154,8 @@ bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x, float y, bool sweep){
 						&& box->top() + eb->y - grid->y - eg->y			< iy*grid->tileHeight + grid->types[t]->y2
 						&& iy*grid->tileHeight + grid->types[t]->y1		< box->bottom() + eb->y - grid->y - eg->y
 						){
-							if (x > 0) X = min(float(X), ix*grid->tileWidth + grid->types[t]->x1 - box->width + x - grid->x - eg->x);
-							if (x < 0) X = max(float(X), ix*grid->tileWidth + grid->types[t]->x2 - grid->x - eg->x);
+							if (x > 0) X = std::min(float(X), ix*grid->tileWidth + grid->types[t]->x1 - box->width + x - grid->x - eg->x);
+							if (x < 0) X = std::max(float(X), ix*grid->tileWidth + grid->types[t]->x2 - grid->x - eg->x);
 							cx = true;
 						}
 					}
@@ -97,8 +172,8 @@ bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x, float y, bool sweep){
 			if(y < 0)box->y += y;
 			box->height += abs(y);
 			float Y = eb->y + y;
-			for (	 int ix = max(float(0),floor((box->x + eb->x - grid->x - eg->x)/grid->tileWidth )); ix < min(float(grid->width ),ceil((box->x + box->width + eb->x - grid->x - eg->x)/grid->tileWidth )); ix ++){
-				for (int iy = max(float(0),floor((box->y + eb->y - grid->y - eg->y)/grid->tileHeight)); iy < min(float(grid->height),ceil((box->y + box->height+ eb->y - grid->y - eg->y)/grid->tileHeight)); iy ++){
+			for (	 int ix = std::max(double(0),floor((box->x + eb->x - grid->x - eg->x)/grid->tileWidth )); ix < std::min(double(grid->width ),ceil((box->x + box->width + eb->x - grid->x - eg->x)/grid->tileWidth )); ix ++){
+				for (int iy = std::max(double(0),floor((box->y + eb->y - grid->y - eg->y)/grid->tileHeight)); iy < std::min(double(grid->height),ceil((box->y + box->height+ eb->y - grid->y - eg->y)/grid->tileHeight)); iy ++){
 					int t = grid->tiles[ix][iy];
 					if(grid->types[t]->empty == false) {
 						if(box->left() + eb->x - grid->x - eg->x 		< ix*grid->tileWidth + grid->types[t]->x2
@@ -106,8 +181,8 @@ bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x, float y, bool sweep){
 						&& box->top() + eb->y - grid->y - eg->y			< iy*grid->tileHeight + grid->types[t]->y2
 						&& iy*grid->tileHeight + grid->types[t]->y1		< box->bottom() + eb->y - grid->y - eg->y
 						){
-							if (y > 0) Y = min(float(Y), iy*grid->tileHeight + grid->types[t]->y1 - box->height + y - grid->y - eg->y);
-							if (y < 0) Y = max(float(Y), iy*grid->tileHeight + grid->types[t]->y2 - grid->y - eg->y);
+							if (y > 0) Y = std::min(float(Y), iy*grid->tileHeight + grid->types[t]->y1 - box->height + y - grid->y - eg->y);
+							if (y < 0) Y = std::max(float(Y), iy*grid->tileHeight + grid->types[t]->y2 - grid->y - eg->y);
 							cy = true;
 						}
 					}
@@ -124,8 +199,8 @@ bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x, float y, bool sweep){
 			if(y < 0)box->y += y;
 			box->height += abs(y);
 
-			for (	 int ix = max(float(0),floor((box->x + eb->x - grid->x - eg->x)/grid->tileWidth )); ix < min(float(grid->width ),ceil((box->x + box->width + eb->x - grid->x - eg->x)/grid->tileWidth )); ix ++){
-				for (int iy = max(float(0),floor((box->y + eb->y - grid->y - eg->y)/grid->tileHeight)); iy < min(float(grid->height),ceil((box->y + box->height+ eb->y - grid->y - eg->y)/grid->tileHeight)); iy ++){
+			for (	 int ix = std::max(double(0),floor((box->x + eb->x - grid->x - eg->x)/grid->tileWidth )); ix < std::min(double(grid->width ),ceil((box->x + box->width + eb->x - grid->x - eg->x)/grid->tileWidth )); ix ++){
+				for (int iy = std::max(double(0),floor((box->y + eb->y - grid->y - eg->y)/grid->tileHeight)); iy < std::min(double(grid->height),ceil((box->y + box->height+ eb->y - grid->y - eg->y)/grid->tileHeight)); iy ++){
 					int t = grid->tiles[ix][iy];
 					if(grid->types[t]->empty == false) {
 						if(box->left() + eb->x - grid->x - eg->x 		< ix*grid->tileWidth + grid->types[t]->x2
@@ -145,9 +220,9 @@ bool jeCollideBoxGrid(jeEntity* eb, jeEntity* eg, float x, float y, bool sweep){
 	return c;
 }
 
-void jeGrid::newTile(float x1, float y1, float x2, float y2, int ID){
-	jeGridTile* tile;
-	tile = new jeGridTile(x1, y1, x2, y2, false);
+void Grid::newTile(float x1, float y1, float x2, float y2, bool empty, int ID){
+	GridTile* tile;
+	tile = new GridTile(x1, y1, x2, y2, empty);
 	if (ID < 0) {
 		this->types.push_back(tile);
 	}else{
@@ -157,15 +232,15 @@ void jeGrid::newTile(float x1, float y1, float x2, float y2, int ID){
 	}
 }
 
-void jeGrid::newTileF(float x1, float y1, float x2, float y2, int ID){
-	this->newTile(x1*this->tileWidth,y1*this->tileHeight,x2*this->tileWidth,y2*this->tileHeight,ID);
+void Grid::newTileF(float x1, float y1, float x2, float y2, bool empty, int ID){
+	this->newTile(x1*this->tileWidth,y1*this->tileHeight,x2*this->tileWidth,y2*this->tileHeight,empty,ID);
 }
 
-void jeGrid::emptyTile(int ID, bool empty){
+void Grid::emptyTile(int ID, bool empty){
 	this->types[ID]->empty = empty;
 }
 
-void jeGrid::resize(int width, int height, float twidth, float theight){
+void Grid::resize(int width, int height, float twidth, float theight){
 	if (width != this->width){
 		this->tiles.resize(width, std::vector<int>(height));
 	}
@@ -189,4 +264,5 @@ void jeGrid::resize(int width, int height, float twidth, float theight){
 	}
 }
 
-bool jeCollideBoxGrid(jeHitBox* box, jeGrid* grid, float x, float y, bool sweep){return false;}
+bool collideBoxGrid(HitBox* box, Grid* grid, float x, float y, bool sweep){return false;}
+};};

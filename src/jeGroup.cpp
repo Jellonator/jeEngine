@@ -1,18 +1,18 @@
 #include "JE.h"
-
-jeGroup::jeGroup(int order, int drawmode, int updatemode){
+namespace JE{
+Group::Group(int order, int drawmode, int updatemode){
 	this->order = order;
 	this->drawMode = drawmode;
 	this->updateMode = updatemode;
 }
 
-jeGroup::~jeGroup(){
+Group::~Group(){
 	//dtor
 }
 
-void jeGroup::begin(){};
+void Group::begin(){};
 
-void jeGroup::update(int group){
+void Group::update(int group){
 	if (this->updateMode == JE_WORLD_MODE_ALL && group < 0){
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
 			if (this->__EREMOVED__[i] == false) this->entities[i]->OnUpdate();
@@ -31,7 +31,7 @@ void jeGroup::update(int group){
 	}
 };
 
-void jeGroup::draw(int group){
+void Group::draw(int group){
 	if (this->drawMode == JE_WORLD_MODE_ALL){
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
 			if (this->__EREMOVED__[i] == false) this->entities[i]->OnDraw();
@@ -47,9 +47,9 @@ void jeGroup::draw(int group){
 	}
 };
 
-void jeGroup::end(){};
+void Group::end(){};
 
-void jeGroup::add(jeEntity* entity){
+void Group::add(Entity* entity){
 	//Function that adds an entity.
 	if (this->__IREMOVED__.size() > 0){//If there is free space
 		//Add it to the empty spot
@@ -67,7 +67,7 @@ void jeGroup::add(jeEntity* entity){
 	//entity->add();
 }
 
-void jeGroup::remove(jeEntity* entity){
+void Group::remove(Entity* entity){
 	//If full order then 'erase' it
 	if (this->order == JE_ORDER_FULL){
 		unsigned int j = this->entities.size();
@@ -113,7 +113,55 @@ void jeGroup::remove(jeEntity* entity){
 	this->needOrder = true;
 }
 
-void jeGroup::changeOrder( int order){
+void Group::clear(){
+	this->entities.clear();
+	this->__EREMOVED__.clear();
+	this->__IREMOVED__.clear();
+	this->needOrder = false;
+}
+
+void Group::clear(int group){
+	this->groups[group]->clear();
+}
+
+void Group::clearAll(){
+	for (unsigned int i = 0; i < this->groups.size(); ++i){
+		this->groups[i]->clearAll();
+	}
+	this->clear();
+}
+
+int Group::getID(Entity* entity){
+	for (unsigned int i = 0; i < this->entities.size(); ++i){
+		if (this->entities[i] == entity) return i;
+	}
+	return -1;
+}
+void Group::move(int from, int to){
+	if (from == -1) return;
+	Entity* e = this->entities[from];
+	this->entities.erase(this->entities.begin()+from);
+	this->entities.insert(this->entities.begin()+to, e);
+}
+void Group::moveToBack(int from){
+	if (from == -1) return;
+	Entity* e = this->entities[from];
+	this->entities.erase(this->entities.begin()+from);
+	this->entities.push_back(e);
+}
+void Group::moveToFront(int from){
+	this->move(from, 0);
+}
+void Group::moveUp(int from){
+	if (from >= this->entities.size()-1) return;
+	this->move(from, from+1);
+}
+void Group::moveDown(int from){
+	if (from <= 0) return;
+	this->move(from, from-1);
+}
+
+void Group::changeOrder( int order){
 
 	if (this->order == JE_ORDER_FULL && this->needOrder){
 		//Check again.
@@ -136,18 +184,18 @@ void jeGroup::changeOrder( int order){
 	this->order = order;
 }
 
-void jeGroup::addToGroup(jeEntity* entity, unsigned int group){
+void Group::addToGroup(Entity* entity, unsigned int group){
 	//Test if group exists, if not then resize
 	if (this->groups.size() < group+1) addGroup(group);
 	//Then add to the group
 	this->groups[group]->add(entity);
 }
 
-void jeGroup::removeFromGroup(jeEntity* entity, unsigned int group){
+void Group::removeFromGroup(Entity* entity, unsigned int group){
 	this->groups[group]->remove(entity);
 }
 
-void jeGroup::addGroup(unsigned int group, int order, int drawmode, int updatemode){
+void Group::addGroup(unsigned int group, int order, int drawmode, int updatemode){
 	//Adds a group
 	//If an order is unspecified, default to the world's order.
 	if (order < 0) order = this->order;
@@ -158,44 +206,24 @@ void jeGroup::addGroup(unsigned int group, int order, int drawmode, int updatemo
 	this->groups.resize(std::max((unsigned int)this->groups.size(), group+1));
 	//And fill up all of the new groups pointers with new groups
 	for (unsigned int i = a; i < this->groups.size(); i ++){
-		this->groups[i] = new jeGroup(this->order, drawmode, updatemode);
+		this->groups[i] = new Group(this->order, drawmode, updatemode);
 		//this->groups[i]->__PINDEX__ = a;
 		this->groups[i]->begin();
 	}
 }
 
-jeGroup* jeGroup::getGroup(unsigned int index){
+Group* Group::getGroup(unsigned int index){
 	if (this->groups.size() < index+1) addGroup(index);
 	return groups[index];
 }
 
-void jeGroup::removeGroup(unsigned int group){
+void Group::removeGroup(unsigned int group){
+	delete this->groups[group];
 	this->groups.erase(this->groups.begin()+group);
-	//jeRemoveGroup(this->groups[group]);
+	//RemoveGroup(this->groups[group]);
 }
 
-void jeGroup::clear(int level){
-	if (level >= 2){
-		int i = entities.size();
-		while (i > 0){
-			if (this->__EREMOVED__[0] == false) entities[0]->destroy();
-			i = entities.size();
-		}
-	}
-	if (level >= 1){
-		for (unsigned int i = 0; i < groups.size(); i ++){
-			groups[i]->clear(2);
-			delete groups[i];
-		}
-	}
-	if (level <= 1){
-		for (unsigned int i = 0; i < entities.size(); i ++){
-			if (this->__EREMOVED__[i] == false) entities[i]->OnRemove();
-		}
-		entities.clear();
-	}
-	entities.clear();
-	__EREMOVED__.clear();
-	__IREMOVED__.clear();
-	needOrder = false;
+Entity* Group::operator[](unsigned int value){
+	return this->entities[value];
 }
+};

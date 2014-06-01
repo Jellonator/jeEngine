@@ -1,11 +1,11 @@
-#include "jeWindow.h"
+#include "jeProgram.h"
 namespace JE{namespace GRAPHICS{
-Window::Window()
+Program::Program()
 {
 	//ctor
 }
 
-Window::~Window()
+Program::~Program()
 {
 	//dtor
 }

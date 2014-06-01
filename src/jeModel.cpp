@@ -1,11 +1,11 @@
-#include "jeWindow.h"
+#include "jeModel.h"
 namespace JE{namespace GRAPHICS{
-Window::Window()
+Model::Model()
 {
 	//ctor
 }
 
-Window::~Window()
+Model::~Model()
 {
 	//dtor
 }

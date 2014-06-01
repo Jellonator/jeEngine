@@ -1,15 +1,16 @@
 #include "jeData.h"
-
-jeData::jeData(void* owner){
+namespace JE{
+Data::Data(void* owner){
 	this->owner = owner;
 	this->independent = (owner == NULL);
 }
 
-jeData::~jeData(){
+Data::~Data(){
 	//dtor
 }
 
-bool jeData::getKill(void* killer){
+bool Data::getKill(void* killer){
 	if (killer == this->owner) return true;
 	return false;
 }
+};

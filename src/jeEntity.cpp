@@ -1,6 +1,6 @@
 #include "jeEntity.h"
-
-jeEntity::jeEntity()
+namespace JE{
+Entity::Entity()
 {
 	x = 0;
 	y = 0;
@@ -8,22 +8,22 @@ jeEntity::jeEntity()
 	this->OnCreate();
 }
 
-jeEntity::~jeEntity()
+Entity::~Entity()
 {
 	if(this->mask != NULL) delete this->mask;
 }
 
-void jeEntity::OnCreate(){};
+void Entity::OnCreate(){};
 
-void jeEntity::OnAdd(jeWorld* world){};
+void Entity::OnAdd(World* world){};
 
-void jeEntity::OnUpdate(){};
+void Entity::OnUpdate(){};
 
-void jeEntity::OnDraw(){};
+void Entity::OnDraw(){};
 
-void jeEntity::OnRemove(jeWorld* world){};
+void Entity::OnRemove(World* world){};
 
-void jeEntity::destroy(){
+void Entity::destroy(){
 	//tell the entity it is being removed
 	this->OnRemove();
 	//remove it from all groups
@@ -35,3 +35,4 @@ void jeEntity::destroy(){
 	//and delete
 	delete this;
 }
+};

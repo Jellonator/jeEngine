@@ -1,77 +1,78 @@
 #include "JE.h"
-void jePrint(std::string s){std::cout << s << std::endl;}
-
-namespace JE
-{
-	#ifdef _SDL_H
+namespace JE{
+void print(std::string s){std::cout << s << std::endl;}
+namespace GRAPHICS{
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	SDL_Renderer* _renderer;
-	#endif
-    int time = 0;
+	Color* backcolor;
+	Color* forecolor;
+	void draw(){
+		SDL_SetRenderDrawColor(renderer,backcolor->r,backcolor->g,backcolor->b,backcolor->a);
+		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(renderer,forecolor->r,forecolor->g,forecolor->b,forecolor->a);
+		world->draw();
+	}
+	void flip(){
+		SDL_RenderPresent(renderer);
+	}
+};
+namespace TIME{
+	int time = 0;
 	int frames = 0;
 	float seconds = 0;
 	int ptime = 0;
 	float dt = 0;
 	float fps = 0;
-	jeWorld* world;/**< \brief jeWorld* world, the active world. */
-	jeColor* backcolor;
-	jeColor* forecolor;
-}
-
-void jeInit(){
-	jeWorld::set(new jeWorld());
+	void calculate(){
+		//add 1 to frame count; get the time.
+		frames ++;
+		time = SDL_GetTicks();
+		//calculate the delta time.
+		dt = float(time - ptime)/1000;
+		//if dt is non-zero
+		if (dt != 0){
+			//add dt to seconds, then calculate the FPS(This is why dt must be non-zero)
+			seconds += dt;
+		}
+		//If a second has passed, then reset seconds and frames to 0.
+		if (seconds > 1){
+			fps = (float(frames)/float(seconds));
+			//std::cout << fps << std::endl;
+			seconds = 0;
+			frames = 0;
+		}
+		//cout << time << endl;
+		ptime = time;
+	}
+};
+namespace MATH{
+	float getSign(float f){
+		if (f == 0) return 0;
+		return (f > 0) ? 1 : -1;
+	}
+};
+World* world;/**< \brief jeWorld* world, the active world. */
+void init(){
+	SDL_SetHint(SDL_HINT_RENDER_OPENGL_SHADERS, "1");
+	World::set(new World());
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {std::cout << SDL_GetError() << std::endl;}
-	JE::backcolor = new jeColor();
-	JE::forecolor = new jeColor();
-	jeSetColor(255,255,255,255);
-	jeSetBackgroundColor(0,0,0,255);
+	GRAPHICS::backcolor = new GRAPHICS::Color();
+	GRAPHICS::forecolor = new GRAPHICS::Color();
+	GRAPHICS::setColor(255,255,255,255);
+	GRAPHICS::setBackgroundColor(0,0,0,255);
+	SDL_SetRenderDrawBlendMode(GRAPHICS::renderer, SDL_BLENDMODE_BLEND);
 }
 
-void jeInitWindow(std::string name, int x, int y, int w, int h, int wflags, int rflags){
-	jeInit();
-	JE::window = SDL_CreateWindow(name.c_str(), x, y, w, h, wflags);
-    if (JE::window == NULL) {std::cout << SDL_GetError() << std::endl;}
-	JE::renderer = SDL_CreateRenderer(JE::window, -1, rflags);
-    if (JE::renderer == NULL) {std::cout << SDL_GetError() << std::endl;}
-    JE::_renderer = JE::renderer;
-}
-void jeCalcTime(){
-	//add 1 to frame count; get the time.
-	JE::frames ++;
-	JE::time = SDL_GetTicks();
-	//calculate the delta time.
-	JE::dt = float(JE::time - JE::ptime)/1000;
-	//if dt is non-zero
-	if (JE::dt != 0){
-		//add dt to seconds, then calculate the FPS(This is why dt must be non-zero)
-		JE::seconds += JE::dt;
-		JE::fps = (float(JE::frames)/float(JE::seconds));
-	}
-	//If a second has passed, then reset seconds and frames to 0.
-	if (JE::seconds > 1){
-		JE::seconds = 0;
-		JE::frames = 0;
-	}
-	//cout << time << endl;
-	JE::ptime = JE::time;
+void initWindow(std::string name, int x, int y, int w, int h, int wflags, int rflags){
+	init();
+	GRAPHICS::window = SDL_CreateWindow(name.c_str(), x, y, w, h, wflags);
+    if (GRAPHICS::window == NULL) {std::cout << SDL_GetError() << std::endl;}
+	GRAPHICS::renderer = SDL_CreateRenderer(GRAPHICS::window, -1, rflags);
+    if (GRAPHICS::renderer == NULL) {std::cout << SDL_GetError() << std::endl;}
 }
 
-void jeUpdate(){
-	jeCalcTime();
-	JE::world->update();
+void update(){
+	TIME::calculate();
+	world->update();
 }
-void jeDraw(){
-	SDL_SetRenderDrawColor(JE::renderer,JE::backcolor->r,JE::backcolor->g,JE::backcolor->b,JE::backcolor->a);
-	SDL_RenderClear(JE::renderer);
-	SDL_SetRenderDrawColor(JE::renderer,JE::forecolor->r,JE::forecolor->g,JE::forecolor->b,JE::forecolor->a);
-	JE::world->draw();
-}
-void jeFlip(){
-	SDL_RenderPresent(JE::renderer);
-}
-
-float jeGetSign(float f){
-    if (f == 0) return 0;
-    return (f > 0) ? 1 : -1;
-}
+};

@@ -1,14 +1,14 @@
 #include "jeHitBox.h"
-//Constructors, just setting variables.
-using namespace std;
-jeHitBox::jeHitBox(float width, float height){
+namespace JE{namespace MASK{
+//Constructors, just setting variables
+HitBox::HitBox(float width, float height){
 	this->x = 0;
 	this->y = 0;
 	this->width = width;
 	this->height = height;
 	this->type = JE_MASK_BOX;
 }
-jeHitBox::jeHitBox(float x, float y, float width, float height){
+HitBox::HitBox(float x, float y, float width, float height){
 	this->x = x;
 	this->y = y;
 	this->width = width;
@@ -16,14 +16,14 @@ jeHitBox::jeHitBox(float x, float y, float width, float height){
 	this->type = JE_MASK_BOX;
 }
 
-jeHitBox::~jeHitBox(){
+HitBox::~HitBox(){
 	//dtor
 }
 
-bool jeCollideBox(jeEntity* e1, jeEntity* e2, float x, float y, bool sweep){
+bool collideBox(Entity* e1, Entity* e2, float x, float y, bool sweep){
 	bool c = false;
-	jeHitBox* m1 = static_cast<jeHitBox*>(e1->mask);
-	jeHitBox* m2 = static_cast<jeHitBox*>(e2->mask);
+	HitBox* m1 = static_cast<HitBox*>(e1->mask);
+	HitBox* m2 = static_cast<HitBox*>(e2->mask);
 	if (sweep){
 	bool cx = false;
 	bool cy = false;
@@ -70,7 +70,7 @@ bool jeCollideBox(jeEntity* e1, jeEntity* e2, float x, float y, bool sweep){
 	return c;
 }
 
-bool jeCollideBox(jeHitBox* m1, jeHitBox* m2, float x, float y, bool sweep){
+bool collideBox(HitBox* m1, HitBox* m2, float x, float y, bool sweep){
 	bool c = false;
 		if (sweep){
 	bool cx = false;
@@ -115,7 +115,8 @@ bool jeCollideBox(jeHitBox* m1, jeHitBox* m2, float x, float y, bool sweep){
 
 	return c;
 }
-float jeHitBox::left(){return x;}
-float jeHitBox::right(){return x + width;}
-float jeHitBox::top(){return y;}
-float jeHitBox::bottom(){return y + height;}
+float HitBox::left(){return x;}
+float HitBox::right(){return x + width;}
+float HitBox::top(){return y;}
+float HitBox::bottom(){return y + height;}
+};};

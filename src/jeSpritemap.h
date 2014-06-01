@@ -1,17 +1,17 @@
 #pragma once
 #include "JE.h"
 #include "jeData.h"
-class jeFrame;
-class jeAnim;
-class jeSpritemap;
+namespace JE{namespace GRAPHICS{
+class Frame;
+class Anim;
+class Spritemap;
 
-class jeSpritemapData : public jeData{
+class SpritemapData : public Data{
 	public:
-	std::vector<jeFrame*> frames;/**< A list of frames in the image. */
-	std::vector<jeAnim*> anims;/**< A list of animations. */
-	jeSpritemapData(void* owner = NULL);
-	virtual ~jeSpritemapData();
-
+	std::vector<Frame*> frames;/**< \brief A list of frames in the image. */
+	std::vector<Anim*> anims;/**< \brief A list of animations. */
+	SpritemapData(void* owner = NULL);
+	virtual ~SpritemapData();
 	/** \brief Adds a new frame to the spritemap.
 	 * \param x float, the X position.
 	 * \param y float, the Y position.
@@ -34,39 +34,39 @@ class jeSpritemapData : public jeData{
 	void addFrame(int anim, int frame, int pos = -1);
 };
 
-class jeFrame{
+class Frame{
 	public:
-	jeFrame();
-	virtual ~jeFrame();
-	float length;/**< The length of the frame, in seconds. */
-	SDL_Rect* rect;/**< The clipping rectangle of the frame. */
+	Frame();
+	virtual ~Frame();
+	float length;/**< \brief The length of the frame, in seconds. */
+	SDL_Rect* rect;/**< \brief The clipping rectangle of the frame. */
 };
 
-class jeAnim{
+class Anim{
 	public:
-	float speed;/**< The speed of the animation */
-	std::vector<unsigned int> frames;/**< A list of frames for the animation. */
+	float speed;/**< \brief The speed of the animation */
+	std::vector<unsigned int> frames;/**< \brief A list of frames for the animation. */
 };
 
-class jeSpritemap : public jeImage
+class Spritemap : public Image
 {
 	public:
-		jeSpritemapData* data;
-		float time;/**< The time that the frame has been playing. */
-		int anim;/**< The current animation. */
-		int frame;/**< The current frame of the animation. */
-		bool playing;/**< Is the animation playing? */
-		bool looping;/**< Is the animation looping? */
-		float speed;/**< The speed of the animation. */
+		SpritemapData* data;/**<  */
+		float time;/**< \brief The time that the frame has been playing. */
+		int anim;/**< \brief The current animation. */
+		int frame;/**< \brief The current frame of the animation. */
+		bool playing;/**< \brief Is the animation playing? */
+		bool looping;/**< \brief Is the animation looping? */
+		float speed;/**< \brief The speed of the animation. */
 
-		jeSpritemap();
-		virtual ~jeSpritemap();
+		Spritemap();
+		virtual ~Spritemap();
 
         /** \brief Update the spritemap.
          * \param JE::dt float dt, the delta time.
          */
-		void update(float dt = JE::dt);
-
+		void update(float dt = dt);
+		void drawWhole(float x = 0, float y = 0, Camera* camera = NULL, Entity* parent = NULL);
         /** \brief Adds a new frame to the spritemap.
          * \param x float, the X position.
          * \param y float, the Y position.
@@ -92,6 +92,7 @@ class jeSpritemap : public jeImage
          * \param -1 int frame, the frame to use.
          */
 		void setFrame(int frame = -1);
+		void setFrameNoAnim(int frame = -1);
         /** \brief Set the speed of the animation.
          * \param speed float, the speed to use
          * \param anim int, the animation to change the speed of, leave blank for global speed.
@@ -105,11 +106,15 @@ class jeSpritemap : public jeImage
          * \param 0 int frame, the frame to start from.
          */
 		void play(int anim, bool loop = true, bool reset = true, int frame = 0);
-		void pause();/**< pause the animation. */
-		void resume();/**< resume the animation. */
-		void reset();/**< reset the animation. */
+		void pause();/**< \brief pause the animation. */
+		void resume();/**< \brief resume the animation. */
+		void reset();/**< \brief reset the animation. */
 
-		void useData(jeSpritemapData* data);
+        /** \brief Set's the Spritemap's spritemapData.
+         * \param data SpritemapData*, the spritemapdata to use.
+         */
+		void useData(SpritemapData* data);
 	protected:
 	private:
 };
+};};

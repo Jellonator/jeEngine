@@ -1,43 +1,44 @@
 #pragma once
-
 #include "jeGraphic.h"
 #include <string>
 #include "jeData.h"
-namespace JE{
-	extern SDL_Renderer* renderer;
-}
-class jeImage;
-class jeTexture : public jeData{
+namespace JE{namespace GRAPHICS{
+extern SDL_Renderer* renderer;
+class Image;
+
+class Texture : public Data{
 	public:
-	jeTexture(void* owner = NULL);
+	Texture(void* owner = NULL);
 	SDL_Texture* texture;
-	virtual ~jeTexture();
-	void load(std::string file, SDL_Renderer* renderer = JE::renderer);
+	virtual ~Texture();
+	void load(std::string file, SDL_Renderer* renderer = renderer);
 };
 
-class jeImage : public jeGraphic
+class Image : public Graphic
 {
 	public:
-		jeTexture* texture;/**< The texture. */
+		Texture* texture;/**< The texture. */
 		SDL_RendererFlip flip;/**< Flipping. */
 		SDL_Rect* clip;/**< Clipping rectangle. */
 		float w;/**< The width of the image. */
 		float h;/**< The height of the image. */
-		jeImage();
-		virtual ~jeImage();
+		Image();
+		Image(std::string file);
+		virtual ~Image();
         /** \brief Draw the image to the screen.
-         * \param 0 float x, the X offset.
-         * \param 0 float y, the Y offset.
-         * \param NULL jeCamera* camera, the Camera.
-         * \param NULL jeEntity* parent, the parent Entity.
-         * \param JE::renderer SDL_Renderer* renderer, The renderer to use, defaults to the default renderer(JE::renderer)
+         * \param float x, the X offset.
+         * \param float y, the Y offset.
+         * \param Camera* camera, the Camera.
+         * \param Entity* parent, the parent Entity.
+         * \param SDL_Renderer* renderer, The renderer to use, defaults to the default renderer(JE::renderer)
          */
-		virtual void draw(float x = 0, float y = 0, jeCamera* camera = NULL, jeEntity* parent = NULL, SDL_Renderer* renderer = JE::renderer);
+		virtual void drawExt(float x = 0, float y = 0, Camera* camera = NULL, Entity* parent = NULL, float angle = 0, SDL_Renderer* renderer = renderer);
+		virtual void draw(float x = 0, float y = 0, Camera* camera = NULL, Entity* parent = NULL);
         /** \brief Loads an image as a texture.
          * \param file std::string, the file to load.
          * \param JE::renderer SDL_Renderer* renderer, the renderer to use.
          */
-		void load(std::string file, SDL_Renderer* renderer = JE::renderer);
+		void load(std::string file, SDL_Renderer* renderer = renderer);
         /** \brief Set the image clipping.
          * \param x float, the x position.
          * \param y float, the y position.
@@ -55,9 +56,10 @@ class jeImage : public jeGraphic
          * \param -1 float y, the Y scale, defaults to the X scale.
          */
 		void setScale(float x, float y = -1);
-		void useTexture(jeTexture* texture);
+		void useTexture(Texture* texture);
+		void centerOrigin();
 	protected:
 	private:
 };
-
-jeImage* jeCopyImage(jeImage* image);
+Image* copyImage(Image* image);
+};};
