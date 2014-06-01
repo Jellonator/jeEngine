@@ -22,21 +22,21 @@ Examples
 ```C++
 //Hello world
 #include "JE.h"
-class MyEntity : public jeEntity{
+class MyEntity : public JE::Entity{
 	public:
 	MyEntity();
 	void OnUpdate();
 };
-MyEntity::MyEntity() : jeEntity(){
+MyEntity::MyEntity() : JE::Entity(){
 
 }
 void MyEntity::OnUpdate(){
-	std::cout << "Hello World!" << std::endl;
+	JE::print("Hello World!");
 }
 int main(){
-	jeWorld::set(new jeWorld());
+	JE::init();
 	JE::world->add(new MyEntity());
-	jeUpdate();
+	JE::update();
 	return 0;
 }
 ```
