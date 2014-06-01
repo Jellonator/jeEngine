@@ -14,7 +14,7 @@ Event::Event(){
 	this->x = 0;
 	this->y = 0;
 }
-void Event::test(Input* input){}
+void Event::test(EVENT::Input* input){}
 void Event::execute(){
 	#ifndef JE_NO_EVENT_FUNCTIONS
 	if (this->start != NULL && pressed) this->start();

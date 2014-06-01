@@ -25,8 +25,9 @@ enum JE_EVENTCOMPARE_MODE{JE_EVENTCOMPARE_TYPE,JE_EVENTCOMPARE_FULL,JE_EVENTCOMP
 
 namespace JE
 {
-#define Input SDL_Event
-namespace EVENT{};
+namespace EVENT{
+	typedef SDL_Event Input;
+};
 namespace GRAPHICS{
 	class Camera;
 	class Tilemap;

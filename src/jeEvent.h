@@ -28,7 +28,7 @@ struct Event{public:
 	void setEnd(function_pointer f);
 
 	//virtual void execute();
-	virtual void test(Input* input);/**< \brief PRIVATE; DO NOT USE. */
+	virtual void test(EVENT::Input* input);/**< \brief PRIVATE; DO NOT USE. */
 	void execute();
 	virtual void reset();
 };
