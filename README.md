@@ -1,13 +1,12 @@
 jeEngine
 ========
 jeEngine is a cross-platform game engine written in C++, currently supporting whatever SDL supports.
-Using it is meant to be simple, and the engine is meant to be as small and flexible as possible.
 
 ######Libraries/dependancies:######
 - SDL2
 - SDL2_image
 
-Current Version: 0.4
+Current Version: 0.6
 
 Features
 --------
@@ -49,6 +48,14 @@ Todo
 
 Update log
 --------
+### Version 0.6 ###
+- Now uses namespaces, everything is now under JE::
+- Added JE::EVENT:: namespace
+- Added JE::GRAPHICS:: namespace
+- Added JE::MATH:: namespace
+- Added JE::MASK:: namespace
+- Added JE::TIME:: namespace
+
 ### Version 0.5 ###
 - Added jeEvent*, a class for comparing against SDL_Event and other such things.
 - Added jeLine*, experimental, not reccomended for use.
