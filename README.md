@@ -38,9 +38,8 @@ int main(){
 	JE::update();
 	return 0;
 }
-Test ```ok``` Test
 ```
-
+Test ```ok``` Test
 More examples comming soon.
 
 Todo
