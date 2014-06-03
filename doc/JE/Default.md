@@ -5,31 +5,31 @@ Class does this
 Inherits that
 
 ###Constructors
-#####Class();
+#####Class()
 Description
-#####Class(int a);
+#####Class(int a)
 description
 
 ###Callbacks
-#####void Class::OnFunc1();
+#####void Class::OnFunc1()
 Description
-#####void Class::OnFunc2();
+#####void Class::OnFunc2()
 Description
 
 ###Methods(class functions)
-#####void Class::func1();
+#####void Class::func1()
 Description
-#####int Class::func2(int a, int b = 2);
+#####int Class::func2(int a, int b = 2)
 Description
 
 ###Functions
-#####void functionA();
+#####void functionA()
 Description
-#####bool functionB(Class* class);
+#####bool functionB(Class* class)
 Description
 
 ###Variables
-#####int Class::foo = 0;
+#####int Class::foo
 Description
-#####float Class::bar = 0;
+#####float Class::bar = 0
 Description
