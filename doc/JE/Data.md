@@ -13,5 +13,4 @@ Returns true if the owner of this class is the killer.
 
 #####Variables
 ######Class::owner;
-######Class::owner;
 Owner of the data.
