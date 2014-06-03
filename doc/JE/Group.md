@@ -32,7 +32,7 @@ Removes an entity from the group.
 entity: the entity to remove from the group.
 ####Movement methods
 #####void Group::move(int from, int to)
-Moves an entity from one position to another using IDs.
+Moves an entity from one position to another using IDs.  
 from: the ID of entity to move(use Group::getID)  
 to: the ID to move the entity to(use Group::getID)  
 #####void Group::moveToBack(int from)
@@ -48,15 +48,15 @@ from: the ID of entity to move(use Group::getID)
 Moves an entity down one ID  
 from: the ID of entity to move(use Group::getID)  
 #####void Group::swap(int a, int b)
-Swaps the position of two entities(A and B)
+Swaps the position of two entities(A and B)  
 a: the ID of entity A(use Group::getID)  
 b: the ID of entity B(use Group::getID)  
 #####int Group::getID(Entity* entity)
-Gets the ID of an entity for moving. Returns -1 if invalid.
-entity: the ID of the entity to get the ID of.
+Gets the ID of an entity for moving. Returns -1 if invalid.  
+entity: the ID of the entity to get the ID of.  
 ####Clearing methods
 #####void Group::clear()
-Removes all entities from the group.
+Removes all entities from the group.  
 #####void Group::clear(int group)
 Removes all entities from a sub-group.  
 group: the group to remove.
@@ -64,8 +64,8 @@ group: the group to remove.
 Removes all entities and groups from group.
 #####void Group::changeOrder(int order)
 Change the order of the group.  
-order: the order to change to.
-####Group management methods
+order: the order to change to.  
+####Group management methods  
 #####void Group::addToGroup(Entity* entity, unsigned int group)
 Adds an entity to a group.  
 entity: the entity to add.  
@@ -76,15 +76,15 @@ entity: the entity to remove.
 group: the group ID to remove from.
 #####Group* Group::getGroup(unsigned int index)
 Returns a group pointer with a group ID.  
-index: the group ID to use.
+index: the group ID to use.  
 #####void Group::addGroup(unsigned int group, int order = -1, int drawmode = -1, int updatemode = -1)
 Creates a new group within the group.  
 order: the order of entities.  
-drawmode: the drawing order of entities.
-updatemode: the updating order of entities.
+drawmode: the drawing order of entities.  
+updatemode: the updating order of entities.  
 #####void Group::removeGroup(unsigned int group)
 Removes a group from the group.  
-group: the group ID to remove.
+group: the group ID to remove.  
 
 ###Variables
 #####std::vector<Group*> groups
