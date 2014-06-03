@@ -30,6 +30,7 @@ entity: the entity to add to the group.
 #####void Group::remove(Entity* entity)
 Removes an entity from the group.  
 entity: the entity to remove from the group.
+####Movement methods
 #####void Group::move(int from, int to)
 Moves an entity from one position to another using IDs.
 from: the ID of entity to move(use Group::getID)  
@@ -53,6 +54,7 @@ b: the ID of entity B(use Group::getID)
 #####int Group::getID(Entity* entity)
 Gets the ID of an entity for moving. Returns -1 if invalid.
 entity: the ID of the entity to get the ID of.
+####Clearing methods
 #####void Group::clear()
 Removes all entities from the group.
 #####void Group::clear(int group)
@@ -63,6 +65,7 @@ Removes all entities and groups from group.
 #####void Group::changeOrder(int order)
 Change the order of the group.  
 order: the order to change to.
+####Group management methods
 #####void Group::addToGroup(Entity* entity, unsigned int group)
 Adds an entity to a group.  
 entity: the entity to add.  
