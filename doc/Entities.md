@@ -1,7 +1,7 @@
 #Entities
 ##JE::Entity
 ###Description
-A class used to represent an object occupying a world, group, or neither.  
+A class used to represent an object occupying a world, group, or neither.
 Inherits JE::Point
 
 ###Constructors
