@@ -1,39 +1,23 @@
-#Name of file
-##NAMESPACE::Class
+#Time
+##JE::TIME::
 ###Description
-Class does this
-Inherits that
-
-###Constructors
-#####Class()
-Description
-#####Class(int a)
-description
-a: description
-
-###Callbacks
-#####void Class::OnFunc1()
-Description
-#####void Class::OnFunc2()
-Description
-
-###Methods(class functions)
-#####void Class::func1()
-Description
-#####int Class::func2(int a, int b = 2)
-Description  
-a: description  
-b: description  
+Namespace full of timing variables and functions 
 
 ###Functions
-#####void functionA()
-Description
-#####bool functionB(Class* class)
-Description
-class: description
+#####void calculate()
+Function that calculates time, should only be called once by frame via JE::update()  
+Do not use if you use JE::update()
 
 ###Variables
-#####int Class::foo
-Description
-#####float Class::bar = 0
-Description
+#####int time;
+the time of the current frame.
+#####int frames;
+frame count.  Used to calculate FPS. Reset when seconds == 1.
+#####float seconds;
+Not really useful, just used to calculate FPS once a second.
+#####int ptime;
+the previous time.
+#####float dt;
+the delta time. The time between the last frame and the current frame.
+#####float fps;
+the frames per second.  Used for benchmarking.
