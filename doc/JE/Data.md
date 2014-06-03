@@ -1,16 +1,17 @@
 #Data
-##JE::Data
-####Description
+###JE::Data
+#####Description
 A class used for managing and distributing data among classes.
 
-####Constructors
-#####Data(void* owner);
+#####Constructors
+######Data(void* owner);
 Creates a new instance of Data with owner as the owner.
 
-####Methods(class functions)
-#####bool Data::getKill(void* killer)
+#####Methods(class functions)
+######bool Data::getKill(void* killer)
 Returns true if the owner of this class is the killer.
 
-####Variables
-#####Class::owner;
+#####Variables
+######Class::owner;
+######Class::owner;
 Owner of the data.
