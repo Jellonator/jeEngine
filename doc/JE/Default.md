@@ -1,3 +1,5 @@
+Always remember to double space for line breaks.
+
 #Name of file
 ##NAMESPACE::Class
 ###Description
@@ -9,6 +11,7 @@ Inherits that
 Description
 #####Class(int a)
 description
+a: description
 
 ###Callbacks
 #####void Class::OnFunc1()
@@ -20,13 +23,16 @@ Description
 #####void Class::func1()
 Description
 #####int Class::func2(int a, int b = 2)
-Description
+Description  
+a: description  
+b: description  
 
 ###Functions
 #####void functionA()
 Description
 #####bool functionB(Class* class)
 Description
+class: description
 
 ###Variables
 #####int Class::foo

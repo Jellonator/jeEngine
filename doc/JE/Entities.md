@@ -14,16 +14,19 @@ Do not use ```delete entity```, instead use ```entity->destroy()``` instead.
 Called when the entity is created.
 #####void Entity::OnAdd(Group* group)
 Called when the entity is added to a group.
+group: the group the entity was added to.
 #####void Entity::OnUpdate()
 Called when the entity is updated via JE::update, group->update(), or entity->OnUpdate();
 #####void Entity::OnDraw()
 Called when the entity is drawn via JE::draw, group->draw(), or entity->OnDraw();
 #####void Entity::OnRemove(Group* group)
 Called when the entity is removed from a group.
+group: the group the entity was removed from.
 
 ###Methods(class functions)
 #####void Entity::setMask(Mask* mask)
 Sets the entity's collision mask.
+mask: the entity's new mask.
 #####void Entity::destroy()
 Removes the entity from all groups, then deletes it.
 
