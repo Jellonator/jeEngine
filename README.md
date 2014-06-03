@@ -39,8 +39,7 @@ int main(){
 	return 0;
 }
 ```
-
-More examples comming soon.
+More examples coming soon.
 
 Todo
 --------
