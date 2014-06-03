@@ -26,7 +26,7 @@ enum JE_EVENTCOMPARE_MODE{JE_EVENTCOMPARE_TYPE,JE_EVENTCOMPARE_FULL,JE_EVENTCOMP
 namespace JE
 {
 namespace EVENT{
-	typedef SDL_Event Input;
+	typedef SDL_Event Input;/**< \brief Naming convention for SDL_Event. */
 };
 namespace GRAPHICS{
 	class Camera;
@@ -70,6 +70,9 @@ void update();/**< \brief Updates the engine and the active world. */
  * \param 0 int rflags, the SDL renderer flags.
  */
 void initWindow(std::string name, int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WINDOWPOS_CENTERED, int w = 640, int h = 480, int wflags = 0, int rflags = 0);
+/** \brief Prints string to console output.
+ * \param string s, string to print.
+ */
 void print(std::string s);
 };
 #include "jeImage.h"

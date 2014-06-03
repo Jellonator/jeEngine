@@ -68,14 +68,51 @@ class Grid : public Mask
          * \param float theight; the new tile height.
          */
 		void resize(int width, int height, float twidth = -1, float theight = -1);
+        /** \brief Fill bucket like function that fills and area with the specified tile.
+         * \param type int, the type to fill with.
+         * \param x int, the x position to fill.
+         * \param y int, the y position to fill.
+         */
 		void fill(int type, int x, int y);
 
+        /** \brief Draw the grid(debugging)
+         * \param x float, the x position to draw to.
+         * \param y float, the y position to draw to.
+         * \param camera Camera*, the camera for transformations.
+         * \param outline bool, whether to draw outlines.
+         * \param include_empty bool, whether to draw empty tiles.
+         */
 		void draw(float x = 0, float y = 0, GRAPHICS::Camera* camera = NULL, bool outline = false, bool include_empty = false);/**< \brief draws the grid, for debug purposes. */
+        /** \brief Draw a grid's tile
+         * \param x float, the x position to draw to.
+         * \param y float, the y position to draw to.
+         * \param type int, the type to draw.
+         * \param camera Camera*, the camera for transformations.
+         * \param width float, the width of the tile.
+         * \param height float, the height of the tile.
+         */
 		void drawTile(float x, float y, int type, GRAPHICS::Camera* camera = NULL, float width=-1, float height=-1);
 	protected:
 	private:
 };
 
+/** \brief Tests whether a hitbox and grid collided.
+ * \param box HitBox*, the hitbox to use.
+ * \param grid Grid*, the grid to use.
+ * \param x float, the x offset of the hitbox.
+ * \param y float, the y offset of the hitbox.
+ * \param sweep bool, whether the hitbox should move.
+ * \return bool, If the masks collided.
+ */
 bool collideBoxGrid(HitBox* box, Grid* grid, float x = 0, float y = 0, bool sweep = false);
+
+/** \brief Tests whether a hitbox and grid collided(via entities)
+ * \param e1 Entity*, the hitbox to use.
+ * \param e2 Entity*, the grid to use.
+ * \param x float, the x offset of the hitbox.
+ * \param y float, the y offset of the hitbox.
+ * \param sweep bool, whether the hitbox should move.
+ * \return bool, If the masks collided.
+ */
 bool collideBoxGrid(Entity* eb, Entity* eg, float x = 0, float y = 0, bool sweep = false);
 };};

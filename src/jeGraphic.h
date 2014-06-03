@@ -54,17 +54,59 @@ class Graphic
 
 };
 namespace GRAPHICS{
+    /** \brief Set the color for drawing operations.
+     * \param r Uint8, Red value(0-255)
+     * \param g Uint8, Green value(0-255)
+     * \param b Uint8, Blue value(0-255)
+     * \param a Uint8, Alpha value(defaults to 255)
+     * \param SDL_Renderer* renderer, the renderer to set the color of.
+     */
 	void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, SDL_Renderer* renderer = GRAPHICS::renderer);
+    /** \brief Set the color for drawing operations.
+     * \param r float, Red value(0-1)
+     * \param g float, Green value(0-1)
+     * \param b float, Blue value(0-1)
+     * \param a float, Alpha value(defaults to 1)
+     * \param SDL_Renderer* renderer, the renderer to set the color of.
+     */
 	void setColorF(float r, float g, float b, float a = 1.0f, SDL_Renderer* renderer = GRAPHICS::renderer);
 
+    /** \brief Set the color of the background.
+     * \param r Uint8, Red value(0-255)
+     * \param g Uint8, Green value(0-255)
+     * \param b Uint8, Blue value(0-255)
+     * \param a Uint8, Alpha value(defaults to 255)
+     * \param SDL_Renderer* renderer, the renderer to set the background color of.
+     */
 	void setBackgroundColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, SDL_Renderer* renderer = GRAPHICS::renderer);
+    /** \brief Set the color of the background.
+     * \param r float, Red value(0-1)
+     * \param g float, Green value(0-1)
+     * \param b float, Blue value(0-1)
+     * \param a float, Alpha value(defaults to 1)
+     * \param SDL_Renderer* renderer, the renderer to set the background color of.
+     */
 	void setBackgroundColorF(float r, float g, float b, float a = 1.0f, SDL_Renderer* renderer = GRAPHICS::renderer);
 
+    /** \brief Draw a rectangle.
+     * \param x float, the x position of the rectangle.
+     * \param y float, the y position of the rectangle.
+     * \param w float, the width of the rectangle.
+     * \param h float, the height of the rectangle.
+     * \param camera Camera*, the camera to use for transformations.
+     */
 	void drawRect(float x, float y, float w, float h, GRAPHICS::Camera* camera = NULL);
+    /** \brief Draw a filled rectangle.
+     * \param x float, the x position of the rectangle.
+     * \param y float, the y position of the rectangle.
+     * \param w float, the width of the rectangle.
+     * \param h float, the height of the rectangle.
+     * \param camera Camera*, the camera to use for transformations.
+     */
 	void fillRect(float x, float y, float w, float h, GRAPHICS::Camera* camera = NULL);
 
 	class Image;
-	void drawImgRectStretch(Image* image, float x, float y, float w, float h, float tileWidth, float tileHeight, GRAPHICS::Camera* camera = NULL, Entity* entity = NULL);
-	void drawImgRectRepeat(Image* image, float x, float y, float w, float h, float tileWidth, float tileHeight, GRAPHICS::Camera* camera = NULL, Entity* entity = NULL);
-	void drawImgRectSmart(Image* image, float x, float y, float w, float h, float tileWidth, float tileHeight, GRAPHICS::Camera* camera = NULL, Entity* entity = NULL);
+	void drawImgRectStretch(Image* image, float x, float y, float w, float h, float tileWidth, float tileHeight, GRAPHICS::Camera* camera = NULL, Entity* entity = NULL);/**< \brief experimental */
+	//void drawImgRectRepeat(Image* image, float x, float y, float w, float h, float tileWidth, float tileHeight, GRAPHICS::Camera* camera = NULL, Entity* entity = NULL);
+	//void drawImgRectSmart(Image* image, float x, float y, float w, float h, float tileWidth, float tileHeight, GRAPHICS::Camera* camera = NULL, Entity* entity = NULL);
 };};

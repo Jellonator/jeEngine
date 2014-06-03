@@ -7,6 +7,11 @@ class Entity;
 class Group
 {
 	public:
+        /** \brief A group for containing entities.
+         * \param order int, the ordering for entities. Defaults to no order(fastest).
+         * \param drawmode int, the drawing mode. Defaults to all(renders all entities in order).
+         * \param updatemode int, the update mode. Defaults to all(updates all entities in order).
+         */
 		Group(int order = JE_ORDER_NONE, int drawmode = JE_WORLD_MODE_ALL, int updatemode = JE_WORLD_MODE_ALL);
 		virtual ~Group();
 		std::vector<Group*> groups;
@@ -45,6 +50,7 @@ class Group
 		void moveToFront(int from);
 		void moveUp(int from);
 		void moveDown(int from);
+		void swap(int a, int b);
 		int getID(Entity* entity);
 
 		/** \brief Changes the order of a group.

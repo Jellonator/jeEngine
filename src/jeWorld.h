@@ -4,6 +4,11 @@ namespace JE{
 class World : public Group
 {
 	public:
+        /** \brief Exactly the same as JE::GROUP, but a little more abstracted.
+         * \param order int, the ordering for entities. Defaults to no order(fastest).
+         * \param drawmode int, the drawing mode. Defaults to all(renders all entities in order).
+         * \param updatemode int, the update mode. Defaults to all(updates all entities in order).
+         */
 		World(int order = JE_ORDER_NONE, int drawmode = JE_WORLD_MODE_ALL, int updatemode = JE_WORLD_MODE_ALL);
 		virtual ~World();
 
@@ -33,28 +38,9 @@ class World : public Group
          * \param World* world, the world to use.
          */
 		void end();
-
-        /** \brief Adds an entity to the active world.
-         * \param World* world, the world to add to.
-         * \param Entity* entity, the entity to add.
-         */
-		void add(Entity* entity);
-
-        /** \brief Removes an entity from the world.
-         * \param World* world, the world to remove from.
-         * \param Entity* entity, the entity to remove.
-         */
-		void remove(Entity* entity);
-
-        /** \brief Sets the active world.
-         * \param World* world, the world to use.
-         */
-		static void set(World* world);
-
-        /** \brief Changes the order mode of a world.
-         * \param World* world, the world to change the order of.
-         * \param JE_ORDER order, the order to use.
-         */
-		void changeOrder(int order);
 };
+/** \brief Sets the active world.
+ * \param World* world, the world to use.
+ */
+void setWorld(World* world);
 };

@@ -54,7 +54,7 @@ namespace MATH{
 World* world;/**< \brief jeWorld* world, the active world. */
 void init(){
 	SDL_SetHint(SDL_HINT_RENDER_OPENGL_SHADERS, "1");
-	World::set(new World());
+	setWorld(new World());
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {std::cout << SDL_GetError() << std::endl;}
 	GRAPHICS::backcolor = new GRAPHICS::Color();
 	GRAPHICS::forecolor = new GRAPHICS::Color();

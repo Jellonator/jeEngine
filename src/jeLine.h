@@ -11,6 +11,6 @@ class Line
 	private:
 };
 
-bool testLines(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float* ox, float* oy);
-bool testLines(Line* a, Line* b, float *ox, float *oy);
+bool testLines(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float *ox = NULL, float *oy = NULL);
+bool testLines(Line* a, Line* b, float *ox = NULL, float *oy = NULL);
 };

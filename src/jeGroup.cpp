@@ -64,10 +64,11 @@ void Group::add(Entity* entity){
 	}
 	entity->__GROUPS__.push_back(this);
 	//Tell the entity is was added
-	//entity->add();
+	entity->OnAdd(this);
 }
 
 void Group::remove(Entity* entity){
+	entity->OnRemove(this);
 	//If full order then 'erase' it
 	if (this->order == JE_ORDER_FULL){
 		unsigned int j = this->entities.size();
@@ -221,6 +222,13 @@ void Group::removeGroup(unsigned int group){
 	delete this->groups[group];
 	this->groups.erase(this->groups.begin()+group);
 	//RemoveGroup(this->groups[group]);
+}
+
+void Group::swap(int a, int b){
+	if (a == -1 || b == -1) return;
+	Entity* temp = this->entities[a];
+	this->entities[a] = this->entities[b];
+	this->entities[b] = temp;
 }
 
 Entity* Group::operator[](unsigned int value){

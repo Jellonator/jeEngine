@@ -44,7 +44,7 @@ namespace EVENT{
 		 * \param event Event*; The event to remove.
 		 */
 		void removeEvent(Event* event);
-		void execute();
+		void execute();/**< \brief execute all events accordingly. */
 	};
 
 	struct Keyboard : public Event {public:

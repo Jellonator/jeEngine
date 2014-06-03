@@ -15,13 +15,13 @@ Entity::~Entity()
 
 void Entity::OnCreate(){};
 
-void Entity::OnAdd(World* world){};
+void Entity::OnAdd(Group* group){};
 
 void Entity::OnUpdate(){};
 
 void Entity::OnDraw(){};
 
-void Entity::OnRemove(World* world){};
+void Entity::OnRemove(Group* group){};
 
 void Entity::destroy(){
 	//tell the entity it is being removed

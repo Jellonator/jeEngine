@@ -10,10 +10,10 @@ class Entity : public Point
 		Mask* mask;/**< \brief jeMask* mask, he entity's mask. */
 
 		virtual void OnCreate();/**< \brief Called when the entity is created. */
-		virtual void OnAdd(World* world = NULL);/**< \brief Called when the entity is added to the world. */
+		virtual void OnAdd(Group* group = NULL);/**< \brief Called when the entity is added to the world. */
 		virtual void OnUpdate();/**< \brief Called when the entity is updated. */
 		virtual void OnDraw();/**< \brief Called when the entity is drawn. */
-		virtual void OnRemove(World* world = NULL);/**< \brief Called when the entity is removed from the world. */
+		virtual void OnRemove(Group* group = NULL);/**< \brief Called when the entity is removed from the world. */
 
 		/** \brief Sets the specified entity's mask
 		 * \param jeMask* mask, the mask to use
