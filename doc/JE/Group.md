@@ -13,12 +13,12 @@ updatemode: the updating order of entities.
 
 ###Callbacks
 #####void Group::begin()
-Called when the group is initiated.
+Called when the group is initiated.  
 #####void Group::update(int group = -1)
 Called when the group is updated.  
 group: the group to update. Defaults to updating all entities.
 #####void Group::draw(int group = -1)
-Called when the group is drawn. 
+Called when the group is drawn.  
 group: the group to draw. Defaults to drawing all entities.
 #####void Group::end()
 Called when the group is ended.  
