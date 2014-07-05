@@ -6,7 +6,7 @@ jeEngine is a cross-platform game engine written in C++, currently supporting wh
 - SDL2
 - SDL2_image
 
-Current Version: 0.6
+Current Version: 0.7
 
 Features
 --------
@@ -43,10 +43,14 @@ More examples coming soon.
 
 Todo
 --------
-- [ ] Particle system
 
 Update log
 --------
+### Version 0.7 ###
+- Added a few functions to JE::MATH
+- Added particle system
+- Fixed major bugs in World/Group class.
+
 ### Version 0.6 ###
 - Now uses namespaces, everything is now under JE::
 - Added JE::EVENT:: namespace
