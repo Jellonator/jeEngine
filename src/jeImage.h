@@ -58,6 +58,7 @@ class Image : public Graphic
 		void setScale(float x, float y = -1);
 		void useTexture(Texture* texture);
 		void centerOrigin();
+		void setColor(int r, int g, int b, int a = 255);
 	protected:
 	private:
 };

@@ -21,6 +21,7 @@ HitBox::~HitBox(){
 }
 
 bool collideBox(Entity* e1, Entity* e2, float x, float y, bool sweep){
+	if (e1->mask == NULL || e2->mask == NULL) return false;
 	bool c = false;
 	HitBox* m1 = static_cast<HitBox*>(e1->mask);
 	HitBox* m2 = static_cast<HitBox*>(e2->mask);
@@ -40,7 +41,7 @@ bool collideBox(Entity* e1, Entity* e2, float x, float y, bool sweep){
 			m1->width -= abs(x);
 			//And move the entity accordingly
 			if(cx){
-				if (x > 0)e1->x = ceil(m2->left() + e2->x - m1->width);
+				if (m1->x + e1->x + m1->width/2 < m2->x + e2->x + m2->width / 2) e1->x = ceil(m2->left() + e2->x - m1->width);
 				else e1->x = floor(m2->right() + e2->x);
 			}else e1->x += x;
 		}
@@ -57,15 +58,41 @@ bool collideBox(Entity* e1, Entity* e2, float x, float y, bool sweep){
 			m1->height -= abs(y);
 
 			if(cy){
-				if (y > 0) e1->y = ceil(m2->top() + e2->y - m1->height);
+				if (m1->y + e1->y + m1->height/2 < m2->y + e2->y + m2->height / 2) e1->y = ceil(m2->top() + e2->y - m1->height);
 				else e1->y = floor(m2->bottom() + e2->y);
 			}else e1->y += y;
 		}
 	//And set C to CX or CY
 		c = cx | cy;
+		//and unstuck the player
+		if (collideBox(e1, e2)){//std::cout << "JE: Stuck in wall. Fixing..." << std::endl;
+			float dx = 1;
+			float dy = 1;
+			if (x > 0){
+				if (e1->x + m1->left() < e2->x + m2->right()) dx = -1;else dx = 1;
+			}else if (x < 0){
+				if (e1->x + m1->right() < e2->x + m2->left()) dx = -1;else dx = 1;
+			}else{
+				if (e1->x + m1->x + m1->width/2 < e2->x + m2->x + m2->width/2) dx = -1;else dx = 1;
+			}
+
+			if (y > 0){
+				if (e1->y + m1->top() < e2->y + m2->bottom()) dy = -1;else dy = 1;
+			}else if (y < 0){
+				if (e1->y + m1->bottom() < e2->y + m2->top()) dy = -1;else dy = 1;
+			}else{
+				if (e1->y + m1->y + m1->height/2 < e2->y + m2->y + m2->height/2) dy = -1;else dy = 1;
+			}
+			while(collideBox(e1, e2)){e1->x += dx; e1->y += dy;}
+		}
 	}else{
+		//test collision
+		m1->x += x;
+		m1->y += y;
 		if (m1->left()+e1->x < m2->right()+e2->x && m2->left()+e2->x < m1->right()+e1->x
 		&&  m1->top()+e1->y < m2->bottom()+e2->y && m2->top()+e2->y < m1->bottom()+e1->y){c = true;}
+		m1->x -= x;
+		m1->y -= y;
 	}
 	return c;
 }

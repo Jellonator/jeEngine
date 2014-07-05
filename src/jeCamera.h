@@ -6,6 +6,8 @@ class Camera : public Point
 	public:
 		SDL_Rect* clip;
 		float sx, sy;
+		float offX;
+		float offY;
 		SDL_Point* size;
 
 		Camera();

@@ -42,15 +42,18 @@ bool collide(Entity* e1, Entity* e2, float x, float y, bool sweep){
 }
 
 bool collideGroup(Entity* e, Group* group, float x, float y, bool sweep){
+	if (e->mask == NULL) return false;
 	if (sweep){
-		float X = e->x;
-		float Y = e->y;
+		float X = e->x + x;
+		float Y = e->y + y;
 		float px = e->x;
 		float py = e->y;
 		bool c = false;
 		//Move X
 		for (unsigned int i = 0; i < group->entities.size(); i ++){
-			if (collide(e, group->entities[i], x, y, true)) c = true;
+			JE::Entity* o = group->entities[i];
+			if (o->mask == NULL) continue;
+			if (collide(e, o, x, y, true)) c = true;
 			if (i == 0) {X = e->x; Y = e->y;}
 			else {
 				if (x > 0) X = min(X, e->x);
@@ -66,7 +69,9 @@ bool collideGroup(Entity* e, Group* group, float x, float y, bool sweep){
 		return c;
 	}else{
 		for (unsigned int i = 0; i < group->entities.size(); i ++){
-			if (collide(e, group->entities[i], x, y, false)) return true;
+			JE::Entity* o = group->entities[i];
+			if (o->mask == NULL) continue;
+			if (collide(e, o, x, y, false)) return true;
 		}
 	}
 	return false;

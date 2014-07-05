@@ -1,11 +1,14 @@
 #pragma once
-#include "JE.h"
 #include "jePoint.h"
+#include <cstddef>
+#include <vector>
 namespace JE{
+class Mask;
+class Group;
 class Entity : public Point
 {
 	public:
-		Entity();
+		Entity(float x = 0, float y = 0);
 		virtual ~Entity();
 		Mask* mask;/**< \brief jeMask* mask, he entity's mask. */
 

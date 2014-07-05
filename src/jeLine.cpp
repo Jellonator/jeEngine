@@ -13,7 +13,7 @@ Line::~Line()
 	//dtor
 }
 
-bool testLines(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float *ox, float *oy){
+bool testLines(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float* ox, float* oy){
 	float d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 	//Parallel
 	if (d == 0) return false;
@@ -32,7 +32,7 @@ bool testLines(float x1, float y1, float x2, float y2, float x3, float y3, float
 	return true;
 }
 
-bool testLines(Line* a, Line* b, float *ox, float *oy){
+bool testLines(Line* a, Line* b, float* ox, float* oy){
 	return testLines(a->x1, a->y1, a->x2, a->y2, b->x1, b->y1, b->x2, b->y2, ox, oy);
 }
 };

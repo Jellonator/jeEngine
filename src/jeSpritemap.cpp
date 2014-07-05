@@ -146,4 +146,17 @@ void Spritemap::useData(SpritemapData* data){
 	if (this->data != NULL) {if (this->data->getKill(this)) delete this->data;}
 	this->data = data;
 }
+
+void Spritemap::drawFrame(int frame, float x, float y, Camera* camera, Entity* parent){
+	int temp = this->frame;
+	this->setFrame(frame);
+	this->draw(x, y, camera, parent);
+	this->setFrameNoAnim(temp);
+}
+void Spritemap::drawFrameNoAnim(int frame, float x, float y, Camera* camera, Entity* parent){
+	int temp = this->frame;
+	this->setFrameNoAnim(frame);
+	this->draw(x, y, camera, parent);
+	this->setFrameNoAnim(temp);
+}
 };};

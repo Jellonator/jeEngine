@@ -65,7 +65,7 @@ class Spritemap : public Image
         /** \brief Update the spritemap.
          * \param JE::dt float dt, the delta time.
          */
-		void update(float dt = dt);
+		void update(float dt = JE::TIME::dt);
 		void drawWhole(float x = 0, float y = 0, Camera* camera = NULL, Entity* parent = NULL);
         /** \brief Adds a new frame to the spritemap.
          * \param x float, the X position.
@@ -109,7 +109,8 @@ class Spritemap : public Image
 		void pause();/**< \brief pause the animation. */
 		void resume();/**< \brief resume the animation. */
 		void reset();/**< \brief reset the animation. */
-
+		void drawFrame(int frame, float x = 0, float y = 0, Camera* camera = NULL, Entity* parent = NULL);
+		void drawFrameNoAnim(int frame, float x = 0, float y = 0, Camera* camera = NULL, Entity* parent = NULL);
         /** \brief Set's the Spritemap's spritemapData.
          * \param data SpritemapData*, the spritemapdata to use.
          */

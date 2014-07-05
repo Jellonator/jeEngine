@@ -90,6 +90,7 @@ class Group
         /** \brief Clears the world of all entities.
          * \param int level. 0 means entities in this group only. 1 means entities and sub-groups in this group only. 2 means all entities will be removed from their assosiated groups this group.  Sub-groups are also removed.
          */
+		void deleteAll();
 		std::vector<bool> __EREMOVED__;
 		std::vector<unsigned int> __IREMOVED__;
 		//Overloaders

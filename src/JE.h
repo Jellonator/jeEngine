@@ -1,5 +1,4 @@
 #pragma once
-
 #include <vector>
 #include <cstddef>
 #include <string>
@@ -10,8 +9,6 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
-#define jeRAD 0.0174532925
-#define jeDEG 57.295779515
 
 typedef void (*function_pointer)(void);
 
@@ -44,11 +41,19 @@ namespace TIME{
 	extern float seconds;/**< \brief float seconds.  Not really useful, just used to calculate FPS once a second. */
 	extern int ptime;/**< \brief int ptime, the previous time. */
 	extern float dt;/**< \brief float dt, the delta time.  The time between the last frame and the current frame */
+	extern float limit;
 	extern float fps;/**< \brief float fps, the frames per second.  Used for benchmarking. */
 	void calculate();/**< \brief Calculates time, called automatically by jeUpdate(); */
+	void setDeltaTimeLimit(float limit = 1.0f/15.0f);
 };
 namespace MATH{
+	extern float RAD;
+	extern float DEG;
 	float getSign(float f);
+	float random(float a, float b);
+	float distance(float x1, float y1, float x2, float y2);
+	float Xangle(float angle, float speed);
+	float Yangle(float angle, float speed);
 };
 namespace MASK{
 	class HitBox;
@@ -76,6 +81,7 @@ void initWindow(std::string name, int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WI
 void print(std::string s);
 };
 #include "jeImage.h"
+#include "jeParticle.h"
 #include "jeCanvas.h"
 #include "jeEntity.h"
 #include "jeWorld.h"
@@ -85,6 +91,7 @@ void print(std::string s);
 #include "jeSpritemap.h"
 #include "jeTilemap.h"
 #include "jeGrid.h"
+#include "jeHitBox.h"
 #include "jeEvent.h"
 #include "jeLine.h"
 #include "jeShader.h"

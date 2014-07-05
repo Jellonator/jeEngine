@@ -75,28 +75,30 @@ void Group::remove(Entity* entity){
 		for (unsigned int i = 0; i < j; i ++){
 			if (entity == this->entities[i]) {
 				this->entities.erase(this->entities.begin()+i);
+				this->__EREMOVED__.erase(this->__EREMOVED__.begin()+i);
 				j --;
 				i --;
 			}
 		}
-	}
-	else if (this->order == JE_ORDER_HALF){
+	}else if (this->order == JE_ORDER_HALF){
 	//If there is a half order
 	//then remove it, leaving behind a hole for other entities
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
 			if (entity == this->entities[i]) {
 				this->__EREMOVED__[i] = true;
 				this->__IREMOVED__.push_back(i);
+				this->entities[i] = NULL;
 			}
 		}
-	}
-	else{
+		//while (this->entities
+	}else{
 	//If there is not an order
 		//Just pop it, and place the entity at the back to it's position
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
 			if (entity == this->entities[i]) {
 				if (i < this->entities.size()) this->entities[i] = this->entities[this->entities.size()-1];
 				this->entities.pop_back();
+				this->__EREMOVED__.pop_back();
 				i = 0;
 			}
 		}
@@ -163,7 +165,6 @@ void Group::moveDown(int from){
 }
 
 void Group::changeOrder( int order){
-
 	if (this->order == JE_ORDER_FULL && this->needOrder){
 		//Check again.
 		if (this->__IREMOVED__.size() > 0){
@@ -200,8 +201,8 @@ void Group::addGroup(unsigned int group, int order, int drawmode, int updatemode
 	//Adds a group
 	//If an order is unspecified, default to the world's order.
 	if (order < 0) order = this->order;
-	if (drawmode < 0) drawmode = this->drawMode;
-	if (updatemode < 0) updatemode = this->updateMode;
+	if (drawmode < 0) drawmode = JE_WORLD_MODE_ALL;
+	if (updatemode < 0) updatemode = JE_WORLD_MODE_ALL;
 	//Now calculate the difference in size before and after resizing
 	int a = this->groups.size();
 	this->groups.resize(std::max((unsigned int)this->groups.size(), group+1));
@@ -229,6 +230,20 @@ void Group::swap(int a, int b){
 	Entity* temp = this->entities[a];
 	this->entities[a] = this->entities[b];
 	this->entities[b] = temp;
+}
+
+void Group::deleteAll(){
+	bool done = false;
+	while (this->entities.size() > 0){
+		//if (this->__EREMOVED__[0]) {this->entities.erase(this->entities.begin()); continue;}
+		JE::Entity* e = this->entities[0];
+		if (e != NULL) e->destroy();
+		else this->entities.erase(this->entities.begin());
+	}
+	for (int i = 0; i < this->groups.size(); i ++){
+		this->groups[i]->deleteAll();
+	}
+	this->clearAll();
 }
 
 Entity* Group::operator[](unsigned int value){

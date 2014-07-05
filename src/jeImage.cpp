@@ -34,6 +34,12 @@ Image::~Image()
 	if (this->texture != NULL) {if (this->texture->getKill(this)) delete this->texture;}
 }
 
+void Image::setColor(int r, int g, int b, int a){
+	if (!this->texture) return;
+	SDL_SetTextureColorMod(this->texture->texture,r,g,b);
+	SDL_SetTextureAlphaMod(this->texture->texture,a);
+}
+
 void Image::draw(float x, float y, Camera* camera, Entity* parent){
 	//If the texture exists
 	if (this->texture->texture != NULL){
@@ -77,6 +83,8 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 			if (camera->size) camera->getRatio(&sw,&sh);
 			dx -= camera->x;
 			dy -= camera->y;
+			dx += camera->offX;
+			dy += camera->offY;
 			dx *= camera->sx * sw;
 			dy *= camera->sy * sh;
 			dw *= camera->sx * sw;
@@ -99,7 +107,14 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 		dstrect->w = dw;
 		dstrect->h = dh;
 
+		int windowW;
+		int windowH;
+		SDL_GetWindowSize(JE::GRAPHICS::window, &windowW, &windowH);
+		if (dstrect->x+dstrect->w < 0 || dstrect->y+dstrect->h < 0 || dstrect->x > windowW || dstrect->y > windowH){
+			//do nothing. was initially going to use a 'return;' but decided that woudln't work. So instead I'm going to be lazy and keep as is.
+		}else{
 		SDL_RenderCopy(renderer, this->texture->texture, srcrect, dstrect);
+		}
 		SDL_RenderSetClipRect(renderer, NULL);
 		if (srcrect != NULL) delete srcrect;
 		delete dstrect;

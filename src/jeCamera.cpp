@@ -20,6 +20,8 @@ void Camera::reset(){
 	this->sy = 1;
 	this->x = 0;
 	this->y = 0;
+	this->offX = 0;
+	this->offY = 0;
 	if(this->clip != NULL) this->disableClip();
 	if(this->size != NULL) this->disableSize();
 }
@@ -98,12 +100,13 @@ void Camera::letterbox(float width, float height, float x, float y){
 		height = height * hratio;
 		fratio = hratio;
 	}
-
 	x = (w - width)*x;
 	y = (h - height)*y;
 	this->setScale(fratio,fratio);
 	//this->setPosition(x/fratio, y/fratio);
 	//std::cout << x << " " << y << " " << width << " " << height << std::endl;
+	this->offX += x / this->sx;
+	this->offX += y / this->sy;
 	this->setClip(x, y, width, height);
 }
 };};

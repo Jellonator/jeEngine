@@ -23,6 +23,10 @@ namespace TIME{
 	int ptime = 0;
 	float dt = 0;
 	float fps = 0;
+	float limit = -1;
+	void setDeltaTimeLimit(float limit){
+		JE::TIME::limit = limit;
+	}
 	void calculate(){
 		//add 1 to frame count; get the time.
 		frames ++;
@@ -43,24 +47,34 @@ namespace TIME{
 		}
 		//cout << time << endl;
 		ptime = time;
+		if (dt > limit && limit > 0) dt = limit;
 	}
 };
 namespace MATH{
+	float RAD = 0.0174532925f;
+	float DEG = 57.295779515f;
 	float getSign(float f){
 		if (f == 0) return 0;
 		return (f > 0) ? 1 : -1;
 	}
+	float random(float a, float b){// -10 to 10
+    float random = ((float)rand())/(float)RAND_MAX;//random number between 0 and 1
+    float d = b-a;//D is now 20
+    float r = random * d; //between 0 and 20
+    return a + r; //return -10 plus 0 through 20
+	}
+	float distance(float x1, float y1, float x2, float y2){
+			return std::sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+	}
+	float Xangle(float angle, float speed){return std::cos(RAD*angle)*speed;}
+	float Yangle(float angle, float speed){return std::sin(RAD*angle)*speed;}
 };
 World* world;/**< \brief jeWorld* world, the active world. */
 void init(){
 	SDL_SetHint(SDL_HINT_RENDER_OPENGL_SHADERS, "1");
 	setWorld(new World());
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {std::cout << SDL_GetError() << std::endl;}
-	GRAPHICS::backcolor = new GRAPHICS::Color();
-	GRAPHICS::forecolor = new GRAPHICS::Color();
-	GRAPHICS::setColor(255,255,255,255);
-	GRAPHICS::setBackgroundColor(0,0,0,255);
-	SDL_SetRenderDrawBlendMode(GRAPHICS::renderer, SDL_BLENDMODE_BLEND);
+
 }
 
 void initWindow(std::string name, int x, int y, int w, int h, int wflags, int rflags){
@@ -69,6 +83,11 @@ void initWindow(std::string name, int x, int y, int w, int h, int wflags, int rf
     if (GRAPHICS::window == NULL) {std::cout << SDL_GetError() << std::endl;}
 	GRAPHICS::renderer = SDL_CreateRenderer(GRAPHICS::window, -1, rflags);
     if (GRAPHICS::renderer == NULL) {std::cout << SDL_GetError() << std::endl;}
+	GRAPHICS::backcolor = new GRAPHICS::Color();
+	GRAPHICS::forecolor = new GRAPHICS::Color();
+	GRAPHICS::setColor(255,255,255,255);
+	GRAPHICS::setBackgroundColor(0,0,0,255);
+    SDL_SetRenderDrawBlendMode(GRAPHICS::renderer, SDL_BLENDMODE_BLEND);
 }
 
 void update(){
