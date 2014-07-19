@@ -25,7 +25,7 @@ class Particle:public Entity{
 		int spritemapType;
 		int type;
 		Particle(float x, float y, float life, float angle, float speed, float bounce, float gravityX, float gravityY, float slow,
-			Emitter* parent, int type, Spritemap* spritemap = NULL, int spritemapType = SPRITEMAP_TYPE_NONE);
+			Emitter* parent, int type, Spritemap* spritemap, int spritemapType);
 		void OnUpdate();
 		void OnDraw();
 		virtual ~Particle();

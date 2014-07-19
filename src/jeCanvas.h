@@ -12,6 +12,8 @@ class Canvas : public Image
 		virtual ~Canvas();
 		void bind();/**< \brief Begin drawing operations. */
 		void unbind();/**< \brief Stop drawing operations. */
+		void clear();
+		bool binded;
 	protected:
 	private:
 };

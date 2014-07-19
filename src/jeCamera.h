@@ -42,14 +42,6 @@ class Camera : public Point
 		void disableSize();/**< \brief Resets scaling to 1x1. */
 		void disableClip();/**< \brief Disables viewport clipping. */
 		void reset();/**< \brief Resets the entire camera to defaults. */
-
-        /** \brief Creates a zoomed camera, opposite of letterbox.
-         * \param w float, width of the viewport.
-         * \param h float, height of the viewport
-         * \param float x, Horizontal offset of camera, from 0-1(0.5 being middle)
-         * \param float y, Verticle offset of camera, from 0-1(0.5 being middle)
-         */
-		void zoom(float w, float h, float x = 0.5, float y = 0.5);
         /** \brief Creates a letterboxed camera.
          * \param w float, width of the viewport.
          * \param h float, height of the viewport
@@ -57,6 +49,13 @@ class Camera : public Point
          * \param float y, Verticle offset of camera, from 0-1(0.5 being middle)
          */
 		void letterbox(float width, float height, float x = 0.5, float y = 0.5);
+		/** \brief Creates a letterboxed camera.
+         * \param w float, width of the viewport.
+         * \param h float, height of the viewport
+         * \param float x, Horizontal offset of camera, from 0-1(0.5 being middle)
+         * \param float y, Verticle offset of camera, from 0-1(0.5 being middle)
+         */
+		void zoom(float width, float height, float x = 0.5, float y = 0.5);
         /** \brief Sets the viewport clipping to have a border of (x),(y) pixels.
          * \param w float, The width of the border.
          * \param h float, The height of the border(defaults to X)

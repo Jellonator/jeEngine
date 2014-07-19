@@ -6,7 +6,7 @@ jeEngine is a cross-platform game engine written in C++, currently supporting wh
 - SDL2
 - SDL2_image
 
-Current Version: 0.7
+Current Version: 0.7.1
 
 Features
 --------
@@ -50,6 +50,11 @@ Update log
 - Added a few functions to JE::MATH
 - Added particle system
 - Fixed major bugs in World/Group class.
+## Version 0.7.1 ##
+- Added JE::MATH::random(a, b) which returns a random float between a and b.
+- Added JE::MATH::chance(x) which has an X percent chance of return true.
+- Added JE::MATH::chance(a, b) which is the same as chance(x), but as a fraction (e.g. 1/4 chance would be chance(1, 4)).
+- Fixed Hitbox collision inaccuracies.
 
 ### Version 0.6 ###
 - Now uses namespaces, everything is now under JE::

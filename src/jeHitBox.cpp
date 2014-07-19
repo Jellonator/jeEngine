@@ -25,47 +25,51 @@ bool collideBox(Entity* e1, Entity* e2, float x, float y, bool sweep){
 	bool c = false;
 	HitBox* m1 = static_cast<HitBox*>(e1->mask);
 	HitBox* m2 = static_cast<HitBox*>(e2->mask);
+	float previous_x = m1->x;
+	float previous_y = m1->y;
+	float previous_w = m1->width;
+	float previous_h = m1->height;
 	if (sweep){
 	bool cx = false;
 	bool cy = false;
 	//X movement
 		if (x != 0){
 			//Change mask 1's X and Width so that it consumes it's current area and the area where it will be
-			if(x < 0)m1->x += x;
-			m1->width += abs(x);
+			if (x < 0)m1->x += x;
+			m1->width += x;
 			//Test collision
 			if (m1->left()+e1->x < m2->right()+e2->x && m2->left()+e2->x < m1->right()+e1->x
 			&&  m1->top()+e1->y < m2->bottom()+e2->y && m2->top()+e2->y < m1->bottom()+e1->y){cx = true;}
 			//Move it back
-			if(x < 0)m1->x -= x;
-			m1->width -= abs(x);
+			m1->x = previous_x;
+			m1->width = previous_w;
 			//And move the entity accordingly
 			if(cx){
-				if (m1->x + e1->x + m1->width/2 < m2->x + e2->x + m2->width / 2) e1->x = ceil(m2->left() + e2->x - m1->width);
-				else e1->x = floor(m2->right() + e2->x);
+				if (x > 0) e1->x = (m2->left() + e2->x - m1->right());
+				else e1->x = (m2->right() + e2->x);
 			}else e1->x += x;
 		}
 		//Now repeat for Y.
 	//Y movement
 		if (y != 0){
-			if(y < 0)m1->y += y;
-			m1->height += abs(y);
+			if (y < 0)m1->y += y;
+			m1->height += y;
 
 			if (m1->left()+e1->x < m2->right()+e2->x && m2->left()+e2->x < m1->right()+e1->x
 			&&  m1->top()+e1->y < m2->bottom()+e2->y && m2->top()+e2->y < m1->bottom()+e1->y){cy = true;}
 
-			if(y < 0)m1->y -= y;
-			m1->height -= abs(y);
+			m1->y = previous_y;
+			m1->height = previous_h;
 
 			if(cy){
-				if (m1->y + e1->y + m1->height/2 < m2->y + e2->y + m2->height / 2) e1->y = ceil(m2->top() + e2->y - m1->height);
-				else e1->y = floor(m2->bottom() + e2->y);
+				if (y > 0) e1->y = (m2->top() + e2->y - m1->bottom());
+				else e1->y = (m2->bottom() + e2->y);
 			}else e1->y += y;
 		}
 	//And set C to CX or CY
 		c = cx | cy;
 		//and unstuck the player
-		if (collideBox(e1, e2)){//std::cout << "JE: Stuck in wall. Fixing..." << std::endl;
+		/*if (collideBox(e1, e2)){//std::cout << "JE: Stuck in wall. Fixing..." << std::endl;
 			float dx = 1;
 			float dy = 1;
 			if (x > 0){
@@ -84,15 +88,19 @@ bool collideBox(Entity* e1, Entity* e2, float x, float y, bool sweep){
 				if (e1->y + m1->y + m1->height/2 < e2->y + m2->y + m2->height/2) dy = -1;else dy = 1;
 			}
 			while(collideBox(e1, e2)){e1->x += dx; e1->y += dy;}
-		}
+		}*/
 	}else{
 		//test collision
-		m1->x += x;
-		m1->y += y;
+		if(x < 0)m1->x += x;
+		m1->width += abs(x);
+		if(y < 0)m1->y += y;
+		m1->height += abs(y);
 		if (m1->left()+e1->x < m2->right()+e2->x && m2->left()+e2->x < m1->right()+e1->x
 		&&  m1->top()+e1->y < m2->bottom()+e2->y && m2->top()+e2->y < m1->bottom()+e1->y){c = true;}
-		m1->x -= x;
-		m1->y -= y;
+		m1->x = previous_x;
+		m1->y = previous_y;
+		m1->width = previous_w;
+		m1->height = previous_h;
 	}
 	return c;
 }

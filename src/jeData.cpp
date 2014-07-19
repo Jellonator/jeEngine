@@ -9,8 +9,12 @@ Data::~Data(){
 	//dtor
 }
 
-bool Data::getKill(void* killer){
-	if (killer == this->owner) return true;
+bool Data::kill(void* killer){
+	if (killer == this->owner) {delete this;return true;}
 	return false;
+}
+
+void Data::setOwner(void* owner){
+	this->owner = owner;
 }
 };

@@ -15,7 +15,9 @@ void Group::begin(){};
 void Group::update(int group){
 	if (this->updateMode == JE_WORLD_MODE_ALL && group < 0){
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
-			if (this->__EREMOVED__[i] == false) this->entities[i]->OnUpdate();
+			if (this->__EREMOVED__[i] == true) continue;
+			if (this->entities[i] == NULL) continue;
+			this->entities[i]->OnUpdate();
 		}
 	} else if (this->updateMode == JE_WORLD_MODE_GROUP || group >= 0){
 	//Update by group.
@@ -93,13 +95,19 @@ void Group::remove(Entity* entity){
 		//while (this->entities
 	}else{
 	//If there is not an order
-		//Just pop it, and place the entity at the back to it's position
-		for (unsigned int i = 0; i < this->entities.size(); i ++){
+		//Just pop it, and place the entity at the back to its position
+		unsigned int i = 0;
+		while (i < this->entities.size()){
 			if (entity == this->entities[i]) {
-				if (i < this->entities.size()) this->entities[i] = this->entities[this->entities.size()-1];
+				if (i < this->entities.size()-1) {
+					this->entities[i] = this->entities.back();
+					this->__EREMOVED__[i] = this->__EREMOVED__.back();
+				}
 				this->entities.pop_back();
 				this->__EREMOVED__.pop_back();
 				i = 0;
+			}else{
+				i ++;
 			}
 		}
 	}
@@ -233,7 +241,6 @@ void Group::swap(int a, int b){
 }
 
 void Group::deleteAll(){
-	bool done = false;
 	while (this->entities.size() > 0){
 		//if (this->__EREMOVED__[0]) {this->entities.erase(this->entities.begin()); continue;}
 		JE::Entity* e = this->entities[0];

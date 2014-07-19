@@ -27,74 +27,72 @@ Particle::~Particle(){
 	this->mask = NULL;
 	if (this->spritemap) delete this->spritemap;
 }
-void Particle::OnUpdate(){
-	this->velocx -= this->velocx*this->slow*JE::TIME::dt;
-	this->velocy -= this->velocy*this->slow*JE::TIME::dt;
-	this->velocx += this->accelx*JE::TIME::dt;
-	this->velocy += this->accely*JE::TIME::dt;
-	if (this->parent->types[this->type]->collide && this->mask){
-		JE::MASK::collideGroup(this,this->parent->types[this->type]->collide,this->velocx*JE::TIME::dt,this->velocx*JE::TIME::dt);
-	}else{
-		this->x += this->velocx*JE::TIME::dt;
-		this->y += this->velocy*JE::TIME::dt;
-	}
+void Particle::OnUpdate(){if (JE::TIME::dt < 0) return;
 	this->life -= JE::TIME::dt;
-	if (this->life <= 0) this->destroy();
-	if (this->spritemap){
-		if (this->spritemapType == SPRITEMAP_TYPE_ANIM_INDIVIDUAL) this->spritemap->update();
-		else if (this->spritemapType == SPRITEMAP_TYPE_FADE) {
-			float a = this->life;
-			float b = this->mlife;
-			float c = 1-a/b;
-			float r = c * this->spritemap->data->anims[this->spritemap->anim]->frames.size();
-			int d = std::max(0,std::min((int)this->spritemap->data->anims[this->spritemap->anim]->frames.size() - 1,int(r)));
-			this->spritemap->setFrame(d);
+	if (this->life > 0){
+		this->velocx -= this->velocx*this->slow*JE::TIME::dt;
+		this->velocy -= this->velocy*this->slow*JE::TIME::dt;
+		this->velocx += this->accelx*JE::TIME::dt;
+		this->velocy += this->accely*JE::TIME::dt;
+		if (this->parent->types[this->type]->collide && this->mask){
+			JE::MASK::collideGroup(this,this->parent->types[this->type]->collide,this->velocx*JE::TIME::dt,this->velocx*JE::TIME::dt);
+		}else{
+			this->x += this->velocx*JE::TIME::dt;
+			this->y += this->velocy*JE::TIME::dt;
 		}
+		if (this->spritemap){
+			if (this->spritemapType == SPRITEMAP_TYPE_ANIM_INDIVIDUAL) this->spritemap->update();
+			else if (this->spritemapType == SPRITEMAP_TYPE_FADE) {
+				float a = this->life;
+				float b = this->mlife;
+				float c = 1-a/b;
+				float r = c * this->spritemap->data->anims[this->spritemap->anim]->frames.size();
+				int d = std::max(0,std::min((int)this->spritemap->data->anims[this->spritemap->anim]->frames.size() - 1,int(r)));
+				this->spritemap->setFrame(d);
+			}
+		}
+	}else{
+		this->destroy();
 	}
 }
 void Particle::OnDraw(){
 	if (this->spritemap){
 		if (this->parent->types[this->type]->fade == FADE_ALPHA) {
-			if (this->life > this->mlife-this->parent->types[this->type]->fadeAt) {
-				this->spritemap->setColor(255,255,255,255);
-			}else{
+			if (this->life < this->mlife-this->parent->types[this->type]->fadeAt) {
 				float a = this->life;
 				float b = this->mlife - this->parent->types[this->type]->fadeAt;
 				float c = a/b;
 				c *= 255;
-				c = std::min(255.0f,std::max(0.0f,c));
-				this->spritemap->setColor(255,255,255,c);
-			}
+				int d = std::min(255,std::max(0,int(c)));
+				this->spritemap->setColor(255,255,255,d);
+			}else this->spritemap->setColor(255,255,255,255);
 		}else this->spritemap->setColor(255,255,255,255);
 		this->spritemap->draw(this->parent->x,this->parent->y,this->parent->camera,this);
 	}
 	else if (this->parent->types[this->type]->graphic) {
 		if (this->parent->types[this->type]->fade == FADE_ALPHA) {
-			if (this->life > this->mlife-this->parent->types[this->type]->fadeAt) {
-				this->parent->types[this->type]->graphic->setColor(255,255,255,255);
-			}else{
+			if (this->life < this->mlife - this->parent->types[this->type]->fadeAt) {
 				float a = this->life;
 				float b = this->mlife - this->parent->types[this->type]->fadeAt;
 				float c = a/b;
 				c *= 255;
-				c = std::min(255.0f,std::max(0.0f,c));
-				this->parent->types[this->type]->graphic->setColor(255,255,255,c);
-			}
-		}else this->spritemap->setColor(255,255,255,255);
+				int d = std::min(255,std::max(0,int(c)));
+				//std::cout << d << std::endl;
+				this->parent->types[this->type]->graphic->setColor(255,255,255,d);
+			}else this->parent->types[this->type]->graphic->setColor(255,255,255,255);
+		}else this->parent->types[this->type]->graphic->setColor(255,255,255,255);
 		this->parent->types[this->type]->graphic->draw(this->parent->x,this->parent->y,this->parent->camera,this);
 	}
 	else if (this->parent->types[this->type]->spritemap) {
 		if (this->parent->types[this->type]->fade == FADE_ALPHA) {
-			if (this->life > this->mlife-this->parent->types[this->type]->fadeAt) {
-				this->parent->types[this->type]->spritemap->setColor(255,255,255,255);
-			}else{
+			if (this->life < this->mlife-this->parent->types[this->type]->fadeAt) {
 				float a = this->life;
 				float b = this->mlife - this->parent->types[this->type]->fadeAt;
 				float c = a/b;
 				c *= 255;
-				c = std::min(255.0f,std::max(0.0f,c));
-				this->parent->types[this->type]->spritemap->setColor(255,255,255,c);
-			}
+				int d = std::min(255,std::max(0,int(c)));
+				this->parent->types[this->type]->spritemap->setColor(255,255,255,d);
+			}else this->parent->types[this->type]->spritemap->setColor(255,255,255,255);
 		}else this->parent->types[this->type]->spritemap->setColor(255,255,255,255);
 		this->parent->types[this->type]->spritemap->draw(this->parent->x,this->parent->y,this->parent->camera,this);
 	}
@@ -133,7 +131,7 @@ EmitterType::~EmitterType(){
 }
 Emitter::Emitter(float x, float y):Graphic(x, y){
 	this->camera = NULL;
-	this->world = new World();
+	this->world = new World(JE_ORDER_HALF);
 }
 Emitter::~Emitter(){
 	this->world->deleteAll();
@@ -180,27 +178,13 @@ void Emitter::emit(int type, float x, float y, int count){
 		float slow = this->types[type]->slow + JE::MATH::random(0, this->types[type]->randSlow);
 		Group* group = this->types[type]->custom;
 		if (group == NULL) group = this->world;
-		this->world->add(new Particle(sx+x, sy+y, life, angle, speed, bounce, gravityX, gravityY, slow, this, type,
+		group->add(new Particle(sx+x, sy+y, life, angle, speed, bounce, gravityX, gravityY, slow, this, type,
 																	this->types[type]->spritemap, this->types[type]->spritemapType));
 	}
 }
 void Emitter::emit(int type, float x1, float x2, float y1, float y2, int count){
-	if (this->types.size() <= type) this->newType(type);
 	for (int i = 0; i < count; i ++){
-		float sx = this->types[type]->spawnX + JE::MATH::random(-this->types[type]->spawnXrand, this->types[type]->spawnXrand);
-		float sy = this->types[type]->spawnY + JE::MATH::random(-this->types[type]->spawnYrand, this->types[type]->spawnYrand);
-		float life = this->types[type]->life + JE::MATH::random(0, this->types[type]->randLife);
-		float angle = this->types[type]->angle + JE::MATH::random(-this->types[type]->randAngle, this->types[type]->randAngle);
-		float speed = this->types[type]->speed + JE::MATH::random(0, this->types[type]->randSpeed);
-		float bounce = this->types[type]->bounce + JE::MATH::random(0, this->types[type]->randBounce);
-		float gravityX = this->types[type]->gravityX + JE::MATH::random(-this->types[type]->gravityXrand, this->types[type]->gravityXrand);
-		float gravityY = this->types[type]->gravityY + JE::MATH::random(-this->types[type]->gravityYrand, this->types[type]->gravityYrand);
-		float slow = this->types[type]->slow + JE::MATH::random(0, this->types[type]->randSlow);
-		Group* group = this->types[type]->custom;
-		if (group == NULL) group = this->world;
-		this->world->add(new Particle(sx+JE::MATH::random(x1, x2), sy+JE::MATH::random(y1, y2), life, angle, speed, bounce, gravityX, gravityY, slow, this, type,
-																	this->types[type]->spritemap, this->types[type]->spritemapType));
-		std::cout << this->world->entities.size() << std::endl;
+		this->emit(type, JE::MATH::random(x1, x2), JE::MATH::random(y1, y2),1);
 	}
 }
 void Emitter::setGravity(int type, float x, float y, float randX, float randY){

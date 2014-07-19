@@ -68,10 +68,23 @@ namespace MATH{
 	}
 	float Xangle(float angle, float speed){return std::cos(RAD*angle)*speed;}
 	float Yangle(float angle, float speed){return std::sin(RAD*angle)*speed;}
+	bool chance(float value){
+		float num = JE::MATH::random(0, 100);
+		if (value >= num) return true;
+		return false;
+	}
+	bool chance(float a, float b){
+		if (b == 0) return true;
+		float c = a / b;
+		c *= 100;
+		return chance(c);
+	}
+	float getAngle(float x1, float y1, float x2, float y2){
+		return std::atan2(y2 - y1, x2 - x1)*JE::MATH::DEG;
+	}
 };
 World* world;/**< \brief jeWorld* world, the active world. */
 void init(){
-	SDL_SetHint(SDL_HINT_RENDER_OPENGL_SHADERS, "1");
 	setWorld(new World());
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {std::cout << SDL_GetError() << std::endl;}
 
@@ -79,6 +92,8 @@ void init(){
 
 void initWindow(std::string name, int x, int y, int w, int h, int wflags, int rflags){
 	init();
+	SDL_SetHint(SDL_HINT_RENDER_OPENGL_SHADERS, "1");
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 	GRAPHICS::window = SDL_CreateWindow(name.c_str(), x, y, w, h, wflags);
     if (GRAPHICS::window == NULL) {std::cout << SDL_GetError() << std::endl;}
 	GRAPHICS::renderer = SDL_CreateRenderer(GRAPHICS::window, -1, rflags);
@@ -88,6 +103,7 @@ void initWindow(std::string name, int x, int y, int w, int h, int wflags, int rf
 	GRAPHICS::setColor(255,255,255,255);
 	GRAPHICS::setBackgroundColor(0,0,0,255);
     SDL_SetRenderDrawBlendMode(GRAPHICS::renderer, SDL_BLENDMODE_BLEND);
+	//SDL_GL_CreateContext(GRAPHICS::window);
 }
 
 void update(){

@@ -76,6 +76,40 @@ void Camera::getRatio(float* x, float* y){
 	}else{*x = 1; *y = 1;}
 }
 
+void Camera::zoom(float width, float height, float x, float y){
+	int iw = 1;
+	int ih = 1;
+	SDL_GetWindowSize(window, &iw, &ih);
+	float w = iw;//Window width
+	float h = ih;//Window height
+
+	float wratio = w/width;
+	float hratio = h/height;
+
+	float ratio = w/h;
+
+	float tratio = width/height;
+
+	float fratio = 1;
+	if (ratio > tratio) {
+		width = width * wratio;
+		height = height * wratio;
+		fratio = wratio;
+	}else{
+		width = width * hratio;
+		height = height * hratio;
+		fratio = hratio;
+	}
+	x = (w - width)*x;
+	y = (h - height)*y;
+	this->setScale(fratio,fratio);
+	//this->setPosition(x/fratio, y/fratio);
+	//std::cout << x << " " << y << " " << width << " " << height << std::endl;
+	this->offX += x / this->sx;
+	this->offY += y / this->sy;
+	this->setClip(x, y, width, height);
+}
+
 void Camera::letterbox(float width, float height, float x, float y){
 	int iw = 1;
 	int ih = 1;
@@ -106,7 +140,7 @@ void Camera::letterbox(float width, float height, float x, float y){
 	//this->setPosition(x/fratio, y/fratio);
 	//std::cout << x << " " << y << " " << width << " " << height << std::endl;
 	this->offX += x / this->sx;
-	this->offX += y / this->sy;
+	this->offY += y / this->sy;
 	this->setClip(x, y, width, height);
 }
 };};

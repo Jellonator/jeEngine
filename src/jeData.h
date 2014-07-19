@@ -8,9 +8,10 @@ class Data
 	public:
 		void* owner;
 		bool independent;
-		bool getKill(void* killer = NULL);
-		Data(void* owner);
+		bool kill(void* killer);
+		Data(void* owner = NULL);
 		virtual ~Data();
+		void setOwner(void* owner = NULL);
 	protected:
 	private:
 };

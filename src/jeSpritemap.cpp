@@ -73,7 +73,7 @@ Spritemap::Spritemap() : Image(){
 
 Spritemap::~Spritemap(){
 	this->clip = NULL;
-	if (this->data != NULL) {if (this->data->getKill(this)) delete this->data;}
+	if (this->data != NULL) {this->data->kill(this);}
 }
 
 void Spritemap::update(float dt){
@@ -143,7 +143,7 @@ void Spritemap::setSpeed(float speed, int anim){
 }
 
 void Spritemap::useData(SpritemapData* data){
-	if (this->data != NULL) {if (this->data->getKill(this)) delete this->data;}
+	if (this->data != NULL) {this->data->kill(this);}
 	this->data = data;
 }
 

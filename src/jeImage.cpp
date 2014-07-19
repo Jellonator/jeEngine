@@ -9,8 +9,7 @@ Texture::Texture(void* owner) : Data(owner){
 Texture::~Texture(){
 	if(this->texture != NULL) {SDL_DestroyTexture(this->texture);}
 }
-Image::Image() : Graphic()
-{
+Image::Image() : Graphic(){
 	this->texture = new Texture(this);
 	this->flip = SDL_FLIP_NONE;
 	this->w = -1;
@@ -18,8 +17,7 @@ Image::Image() : Graphic()
 	this->clip = NULL;
 }
 
-Image::Image(std::string file) : Graphic()
-{
+Image::Image(std::string file) : Graphic(){
 	this->texture = new Texture(this);
 	this->flip = SDL_FLIP_NONE;
 	this->w = -1;
@@ -28,10 +26,9 @@ Image::Image(std::string file) : Graphic()
 	this->load(file);
 }
 
-Image::~Image()
-{
+Image::~Image(){
 	if(this->clip != NULL) delete this->clip;
-	if (this->texture != NULL) {if (this->texture->getKill(this)) delete this->texture;}
+	if (this->texture != NULL) {this->texture->kill(this);}
 }
 
 void Image::setColor(int r, int g, int b, int a){
@@ -50,6 +47,8 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 		float dy = 0;
 		float dw = 0;
 		float dh = 0;
+		float ox = this->ox;
+		float oy = this->oy;
 
 		int w, h;
 
@@ -72,6 +71,10 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 			dw = w;
 		if(this->h > 0) dh = this->h; else
 			dh = h;
+
+		ox *= dw/w;
+		oy *= dh/h;
+
 		if(parent){
 			dx += parent->x;
 			dy += parent->y;
@@ -89,6 +92,8 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 			dy *= camera->sy * sh;
 			dw *= camera->sx * sw;
 			dh *= camera->sy * sh;
+			ox *= camera->sx * sw;
+			oy *= camera->sy * sh;
 			if (camera->clip) {
 				if (camera->size){
 					SDL_Rect* cliprect = new SDL_Rect();
@@ -101,20 +106,14 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 				} else SDL_RenderSetClipRect(renderer, camera->clip);
 			}
 		}
-
-		dstrect->x = dx;
-		dstrect->y = dy;
+		//origin->x = ox;
+		//origin->y = oy;
+		dstrect->x = dx - ox;
+		dstrect->y = dy - oy;
 		dstrect->w = dw;
 		dstrect->h = dh;
-
-		int windowW;
-		int windowH;
-		SDL_GetWindowSize(JE::GRAPHICS::window, &windowW, &windowH);
-		if (dstrect->x+dstrect->w < 0 || dstrect->y+dstrect->h < 0 || dstrect->x > windowW || dstrect->y > windowH){
-			//do nothing. was initially going to use a 'return;' but decided that woudln't work. So instead I'm going to be lazy and keep as is.
-		}else{
 		SDL_RenderCopy(renderer, this->texture->texture, srcrect, dstrect);
-		}
+		//}
 		SDL_RenderSetClipRect(renderer, NULL);
 		if (srcrect != NULL) delete srcrect;
 		delete dstrect;
@@ -156,6 +155,9 @@ void Image::drawExt(float x, float y, Camera* camera, Entity* parent, float angl
 		if(this->h > 0) dh = this->h; else
 			dh = h;
 
+		ox *= dw/w;
+		oy *= dh/h;
+
 		if(parent){
 			dx += parent->x;
 			dy += parent->y;
@@ -167,6 +169,8 @@ void Image::drawExt(float x, float y, Camera* camera, Entity* parent, float angl
 			if (camera->size) camera->getRatio(&sw,&sh);
 			dx -= camera->x;
 			dy -= camera->y;
+			dx += camera->offX;
+			dy += camera->offY;
 			dx *= camera->sx * sw;
 			dy *= camera->sy * sh;
 			dw *= camera->sx * sw;
@@ -189,8 +193,8 @@ void Image::drawExt(float x, float y, Camera* camera, Entity* parent, float angl
 		SDL_Point* origin = new SDL_Point();
 		origin->x = ox;
 		origin->y = oy;
-		dstrect->x = dx;
-		dstrect->y = dy;
+		dstrect->x = dx - ox;
+		dstrect->y = dy - oy;
 		dstrect->w = dw;
 		dstrect->h = dh;
 		SDL_RenderCopyEx(renderer, this->texture->texture, srcrect, dstrect, this->angle + angle, origin, this->flip);
@@ -202,6 +206,7 @@ void Image::drawExt(float x, float y, Camera* camera, Entity* parent, float angl
 }
 void Image::load(std::string file, SDL_Renderer* renderer){
 	this->texture->load(file, renderer);
+	SDL_SetTextureBlendMode(this->texture->texture, SDL_BLENDMODE_BLEND);
 }
 void Texture::load(std::string file, SDL_Renderer* renderer){
 	SDL_Surface* s = IMG_Load(file.c_str());
@@ -261,7 +266,7 @@ Image* copyImage(Image* image){
 }
 
 void Image::useTexture(Texture* texture){
-	if (this->texture != NULL) {if (this->texture->getKill(this)) delete this->texture;}
+	if (this->texture != NULL) {this->texture->kill(this);}
 	this->texture = texture;
 }
 

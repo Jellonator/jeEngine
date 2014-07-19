@@ -38,10 +38,10 @@ Grid::~Grid()
 		this->tiles[i].clear();
 	}
 	this->tiles.clear();
-	if (this->data != NULL) {if (this->data->getKill(this)) delete this->data;}
+	if (this->data != NULL) {this->data->kill(this);}
 }
 void Grid::setData(GridData* data){
-	if (this->data != NULL) {if (this->data->getKill(this)) delete this->data;}
+	if (this->data != NULL) {this->data->kill(this);}
 	this->data = data;
 }
 void Grid::setTile(int x, int y, int value){
@@ -154,6 +154,10 @@ bool collideBoxGrid(Entity* eb, Entity* eg, float x, float y, bool sweep){
 	JE::Entity* e = new JE::Entity(0,0);
 	JE::MASK::HitBox* h = new JE::MASK::HitBox(0,0,1,1);
 	e->mask = h;
+	float previous_x = box->x;
+	float previous_y = box->y;
+	float previous_w = box->width;
+	float previous_h = box->height;
 	if(sweep == true){
 		bool cx = false;
 		bool cy = false;
@@ -181,8 +185,8 @@ bool collideBoxGrid(Entity* eb, Entity* eg, float x, float y, bool sweep){
 						float px = eb->x;
 						float py = eb->y;
 					//'unskew' box
-					if(x < 0)box->x -= x;
-					box->width -= abs(x);
+					box->x = previous_x;
+					box->width = previous_w;
 						//grid side exclusion
 						if (grid->data->types[t]->side == GRID_SIDE_TOP && eb->y + box->bottom() > e->y + h->top()) {
 							if(x < 0)box->x += x;
@@ -204,8 +208,8 @@ bool collideBoxGrid(Entity* eb, Entity* eg, float x, float y, bool sweep){
 				}
 			}
 			//unskew box
-			if(x < 0)box->x -= x;
-			box->width -= abs(x);
+			box->x = previous_x;
+			box->width = previous_w;
 			//set X
 			eb->x = X;
 		}
@@ -226,8 +230,8 @@ bool collideBoxGrid(Entity* eb, Entity* eg, float x, float y, bool sweep){
 						h->height = grid->data->types[t]->y2 - grid->data->types[t]->y1;
 						float px = eb->x;
 						float py = eb->y;
-					if(y < 0)box->y -= y;
-					box->height -= abs(y);
+					box->y = previous_y;
+					box->height = previous_h;
 						//grid side exclusion
 						if (grid->data->types[t]->side == GRID_SIDE_TOP && eb->y + box->bottom() > e->y + h->top()) {
 							if(y < 0)box->y += y;
@@ -244,13 +248,13 @@ bool collideBoxGrid(Entity* eb, Entity* eg, float x, float y, bool sweep){
 					}
 				}
 			}
-			if(y < 0)box->y -= y;
-			box->height -= abs(y);
+			box->y = previous_y;
+			box->height = previous_h;
 			eb->y = Y;
 		}
 		c = cx || cy;
 		//Unstuck player
-		for (	 int ix = std::max(double(0),floor((box->x + eb->x - grid->x - eg->x - 1)/grid->tileWidth )); ix < std::min(double(grid->width ),ceil((box->x + box->width + eb->x - grid->x - eg->x + 1)/grid->tileWidth )); ix ++){
+		/*for (	 int ix = std::max(double(0),floor((box->x + eb->x - grid->x - eg->x - 1)/grid->tileWidth )); ix < std::min(double(grid->width ),ceil((box->x + box->width + eb->x - grid->x - eg->x + 1)/grid->tileWidth )); ix ++){
 			for (int iy = std::max(double(0),floor((box->y + eb->y - grid->y - eg->y - 1)/grid->tileHeight)); iy < std::min(double(grid->height),ceil((box->y + box->height+ eb->y - grid->y - eg->y + 1)/grid->tileHeight)); iy ++){
 				int t = grid->tiles[ix][iy];
 				if(grid->data->types[t]->empty == false) {
@@ -267,7 +271,7 @@ bool collideBoxGrid(Entity* eb, Entity* eg, float x, float y, bool sweep){
 					if (JE::MASK::collideBox(eb, e, 0, 0, true)) c = true;
 				}
 			}
-		}
+		}*/
 	}else{
 			if(x < 0)box->x += x;
 			box->width += abs(x);
@@ -286,10 +290,10 @@ bool collideBoxGrid(Entity* eb, Entity* eg, float x, float y, bool sweep){
 						h->width = grid->data->types[t]->x2 - grid->data->types[t]->x1;
 						h->height = grid->data->types[t]->y2 - grid->data->types[t]->y1;
 						//test collision
-					if(x < 0)box->x -= x;
-					box->width -= abs(x);
-					if(y < 0)box->y -= y;
-					box->height -= abs(y);
+					box->x = previous_x;
+					box->width = previous_w;
+					box->y = previous_y;
+					box->height = previous_h;
 						//grid side exclusion
 						if (grid->data->types[t]->side == GRID_SIDE_TOP && eb->y + box->bottom() > e->y + h->top()){
 						if(x < 0)box->x += x;
@@ -307,10 +311,10 @@ bool collideBoxGrid(Entity* eb, Entity* eg, float x, float y, bool sweep){
 				}
 			}
 
-			if(x < 0)box->x -= x;
-			box->width -= abs(x);
-			if(y < 0)box->y -= y;
-			box->height -= abs(y);
+		box->x = previous_x;
+		box->width = previous_w;
+		box->y = previous_y;
+		box->height = previous_h;
 	}
 	delete e;
 	return c;

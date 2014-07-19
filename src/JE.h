@@ -54,6 +54,9 @@ namespace MATH{
 	float distance(float x1, float y1, float x2, float y2);
 	float Xangle(float angle, float speed);
 	float Yangle(float angle, float speed);
+	bool chance(float value);
+	bool chance(float a, float b);
+	float getAngle(float x1, float y1, float x2, float y2);
 };
 namespace MASK{
 	class HitBox;
