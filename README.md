@@ -50,6 +50,7 @@ Update log
 - Added a few functions to JE::MATH
 - Added particle system
 - Fixed major bugs in World/Group class.
+
 ## Version 0.7.1 ##
 - Added JE::MATH::random(a, b) which returns a random float between a and b.
 - Added JE::MATH::chance(x) which has an X percent chance of return true.
