@@ -51,11 +51,16 @@ Update log
 - Added particle system
 - Fixed major bugs in World/Group class.
 
-## Version 0.7.1 ##
+#### Version 0.7.1 ####
 - Added JE::MATH::random(a, b) which returns a random float between a and b.
 - Added JE::MATH::chance(x) which has an X percent chance of return true.
 - Added JE::MATH::chance(a, b) which is the same as chance(x), but as a fraction (e.g. 1/4 chance would be chance(1, 4)).
 - Fixed Hitbox collision inaccuracies.
+- Changed JE::Data a bit.
+- Fixed particles crashing on Windows.
+- Fixed canvases clearing when resizing on Windows.
+- Updated JE::Spritemap and JE::Tilemap to be easier to manage, they now use JE::Data.
+- Probably a few other things.
 
 ### Version 0.6 ###
 - Now uses namespaces, everything is now under JE::
