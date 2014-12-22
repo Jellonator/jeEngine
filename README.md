@@ -6,7 +6,7 @@ jeEngine is a cross-platform game engine written in C++, currently supporting wh
 - SDL2
 - SDL2_image
 
-Current Version: 0.7.1
+Current Version: 0.8.0
 
 Features
 --------
@@ -46,6 +46,23 @@ Todo
 
 Update log
 --------
+### Version 0.8 ###
+- Added JE::MATH::toInt(string) and JE::MATH::toString(int)
+- Added JE::TIME::setDeltaTimeLimit to make things not jittery when doing intensive processes
+- A ton of new functions in JE::MATH
+- Added JE::fileOpen
+- Added clear() and resize(width, height) functions to JE::GRAPHICS::Canvas
+- Added the beginnings of a GUI system(Frame, Divider)
+- Added layering for entities
+- Added Grid sides, which allow for entities to only collide with one side of a grid tile(currently only top-only collision is implimented)
+- Added custom collision functions for JE::Mask
+- Added a deleteAll function to Group
+- Masks now all have a debug draw function
+- Added setColor and getSize to Image
+- Added more JE::MASK::Line functions
+- Added JE::MASK::push and JE::MASK::pushGroup, which pushes entities outside of other entities, so that they don't collide.
+- Spritemaps can now be initialized with files, and now have functions to draw specific frames.
+
 ### Version 0.7 ###
 - Added a few functions to JE::MATH
 - Added particle system
