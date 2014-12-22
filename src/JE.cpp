@@ -74,10 +74,6 @@ namespace TIME{
 namespace MATH{
 	float RAD = 0.0174532925f;
 	float DEG = 57.295779515f;
-	int getSign(float num){
-		if (num == 0) return 0;
-		return (num > 0) ? 1 : -1;
-	}
 	float random(float a, float b){
     float random = ((float)rand())/(float)RAND_MAX;
     float d = b-a;
@@ -115,12 +111,7 @@ namespace MATH{
 		if (!left != !(pos < to)) pos = to;
 		return pos;
 	}
-	float clamp(float value, float min, float max){
-		if (min > max) {float t = min; min = max; max = t;}
-		if (value < min) return min;
-		if (value > max) return max;
-		return value;
-	}
+
 };
 World* world;/**< \brief jeWorld* world, the active world. */
 void init(){

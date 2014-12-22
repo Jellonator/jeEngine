@@ -35,6 +35,7 @@ void Group::update(int group){
 	}
 	if (this->needUpdateEntityLayering){
 		std::sort(this->entities.begin(), this->entities.end(), sortEntity);
+		this->needUpdateEntityLayering = false;
 	}
 };
 

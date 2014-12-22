@@ -9,7 +9,7 @@
 #include <map>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-
+#include "rapidxml/rapidxml.hpp"
 
 typedef void (*function_pointer)(void);
 
@@ -65,7 +65,11 @@ namespace MATH{
   /** \brief returns either 1 or -1, depending on the number's sign. Returns 0 for 0.
    * \param num int the number to get the sign of
    */
-	int getSign(float num);
+	template<typename Type>
+	int getSign(Type num){
+		if (num == 0) return 0;
+		return (num > 0) ? 1 : -1;
+	}
   /** \brief returns a random number between a and b.
    * \param a float
    * \param b float
@@ -121,7 +125,13 @@ namespace MATH{
    * \return float the new position
    */
 	float smoothTween(float pos, float to, float speed, float minSpeed = 5);
-	float clamp(float value, float min, float max);
+	template<typename Type>
+	Type clamp(Type value, Type min, Type max){
+		if (min > max) {float t = min; min = max; max = t;}
+		if (value < min) return min;
+		if (value > max) return max;
+		return value;
+	}
 };
 namespace MASK{
 	class HitBox;
