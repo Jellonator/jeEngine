@@ -9,7 +9,6 @@
 #include <map>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-#include "rapidxml/rapidxml.hpp"
 
 typedef void (*function_pointer)(void);
 
