@@ -21,6 +21,7 @@ class Group
 		bool needOrder;/**< \brief bool needOrder, whether the group needs order or not. */
 		int drawMode;/**< \brief JE_WORLD_MODE drawMode, the drawing mode. */
 		int updateMode;/**< \brief JE_WORLD_MODE updateMode, the update mode. */
+		bool needUpdateEntityLayering;
 
 		void begin();/**< \brief Initiates the group. */
 		/** \brief Updates all entities in the group or sub-group.
@@ -90,6 +91,7 @@ class Group
         /** \brief Clears the world of all entities.
          * \param int level. 0 means entities in this group only. 1 means entities and sub-groups in this group only. 2 means all entities will be removed from their assosiated groups this group.  Sub-groups are also removed.
          */
+		void deleteAll();
 		std::vector<bool> __EREMOVED__;
 		std::vector<unsigned int> __IREMOVED__;
 		//Overloaders

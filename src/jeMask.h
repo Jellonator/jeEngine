@@ -1,17 +1,23 @@
 #pragma once
+#include <cstddef>
 enum JE_MASK_TYPE{JE_MASK_NONE, JE_MASK_BOX, JE_MASK_GRID, JE_MASK_LIST};
-namespace JE{
+namespace JE{namespace GRAPHICS{class Camera;}
 class Group;
 class Entity;
+class Mask;
+typedef bool (*function_pointer_mask)(Mask*, Mask*, Entity*, Entity*);
+//bool _defaultGetCollidable(JE::Mask* other_mask, JE::Entity* this_entity, JE::Entity* other_entity);
 class Mask
 {
 	public:
 		float x;/**< \brief float x, the Mask's x position. */
 		float y;/**< \brief float y, the Mask's y position. */
 		int type;/**< \brief JE_MASK_TYPE type, the Mask's type. */
+		function_pointer_mask getCollidable;
+		void setCollisionFunction(function_pointer_mask collisionFunction = NULL);
 		Mask();
+		virtual void draw(float x = 0, float y = 0, GRAPHICS::Camera* camera = 0);
 		virtual ~Mask();
-
         /** \brief Checks for collision against two masks.
          * \param Mask* m1, the first mask.
          * \param Mask* m2, the second mask.
@@ -63,4 +69,17 @@ bool collideGroup(Entity* e, Group* group, float x = 0, float y = 0, bool sweep 
  * \return bool; whether the enity collided with another entity.
  */
 bool collideGroup(Entity* e, int group, float x = 0, float y = 0, bool sweep = false);
+
+void push(Entity* pusher, Entity* pushed, int direction_x = 0, int direction_y = 0);
+
+void push(JE::Group* pusher, Entity* pushed, int direction_x = 0, int direction_y = 0);
+void push(int pusher, Entity* pushed, int direction_x = 0, int direction_y = 0);
+
+void pushGroup(Entity* pusher, int group, int direction_x = 0, int direction_y = 0);
+void pushGroup(Entity* pusher, JE::Group* group, int direction_x = 0, int direction_y = 0);
+
+void pushGroup(int pusher, JE::Group* group, int direction_x = 0, int direction_y = 0);
+void pushGroup(int pusher, int group, int direction_x = 0, int direction_y = 0);
+void pushGroup(JE::Group* pusher, JE::Group* group, int direction_x = 0, int direction_y = 0);
+void pushGroup(JE::Group* pusher, int group, int direction_x = 0, int direction_y = 0);
 };};

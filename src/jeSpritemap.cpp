@@ -60,6 +60,17 @@ Frame::~Frame(){
 	if (this->rect != NULL) delete this->rect;
 }
 
+Spritemap::Spritemap(std::string file) : Image(){
+	this->playing = false;
+	this->looping = false;
+	this->time = 0;
+	this->anim = 0;
+	this->frame = 0;
+	this->speed = 1;
+	this->data = new SpritemapData(this);
+	this->load(file);
+}
+
 Spritemap::Spritemap() : Image(){
 	this->playing = false;
 	this->looping = false;
@@ -73,7 +84,7 @@ Spritemap::Spritemap() : Image(){
 
 Spritemap::~Spritemap(){
 	this->clip = NULL;
-	if (this->data != NULL) {if (this->data->getKill(this)) delete this->data;}
+	if (this->data != NULL) {this->data->kill(this);}
 }
 
 void Spritemap::update(float dt){
@@ -143,7 +154,20 @@ void Spritemap::setSpeed(float speed, int anim){
 }
 
 void Spritemap::useData(SpritemapData* data){
-	if (this->data != NULL) {if (this->data->getKill(this)) delete this->data;}
+	if (this->data != NULL) {this->data->kill(this);}
 	this->data = data;
+}
+
+void Spritemap::drawFrame(int frame, float x, float y, Camera* camera, Entity* parent){
+	int temp = this->frame;
+	this->setFrame(frame);
+	this->draw(x, y, camera, parent);
+	this->setFrameNoAnim(temp);
+}
+void Spritemap::drawFrameNoAnim(int frame, float x, float y, Camera* camera, Entity* parent){
+	int temp = this->frame;
+	this->setFrameNoAnim(frame);
+	this->draw(x, y, camera, parent);
+	this->setFrameNoAnim(temp);
 }
 };};

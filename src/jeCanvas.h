@@ -12,6 +12,14 @@ class Canvas : public Image
 		virtual ~Canvas();
 		void bind();/**< \brief Begin drawing operations. */
 		void unbind();/**< \brief Stop drawing operations. */
+		void clear();
+				/** \brief resizes the canvas
+				 * \param width int the new width of the canvas.
+				 * \param height int the new height of the canvas.
+				 * \return bool whether the canvas actually resized. If it did, you may want to re-render.
+				 */
+		bool resize(int width, int height);
+		bool binded;
 	protected:
 	private:
 };

@@ -22,6 +22,7 @@ class HitBox : public Mask
 		float right();/**< \return float, the right side of the box. */
 		float top();/**< \return float, the top of the box. */
 		float bottom();/**< \return float, the bottom of the box. */
+		void draw(float x = 0, float y = 0, GRAPHICS::Camera* camera = NULL);
 		virtual ~HitBox();
 	protected:
 	private:

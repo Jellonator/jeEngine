@@ -1,23 +1,20 @@
-#pragma once
+/*#pragma once
 #include "JE.h"
 namespace JE{namespace GRAPHICS{
 class Shader
 {
 	public:
-		std::map<std::string, GLint> attributes;
+		GLint type;
 		GLuint shader;
-		void addAttribute(std::string name);
-		void addAttribute(std::string name, std::string key);
-		void removeAttribute(std::string name);
-		void load(std::string data);
-		void enableAttributes();
-		void disableAttributes();
-		Shader();
+		Shader(std::string file, GLint type);
 		virtual ~Shader();
 	protected:
 	private:
 };
+GLuint newShader(std::string file, GLint type);
+GLuint newBuffer(GLint type);
 namespace SHADERS{
 
 };
 };};
+*/

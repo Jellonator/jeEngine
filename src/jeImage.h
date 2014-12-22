@@ -20,8 +20,8 @@ class Image : public Graphic
 		Texture* texture;/**< The texture. */
 		SDL_RendererFlip flip;/**< Flipping. */
 		SDL_Rect* clip;/**< Clipping rectangle. */
-		float w;/**< The width of the image. */
-		float h;/**< The height of the image. */
+		float width;/**< The width of the image. */
+		float height;/**< The height of the image. */
 		Image();
 		Image(std::string file);
 		virtual ~Image();
@@ -56,8 +56,13 @@ class Image : public Graphic
          * \param -1 float y, the Y scale, defaults to the X scale.
          */
 		void setScale(float x, float y = -1);
+				/** \brief sets the image's texture to a new texture
+				 * \param texture Texture* the new texture of the image
+				 */
 		void useTexture(Texture* texture);
 		void centerOrigin();
+		void setColor(int r, int g, int b, int a = 255);
+		void getSize(int* width, int* height);
 	protected:
 	private:
 };

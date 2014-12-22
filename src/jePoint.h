@@ -19,6 +19,7 @@ class Point
 		void update(float dt);
 		void setPos(float x, float y);*/
 		bool moveTo(float x, float y, float speed = 20, float dt = dt, float snap = 1, float dead = 0);
+		bool moveToLinear(float x, float y, float speed = 20, float dt = dt, float snap = 1, float dead = 0);
 		//void moveTo(float x, float y);
 		//void setSpeed(float speed);
 		//void setDirection(float direction);

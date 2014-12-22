@@ -1,32 +1,44 @@
 #pragma once
 #include "JE.h"
 namespace JE{namespace MASK{
+enum GRID_SIDE{GRID_SIDE_ALL, GRID_SIDE_TOP};
 class GridTile{
 	public:
-	GridTile(float x1, float y1, float x2, float y2, bool empty = false);
-	bool empty;
-	float x1, x2, y1, y2;
+		GridTile(float x1, float y1, float x2, float y2, bool empty = false, GRID_SIDE side=GRID_SIDE_ALL);
+		bool empty;
+		float x1, x2, y1, y2;
+		int side;
 };
-
+class GridData : public JE::Data
+{
+	public:
+		GridData(Grid* parent = NULL);
+		virtual ~GridData();
+		std::vector<GridTile*> types;/**< \brief a list of tile types in the grid. */
+		void newTile(float x1, float y1, float x2, float y2, bool empty=false, GRID_SIDE side=GRID_SIDE_ALL, int ID = -1);
+		//void newTileF(float x1, float y1, float x2, float y2, bool empty=false, GRID_SIDE side=GRID_SIDE_ALL, int ID = -1);
+		void emptyTile(int ID, bool empty = true);
+};
 class Grid : public Mask
 {
 	public:
 		std::vector<std::vector<int> > tiles;/**< \brief a 2D list of tiles in the grid. */
-		std::vector<GridTile*> types;/**< \brief a list of tile types in the grid. */
+		GridData* data;
 		int width;/**< \brief the width of the grid in tiles. */
 		int height;/**< \brief the height of the grid in tiles. */
 		float tileWidth;/**< \brief the width of a tile. */
 		float tileHeight;/**< \brief the height of a tile. */
+		void setData(GridData* data);
 		Grid(int width, int height, int twidth, int theight);
+		//Grid(std::string tmxFile, std::string layerName);
 		virtual ~Grid();
-
         /** \brief sets a tile to the value
          * \param x int; the x position of the tile.
          * \param y int; the y position of the tile.
          * \param value int; the ID of the tile type to set it to.
          */
 		void setTile(int x, int y, int value);
-
+		int getTile(int x, int y);
 
         /** \brief sets an rectangle of tiles to a value.
          * \param x int; the x position of the rectangle.
@@ -44,7 +56,7 @@ class Grid : public Mask
          * \param y2 float; the second y position.
          * \param int ID; The ID of the tile type.
          */
-		void newTile(float x1, float y1, float x2, float y2, bool empty=false, int ID = -1);
+		void newTile(float x1, float y1, float x2, float y2, bool empty=false, GRID_SIDE side=GRID_SIDE_ALL, int ID = -1);
 
         /** \brief Creates a new tile type, with 0 and 1 being the min/max values.
          * \param x1 float; the first x position.
@@ -53,7 +65,7 @@ class Grid : public Mask
          * \param y2 float; the second y position.
          * \param int ID; The ID of the tile type.
          */
-		void newTileF(float x1, float y1, float x2, float y2, bool empty=false, int ID = -1);
+		void newTileF(float x1, float y1, float x2, float y2, bool empty=false, GRID_SIDE side=GRID_SIDE_ALL, int ID = -1);
 
         /** \brief Makes a tile ID empty, or blank.
          * \param ID int; the Tile ID to empty.
@@ -82,7 +94,7 @@ class Grid : public Mask
          * \param outline bool, whether to draw outlines.
          * \param include_empty bool, whether to draw empty tiles.
          */
-		void draw(float x = 0, float y = 0, GRAPHICS::Camera* camera = NULL, bool outline = false, bool include_empty = false);/**< \brief draws the grid, for debug purposes. */
+		void draw(float x = 0, float y = 0, GRAPHICS::Camera* camera = NULL);/**< \brief draws the grid, for debug purposes. */
         /** \brief Draw a grid's tile
          * \param x float, the x position to draw to.
          * \param y float, the y position to draw to.

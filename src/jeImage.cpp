@@ -9,29 +9,32 @@ Texture::Texture(void* owner) : Data(owner){
 Texture::~Texture(){
 	if(this->texture != NULL) {SDL_DestroyTexture(this->texture);}
 }
-Image::Image() : Graphic()
-{
+Image::Image() : Graphic(){
 	this->texture = new Texture(this);
 	this->flip = SDL_FLIP_NONE;
-	this->w = -1;
-	this->h = -1;
+	this->width = -1;
+	this->height = -1;
 	this->clip = NULL;
 }
 
-Image::Image(std::string file) : Graphic()
-{
+Image::Image(std::string file) : Graphic(){
 	this->texture = new Texture(this);
 	this->flip = SDL_FLIP_NONE;
-	this->w = -1;
-	this->h = -1;
+	this->width = -1;
+	this->height = -1;
 	this->clip = NULL;
 	this->load(file);
 }
 
-Image::~Image()
-{
+Image::~Image(){
 	if(this->clip != NULL) delete this->clip;
-	if (this->texture != NULL) {if (this->texture->getKill(this)) delete this->texture;}
+	if (this->texture != NULL) {this->texture->kill(this);}
+}
+
+void Image::setColor(int r, int g, int b, int a){
+	if (!this->texture) return;
+	SDL_SetTextureColorMod(this->texture->texture,r,g,b);
+	SDL_SetTextureAlphaMod(this->texture->texture,a);
 }
 
 void Image::draw(float x, float y, Camera* camera, Entity* parent){
@@ -44,6 +47,8 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 		float dy = 0;
 		float dw = 0;
 		float dh = 0;
+		float ox = this->ox;
+		float oy = this->oy;
 
 		int w, h;
 
@@ -62,10 +67,14 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 		dx = this->x + x;
 		dy = this->y + y;
 
-		if(this->w > 0) dw = this->w; else
+		if(this->width > 0) dw = this->width; else
 			dw = w;
-		if(this->h > 0) dh = this->h; else
+		if(this->height > 0) dh = this->height; else
 			dh = h;
+
+		ox *= dw/w;
+		oy *= dh/h;
+
 		if(parent){
 			dx += parent->x;
 			dy += parent->y;
@@ -77,10 +86,14 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 			if (camera->size) camera->getRatio(&sw,&sh);
 			dx -= camera->x;
 			dy -= camera->y;
+			dx += camera->offX;
+			dy += camera->offY;
 			dx *= camera->sx * sw;
 			dy *= camera->sy * sh;
 			dw *= camera->sx * sw;
 			dh *= camera->sy * sh;
+			ox *= camera->sx * sw;
+			oy *= camera->sy * sh;
 			if (camera->clip) {
 				if (camera->size){
 					SDL_Rect* cliprect = new SDL_Rect();
@@ -93,13 +106,14 @@ void Image::draw(float x, float y, Camera* camera, Entity* parent){
 				} else SDL_RenderSetClipRect(renderer, camera->clip);
 			}
 		}
-
-		dstrect->x = dx;
-		dstrect->y = dy;
+		//origin->x = ox;
+		//origin->y = oy;
+		dstrect->x = round(dx - ox);
+		dstrect->y = round(dy - oy);
 		dstrect->w = dw;
 		dstrect->h = dh;
-
 		SDL_RenderCopy(renderer, this->texture->texture, srcrect, dstrect);
+		//}
 		SDL_RenderSetClipRect(renderer, NULL);
 		if (srcrect != NULL) delete srcrect;
 		delete dstrect;
@@ -136,10 +150,13 @@ void Image::drawExt(float x, float y, Camera* camera, Entity* parent, float angl
 		dx = this->x + x;
 		dy = this->y + y;
 
-		if(this->w > 0) dw = this->w; else
+		if(this->width > 0) dw = this->width; else
 			dw = w;
-		if(this->h > 0) dh = this->h; else
+		if(this->height > 0) dh = this->height; else
 			dh = h;
+
+		ox *= dw/w;
+		oy *= dh/h;
 
 		if(parent){
 			dx += parent->x;
@@ -152,6 +169,8 @@ void Image::drawExt(float x, float y, Camera* camera, Entity* parent, float angl
 			if (camera->size) camera->getRatio(&sw,&sh);
 			dx -= camera->x;
 			dy -= camera->y;
+			dx += camera->offX;
+			dy += camera->offY;
 			dx *= camera->sx * sw;
 			dy *= camera->sy * sh;
 			dw *= camera->sx * sw;
@@ -174,8 +193,8 @@ void Image::drawExt(float x, float y, Camera* camera, Entity* parent, float angl
 		SDL_Point* origin = new SDL_Point();
 		origin->x = ox;
 		origin->y = oy;
-		dstrect->x = dx;
-		dstrect->y = dy;
+		dstrect->x = round(dx - ox);
+		dstrect->y = round(dy - oy);
 		dstrect->w = dw;
 		dstrect->h = dh;
 		SDL_RenderCopyEx(renderer, this->texture->texture, srcrect, dstrect, this->angle + angle, origin, this->flip);
@@ -187,6 +206,7 @@ void Image::drawExt(float x, float y, Camera* camera, Entity* parent, float angl
 }
 void Image::load(std::string file, SDL_Renderer* renderer){
 	this->texture->load(file, renderer);
+	SDL_SetTextureBlendMode(this->texture->texture, SDL_BLENDMODE_BLEND);
 }
 void Texture::load(std::string file, SDL_Renderer* renderer){
 	SDL_Surface* s = IMG_Load(file.c_str());
@@ -220,8 +240,8 @@ void Image::setScale(float x, float y){
 }
 
 void Image::setSize(float w, float h){
-	this->w = w;
-	this->h = h;
+	this->width = w;
+	this->height = h;
 }
 
 Image* copyImage(Image* image){
@@ -234,8 +254,8 @@ Image* copyImage(Image* image){
 	r->oy		= image->oy;
 	r->angle	= image->angle;
 	r->flip		= image->flip;
-	r->w		= image->w;
-	r->h		= image->h;
+	r->width		= image->width;
+	r->height		= image->height;
 	r->clip 	= new SDL_Rect();
 	r->clip->x 	= image->clip->x;
 	r->clip->y 	= image->clip->y;
@@ -246,7 +266,7 @@ Image* copyImage(Image* image){
 }
 
 void Image::useTexture(Texture* texture){
-	if (this->texture != NULL) {if (this->texture->getKill(this)) delete this->texture;}
+	if (this->texture != NULL) {this->texture->kill(this);}
 	this->texture = texture;
 }
 
@@ -255,5 +275,8 @@ void Image::centerOrigin(){
 	SDL_QueryTexture(this->texture->texture, NULL, NULL, &x, &y);
 	this->ox = float(x)/2;
 	this->oy = float(y)/2;
+}
+void Image::getSize(int* width, int* height){
+	SDL_QueryTexture(this->texture->texture, NULL, NULL, width, height);
 }
 };};

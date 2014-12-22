@@ -11,6 +11,12 @@ class Line
 	private:
 };
 
-bool testLines(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float *ox = NULL, float *oy = NULL);
-bool testLines(Line* a, Line* b, float *ox = NULL, float *oy = NULL);
+bool testLines(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float* ox = NULL, float* oy = NULL);
+bool testLines(Line* a, Line* b, float* ox = NULL, float* oy = NULL);
+namespace MASK{
+bool collideBoxLine(Line* a, JE::MASK::HitBox* box, float* ox = NULL, float* oy = NULL);
+bool collideBoxLine(Line* a, JE::Entity* e, float* ox = NULL, float* oy = NULL);
+bool collideBoxLine(float x1, float y1, float x2, float y2, JE::MASK::HitBox* box, float* ox = NULL, float* oy = NULL);
+bool collideBoxLine(float x1, float y1, float x2, float y2, JE::Entity* e, float* ox = NULL, float* oy = NULL);
+};
 };

@@ -17,7 +17,7 @@ namespace GRAPHICS{
 class Graphic
 {
 	public:
-		Graphic();
+		Graphic(float x = 0, float y = 0);
 		virtual ~Graphic();
 		float x;/**< \brief float x, the graphic's X position */
 		float y;/**< \brief float y, the graphic's Y position */

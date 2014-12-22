@@ -1,10 +1,10 @@
 #include "jeGraphic.h"
 #include "jeCamera.h"
 namespace JE{
-Graphic::Graphic()
+Graphic::Graphic(float x, float y)
 {
-	this->x = 0;
-	this->y = 0;
+	this->x = x;
+	this->y = y;
 	this->angle = 0;
 	this->ox = 0;
 	this->oy = 0;
@@ -56,6 +56,8 @@ void drawRect(float x, float y, float w, float h, GRAPHICS::Camera* camera){
 		if (camera->size) camera->getRatio(&sw,&sh);
 		dx -= camera->x;
 		dy -= camera->y;
+		dx += camera->offX;
+		dy += camera->offY;
 		dx *= camera->sx * sw;
 		dy *= camera->sy * sh;
 		dw *= camera->sx * sw;
@@ -93,6 +95,8 @@ void fillRect(float x, float y, float w, float h, GRAPHICS::Camera* camera){
 		if (camera->size) camera->getRatio(&sw,&sh);
 		dx -= camera->x;
 		dy -= camera->y;
+		dx += camera->offX;
+		dy += camera->offY;
 		dx *= camera->sx * sw;
 		dy *= camera->sy * sh;
 		dw *= camera->sx * sw;
@@ -109,10 +113,10 @@ void fillRect(float x, float y, float w, float h, GRAPHICS::Camera* camera){
 			} else SDL_RenderSetClipRect(renderer, camera->clip);
 		}
 	}
-	dstrect->x = dx;
-	dstrect->y = dy;
-	dstrect->w = dw;
-	dstrect->h = dh;
+	dstrect->x = std::floor(dx);
+	dstrect->y = std::floor(dy);
+	dstrect->w = std::ceil(dw);
+	dstrect->h = std::ceil(dh);
 	SDL_RenderFillRect(renderer, dstrect);
 	SDL_RenderSetClipRect(renderer, NULL);
 	delete dstrect;
@@ -126,8 +130,8 @@ void drawImgRectStretch(Image* image, float x, float y, float w, float h, float 
 	if (tw >= tileWidth*2 && th >= tileHeight*2){
 	//store temporary information
 		SDL_Rect* temprect = image->clip;
-		float tempWidth = image->w;
-		float tempHeight = image->h;
+		float tempWidth = image->width;
+		float tempHeight = image->height;
 		image->clip = new SDL_Rect();
 		//Set size to corner
 		image->setSize(tileWidth,tileHeight);
@@ -174,8 +178,8 @@ void drawImgRectStretch(Image* image, float x, float y, float w, float h, float 
 	//Reset image
 		delete image->clip;
 		image->clip = temprect;
-		image->w = tempWidth;
-		image->h = tempHeight;
+		image->width = tempWidth;
+		image->height = tempHeight;
 	}
 }
 }

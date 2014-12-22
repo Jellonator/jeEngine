@@ -1,9 +1,11 @@
 #include "JE.h"
+#include <algorithm>
 namespace JE{
 Group::Group(int order, int drawmode, int updatemode){
 	this->order = order;
 	this->drawMode = drawmode;
 	this->updateMode = updatemode;
+	this->needUpdateEntityLayering = false;
 }
 
 Group::~Group(){
@@ -11,11 +13,13 @@ Group::~Group(){
 }
 
 void Group::begin(){};
-
+bool sortEntity(Entity*a, Entity*b) { return a->layer < b->layer; }
 void Group::update(int group){
 	if (this->updateMode == JE_WORLD_MODE_ALL && group < 0){
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
-			if (this->__EREMOVED__[i] == false) this->entities[i]->OnUpdate();
+			if (this->__EREMOVED__[i] == true) continue;
+			if (this->entities[i] == NULL) continue;
+			this->entities[i]->OnUpdate();
 		}
 	} else if (this->updateMode == JE_WORLD_MODE_GROUP || group >= 0){
 	//Update by group.
@@ -28,6 +32,9 @@ void Group::update(int group){
 			//update only one
 			this->groups[group]->update();
 		}
+	}
+	if (this->needUpdateEntityLayering){
+		std::sort(this->entities.begin(), this->entities.end(), sortEntity);
 	}
 };
 
@@ -44,6 +51,9 @@ void Group::draw(int group){
 		}else{
 			this->groups[group]->draw();
 		}
+	}
+	if (this->needUpdateEntityLayering){
+		std::sort(this->entities.begin(), this->entities.end(), sortEntity);
 	}
 };
 
@@ -65,6 +75,7 @@ void Group::add(Entity* entity){
 	entity->__GROUPS__.push_back(this);
 	//Tell the entity is was added
 	entity->OnAdd(this);
+	this->needUpdateEntityLayering = true;
 }
 
 void Group::remove(Entity* entity){
@@ -75,31 +86,40 @@ void Group::remove(Entity* entity){
 		for (unsigned int i = 0; i < j; i ++){
 			if (entity == this->entities[i]) {
 				this->entities.erase(this->entities.begin()+i);
+				this->__EREMOVED__.erase(this->__EREMOVED__.begin()+i);
 				j --;
 				i --;
 			}
 		}
-	}
-	else if (this->order == JE_ORDER_HALF){
+	}else if (this->order == JE_ORDER_HALF){
 	//If there is a half order
 	//then remove it, leaving behind a hole for other entities
 		for (unsigned int i = 0; i < this->entities.size(); i ++){
 			if (entity == this->entities[i]) {
 				this->__EREMOVED__[i] = true;
 				this->__IREMOVED__.push_back(i);
+				this->entities[i] = NULL;
 			}
 		}
-	}
-	else{
+		//while (this->entities
+	}else{
 	//If there is not an order
-		//Just pop it, and place the entity at the back to it's position
-		for (unsigned int i = 0; i < this->entities.size(); i ++){
+		//Just pop it, and place the entity at the back to its position
+		unsigned int i = 0;
+		while (i < this->entities.size()){
 			if (entity == this->entities[i]) {
-				if (i < this->entities.size()) this->entities[i] = this->entities[this->entities.size()-1];
+				if (i < this->entities.size()-1) {
+					this->entities[i] = this->entities.back();
+					this->__EREMOVED__[i] = this->__EREMOVED__.back();
+				}
 				this->entities.pop_back();
+				this->__EREMOVED__.pop_back();
 				i = 0;
+			}else{
+				i ++;
 			}
 		}
+		this->needUpdateEntityLayering = true;
 	}
 	//now remove it from all groups
 	/// TODO: Remove from world's groups, not the entity's.
@@ -139,12 +159,14 @@ int Group::getID(Entity* entity){
 	return -1;
 }
 void Group::move(int from, int to){
+	if (from == to) return;
 	if (from == -1) return;
 	Entity* e = this->entities[from];
 	this->entities.erase(this->entities.begin()+from);
 	this->entities.insert(this->entities.begin()+to, e);
 }
 void Group::moveToBack(int from){
+	if (from == this->entities.size()-1) return;
 	if (from == -1) return;
 	Entity* e = this->entities[from];
 	this->entities.erase(this->entities.begin()+from);
@@ -163,7 +185,6 @@ void Group::moveDown(int from){
 }
 
 void Group::changeOrder( int order){
-
 	if (this->order == JE_ORDER_FULL && this->needOrder){
 		//Check again.
 		if (this->__IREMOVED__.size() > 0){
@@ -200,8 +221,8 @@ void Group::addGroup(unsigned int group, int order, int drawmode, int updatemode
 	//Adds a group
 	//If an order is unspecified, default to the world's order.
 	if (order < 0) order = this->order;
-	if (drawmode < 0) drawmode = this->drawMode;
-	if (updatemode < 0) updatemode = this->updateMode;
+	if (drawmode < 0) drawmode = JE_WORLD_MODE_ALL;
+	if (updatemode < 0) updatemode = JE_WORLD_MODE_ALL;
 	//Now calculate the difference in size before and after resizing
 	int a = this->groups.size();
 	this->groups.resize(std::max((unsigned int)this->groups.size(), group+1));
@@ -229,6 +250,19 @@ void Group::swap(int a, int b){
 	Entity* temp = this->entities[a];
 	this->entities[a] = this->entities[b];
 	this->entities[b] = temp;
+}
+
+void Group::deleteAll(){
+	while (this->entities.size() > 0){
+		//if (this->__EREMOVED__[0]) {this->entities.erase(this->entities.begin()); continue;}
+		JE::Entity* e = this->entities[0];
+		if (e != NULL) e->destroy();
+		else this->entities.erase(this->entities.begin());
+	}
+	for (int i = 0; i < this->groups.size(); i ++){
+		this->groups[i]->deleteAll();
+	}
+	this->clearAll();
 }
 
 Entity* Group::operator[](unsigned int value){
