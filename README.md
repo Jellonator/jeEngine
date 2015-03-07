@@ -1,6 +1,7 @@
 jeEngine
 ========
-jeEngine is a cross-platform game engine written in C++, currently supporting whatever SDL supports.
+jeEngine, or Jello's Engine, is a cross-platform game engine written in C++, currently supporting whatever SDL supports.
+Note that this engine is mostly just a wrapper for SDL2. SDL2 may be replaced with OpenGL for graphics at somepoint to make this engine more dynamic, but currently that is not a priority.
 
 ######Libraries/dependancies:######
 - SDL2
