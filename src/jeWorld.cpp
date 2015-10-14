@@ -1,31 +1,55 @@
 #include "jeWorld.h"
+#include "jeEntity.h"
 namespace JE{
-World::World(int order, int drawmode, int updatemode) : Group(order, drawmode, updatemode){
+std::shared_ptr<World> world;/**< \brief jeWorld* world, the active world. */
+World::World(int drawmode, int updatemode) : Group(drawmode, updatemode){
 	//this->order = order;
-	this->needOrder = false;
+	//this->needOrder = false;
 }
 
 World::~World(){
 	//dtor
 }
-void World::begin(){this->OnBegin();Group::begin();}
-void World::end(){this->onEnd();Group::end();}
+void World::begin(){Group::begin();this->OnBegin();}
+void World::end(){this->OnEnd();Group::end();}
 
-void World::update(int group){
+void World::update(float dt, int group){
 	//Update all of the entities
-	Group::update(group);
-	this->onUpdate();
+	if (group < 0){
+		this->OnUpdate(dt);
+	} else Group::update(dt, group);
 };
 
 void World::draw(int group){
 	//same as the update function
-	Group::draw(group);
-	this->OnDraw();
+	if (group < 0){
+		this->OnDraw();
+	} else Group::update(group);
 }
-
-void setWorld(World* world){
-	if(JE::world != NULL) JE::world->end();
+void setWorld(std::shared_ptr<World> world){
+	if(JE::world != nullptr) JE::world->end();
 	JE::world = world;
 	JE::world->begin();
+	JE::GRAPHICS::resize();
+}
+void World::OnUpdate(float dt){
+	Group::update(dt);
+}
+void World::OnDraw(){
+	Group::draw();
+}
+void World::OnBegin(){
+
+}
+void World::OnEnd(){
+
+}
+void World::add(std::shared_ptr<Entity> entity){
+	Group::add(entity);
+	entity->OnAdd(this);
+}
+void World::remove(std::shared_ptr<Entity> entity){
+	Group::remove(entity);
+	entity->OnRemove(this);
 }
 };

@@ -1,5 +1,5 @@
 #include "jePoint.h"
-#include "JE.h"
+#include <cmath>
 namespace JE{
 Point::Point(float x, float y)
 {
@@ -20,7 +20,19 @@ Point::~Point()
 	//dtor
 }
 
-bool Point::moveTo(float x, float y, float dt, float speed, float snap, float dead){
+void Point::set(float x, float y){
+	this->x = x;
+	this->y = y;
+}
+
+float Point::getX()const{
+	return this->x;
+}
+float Point::getY()const{
+	return this->y;
+}
+
+bool Point::moveToSmooth(float x, float y, float dt, float speed, float snap, float dead){
 	float xd = x-this->x;
 	float yd = y-this->y;
 	if (std::abs(xd) <= snap && std::abs(yd) <= snap){this->x = x; this->y = y;return true;}

@@ -1,6 +1,9 @@
 #pragma once
-#include "JE.h"
+#include "jeGroup.h"
+#include <memory>
 namespace JE{
+class World;
+extern std::shared_ptr<World> world;/**< \brief jeWorld* world, the active world. */
 class World : public Group
 {
 	public:
@@ -9,13 +12,13 @@ class World : public Group
          * \param drawmode int, the drawing mode. Defaults to all(renders all entities in order).
          * \param updatemode int, the update mode. Defaults to all(updates all entities in order).
          */
-		World(int order = JE_ORDER_NONE, int drawmode = JE_WORLD_MODE_ALL, int updatemode = JE_WORLD_MODE_ALL);
+		World(int drawmode = JE_WORLD_MODE_ALL, int updatemode = JE_WORLD_MODE_ALL);
 		virtual ~World();
 
-		virtual void OnBegin(){};/**< \brief Called when the world starts. */
-		virtual void onUpdate(){};/**< \brief Called when the world is updated. */
-		virtual void OnDraw(){};/**< \brief Called when the entity is drawn. */
-		virtual void onEnd(){};/**< \brief Called when the world is ended. */
+		virtual void OnBegin();/**< \brief Called when the world starts. */
+		virtual void OnUpdate(float dt);/**< \brief Called when the world is updated. */
+		virtual void OnDraw();/**< \brief Called when the entity is drawn. */
+		virtual void OnEnd();/**< \brief Called when the world is ended. */
 
         /** \brief Initiates the world, DO NOT CALL EXPLICITLY, automatically called when using World::set().
          * \param World* world, the world to use.
@@ -26,7 +29,7 @@ class World : public Group
          * \param World* world, the world to update.
          * \param int group, the group to update(if applicable).
          */
-		void update(int group = -1);
+		void update(float dt, int group = -1);
 
         /** \brief draws the world
          * \param World* world, the world to draw.
@@ -38,9 +41,19 @@ class World : public Group
          * \param World* world, the world to use.
          */
 		void end();
+
+        /** \brief Adds an entity to the specified Group.
+         * \param Entity* entity, the entity to add.
+         */
+		virtual void add(std::shared_ptr<Entity> entity);
+
+        /** \brief Removes an entity from the specified group.
+         * \param Entity* entity, the entity to remove.
+         */
+		virtual void remove(std::shared_ptr<Entity> entity);
 };
 /** \brief Sets the active world.
  * \param World* world, the world to use.
  */
-void setWorld(World* world);
+void setWorld(std::shared_ptr<World> world);
 };
