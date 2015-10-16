@@ -1,6 +1,6 @@
-#include "../jeEntity.h"
-#include "jeCamera.h"
-#include "jeImage.h"
+#include "JE/jeEntity.h"
+#include "JE/GRAPHIC/jeCamera.h"
+#include "JE/GRAPHIC/jeImage.h"
 #include <iostream>
 #include <cmath>
 #include <vector>

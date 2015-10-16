@@ -1,9 +1,9 @@
-#include "../UTIL/jeMath.h"
-#include "../UTIL/jeTime.h"
-#include "jeCamera.h"
-#include "jeGraphic.h"
-#include "jeParticle.h"
-#include "jeSpritemap.h"
+#include "JE/UTIL/jeMath.h"
+#include "JE/UTIL/jeTime.h"
+#include "JE/GRAPHIC/jeCamera.h"
+#include "JE/GRAPHIC/jeGraphic.h"
+#include "JE/GRAPHIC/jeParticle.h"
+#include "JE/GRAPHIC/jeSpritemap.h"
 
 namespace JE{namespace GRAPHICS{
 Particle::Particle(float x, float y, float life, float angle, float speed, float bounce, float gravityX, float gravityY,
@@ -144,7 +144,7 @@ void Emitter::newType(int type){
 	}
 }
 void Emitter::emit(int type, float x, float y, int count){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	for (int i = 0; i < count; i ++){
 		float sx = this->types[type].spawnX + JE::MATH::random(-this->types[type].spawnXrand, this->types[type].spawnXrand);
 		float sy = this->types[type].spawnY + JE::MATH::random(-this->types[type].spawnYrand, this->types[type].spawnYrand);
@@ -167,7 +167,7 @@ void Emitter::emit(int type, float x1, float x2, float y1, float y2, int count){
 	}
 }
 void Emitter::setGravity(int type, float x, float y, float randX, float randY){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].gravityX = x;
 	this->types[type].gravityY = y;
 	this->types[type].gravityXrand = randX;
@@ -178,31 +178,31 @@ void Emitter::setPos(float x, float y){
 	this->y = y;
 }
 void Emitter::setSpawn(int type, float x, float y, float randX , float randY ){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].spawnX = x;
 	this->types[type].spawnY = y;
 	this->types[type].spawnXrand = randX;
 	this->types[type].spawnYrand = randY;
 }
 void Emitter::setSpeed(int type, float angle, float speed, float rangle , float rspeed ){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].angle = angle;
 	this->types[type].speed = speed;
 	this->types[type].randAngle = rangle;
 	this->types[type].randSpeed = rspeed;
 }
 void Emitter::setLife(int type, float life, float rlife ){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].life = life;
 	this->types[type].randLife = rlife;
 }
 void Emitter::setBounce(int type, float bounce, float rbounce ){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].bounce = bounce;
 	this->types[type].randBounce = rbounce;
 }
 void Emitter::setImage(int type, const std::shared_ptr<Image>& graphic){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].graphic.useTexture(graphic);
 	this->types[type].use_graphic = true;
 	this->types[type].use_spritemap = false;
@@ -221,7 +221,7 @@ void Emitter::setCollide(int type, Group* group){
 	this->types[type]->collide = group;
 }*/
 void Emitter::setSlow(int type, float slow, float rslow ){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].slow = slow;
 	this->types[type].randSlow = rslow;
 }
@@ -230,7 +230,7 @@ void Emitter::setSlow(int type, float slow, float rslow ){
 	this->types[type]->hitbox = hitbox;
 }*/
 void Emitter::update(float dt){
-	for (int i = 0; i < this->types.size(); i ++){
+	for (unsigned int i = 0; i < this->types.size(); i ++){
 		if (this->types[i].spritemapType == SPRITEMAP_TYPE_ANIM && this->types[i].use_spritemap){
 			this->types[i].spritemap->update(JE::TIME::dt);
 		}
@@ -238,7 +238,7 @@ void Emitter::update(float dt){
 	this->world.update(dt);
 }
 void Emitter::setFadeType(int type, int fadeType, float start){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].fade = fadeType;
 	this->types[type].fadeAt = start;
 }
@@ -251,7 +251,7 @@ void Emitter::setWorld(int type, int group){
 	this->types[type]->custom = JE::world->groups[group];
 }*/
 void Emitter::setSpritemap(int type, const std::shared_ptr<Spritemap>& spritemap, int anim, int spritemapType){
-	if (this->types.size() <= type) this->newType(type);
+	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].spritemap = std::make_shared<Spritemap>();
 	this->types[type].spritemap->useTexture(spritemap->texture);
 	this->types[type].spritemap->useData(spritemap->data);

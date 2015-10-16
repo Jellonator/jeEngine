@@ -1,9 +1,9 @@
-#include "GRAPHIC/jeGraphic.h"
-#include "UTIL/jeString.h"
-#include "UTIL/jeMath.h"
-#include "jeUtil.h"
-#include "UTIL/jeTime.h"
-#include "jeWorld.h"
+#include "JE/GRAPHIC/jeGraphic.h"
+#include "JE/UTIL/jeString.h"
+#include "JE/UTIL/jeMath.h"
+#include "JE/UTIL/jeTime.h"
+#include "JE/jeUtil.h"
+#include "JE/jeWorld.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>

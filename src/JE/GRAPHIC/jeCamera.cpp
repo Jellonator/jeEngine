@@ -1,6 +1,6 @@
-#include "jeCamera.h"
-#include "../UTIL/jeMath.h"
-#include "../jeUtil.h"
+#include "JE/GRAPHIC/jeCamera.h"
+#include "JE/UTIL/jeMath.h"
+#include "JE/jeUtil.h"
 #include <iostream>
 #include <algorithm>
 #include <cmath>

@@ -1,4 +1,4 @@
-#include "jePoint.h"
+#include "JE/jePoint.h"
 #include <cmath>
 namespace JE{
 Point::Point(float x, float y)

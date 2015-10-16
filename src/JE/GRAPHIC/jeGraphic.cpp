@@ -1,8 +1,8 @@
-#include "../UTIL/jeMath.h"
-#include "../jeWorld.h"
-#include "jeCamera.h"
-#include "jeGraphic.h"
-#include "jeImage.h"
+#include "JE/UTIL/jeMath.h"
+#include "JE/jeWorld.h"
+#include "JE/GRAPHIC/jeCamera.h"
+#include "JE/GRAPHIC/jeGraphic.h"
+#include "JE/GRAPHIC/jeImage.h"
 namespace JE{
 Graphic::Graphic(float x, float y)
 {

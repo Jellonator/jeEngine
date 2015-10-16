@@ -1,5 +1,5 @@
-#include "jeGroup.h"
-#include "jeEntity.h"
+#include "JE/jeGroup.h"
+#include "JE/jeEntity.h"
 #include <algorithm>
 #include <iostream>
 namespace JE{

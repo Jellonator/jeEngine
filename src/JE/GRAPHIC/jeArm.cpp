@@ -1,6 +1,6 @@
-#include "../UTIL/jeMath.h"
-#include "jeGraphic.h"
-#include "jeArm.h"
+#include "JE/UTIL/jeMath.h"
+#include "JE/GRAPHIC/jeGraphic.h"
+#include "JE/GRAPHIC/jeArm.h"
 #include <iostream>
 
 namespace JE{namespace ARM{
@@ -147,7 +147,7 @@ void Arm::getHinge(std::string name, float* x, float* y){
 	if (arm != nullptr) arm->getHinge(x, y);
 }
 std::shared_ptr<Arm> Arm::newArm(std::string name, float angle, float length, float offset_x, float offset_y){
-	int seperator = name.find('.');
+	size_t seperator = name.find('.');
 	if (seperator != name.npos){
 		std::string self_name = name.substr(0, seperator);
 		std::string pass_name = name.substr(seperator+1, name.npos);
@@ -166,7 +166,7 @@ std::shared_ptr<Arm> Arm::newArm(std::string name, float angle, float length, fl
 }
 std::shared_ptr<Arm> Arm::getArm(std::string name){
 	if (name == "") return shared_from_this();
-	int seperator = name.find('.');
+	size_t seperator = name.find('.');
 	if (seperator != name.npos){
 		std::string self_name = name.substr(0, seperator);
 		std::string pass_name = name.substr(seperator+1, name.npos);
@@ -178,7 +178,7 @@ std::shared_ptr<Arm> Arm::getArm(std::string name){
 	}
 }
 std::shared_ptr<Arm> Arm::getArm(int ID){
-	if (ID >= this->arm_vec.size() || ID < 0) return nullptr;
+	if (ID >= (int)this->arm_vec.size() || ID < 0) return nullptr;
 	return this->arm_vec[ID];
 }
 std::shared_ptr<Arm> Arm::operator[](std::string name){

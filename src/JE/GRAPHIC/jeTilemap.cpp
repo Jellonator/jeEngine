@@ -1,4 +1,4 @@
-#include "jeTilemap.h"
+#include "JE/GRAPHIC/jeTilemap.h"
 #include <iostream>
 namespace JE{namespace GRAPHICS{
 Tileset::Tileset(std::string file, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY){

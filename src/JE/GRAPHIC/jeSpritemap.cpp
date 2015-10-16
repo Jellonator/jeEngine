@@ -1,4 +1,4 @@
-#include "jeSpritemap.h"
+#include "JE/GRAPHIC/jeSpritemap.h"
 #include <iostream>
 #include <algorithm>
 namespace JE{namespace GRAPHICS{
@@ -108,10 +108,38 @@ Spritemap::~Spritemap(){
 	//if (this->data != NULL) {this->data->kill(this);}
 }
 
+int Spritemap::getFrameCount(){
+	return this->data->frames.size();
+}
+
+int Spritemap::getAnimFrameCount(int anim){
+	return this->getAnim(anim)->frames.size();
+}
+
+int Spritemap::getAnimCount(){
+	return this->data->anims.size();
+}
+
+float Spritemap::getFrameLength(int frame){
+	return this->getFrame(frame)->length;
+}
+
+float Spritemap::getAnimFrameLength(int anim, int frame){
+	return this->getFrame(anim, frame)->length;
+}
+
+SDL_Rect& getFrameRect(int frame){
+	
+}
+
+SDL_Rect& getAnimFrameRect(int anim, int frame){
+	
+}
+
 void Spritemap::update(float dt){
 	if (this->playing){
 		this->time += dt*this->speed*this->getAnim(this->anim)->speed;
-		bool done = false;
+		
 		while (this->time >= this->getFrame(this->anim, this->frame)->length){
 			this->time -= this->getFrame(this->anim, this->frame)->length;
 			++this->frame;
@@ -139,8 +167,8 @@ void Spritemap::setFrame(int frame){
 
 void Spritemap::setFrameNoAnim(int frame){
 	if (frame >= 0) this->frame = frame;
-	if (this->frame < 0) this->frame = this->data->frames.size() - 1;
-	if (this->frame >= this->data->frames.size()) this->frame = 0;
+	if (this->frame < 0) this->frame = this->getFrameCount() - 1;
+	if (this->frame >= this->getFrameCount()) this->frame = 0;
 	this->clip = this->getFrame(this->frame)->rect;
 	this->use_clip = true;
 }

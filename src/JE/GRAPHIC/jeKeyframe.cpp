@@ -1,5 +1,5 @@
-#include "../UTIL/jeMath.h"
-#include "jeKeyframe.h"
+#include "JE/UTIL/jeMath.h"
+#include "JE/GRAPHIC/jeKeyframe.h"
 #include <iostream>
 
 namespace JE{namespace ARM{

@@ -1,5 +1,5 @@
-#include "jeWorld.h"
-#include "jeEntity.h"
+#include "JE/jeWorld.h"
+#include "JE/jeEntity.h"
 namespace JE{
 std::shared_ptr<World> world;/**< \brief jeWorld* world, the active world. */
 World::World(int drawmode, int updatemode) : Group(drawmode, updatemode){

@@ -1,5 +1,5 @@
-#include "jeAnimation.h"
-#include "../UTIL/jeMath.h"
+#include "JE/GRAPHIC/jeAnimation.h"
+#include "JE/UTIL/jeMath.h"
 #include <iostream>
 
 namespace JE{namespace ARM{

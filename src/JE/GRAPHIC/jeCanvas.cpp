@@ -1,4 +1,4 @@
-#include "jeCanvas.h"
+#include "JE/GRAPHIC/jeCanvas.h"
 namespace JE{namespace GRAPHICS{
 Canvas::Canvas(int width, int height) : Image(){
 	this->texture->set(SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, width, height));

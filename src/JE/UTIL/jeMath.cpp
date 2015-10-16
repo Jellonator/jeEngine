@@ -1,6 +1,6 @@
-#include "../jeMain.h"
-#include "jeMath.h"
-#include "jeTime.h"
+#include "JE/UTIL/jeMath.h"
+#include "JE/UTIL/jeTime.h"
+#include "JE/jeMain.h"
 #include <cmath>
 #include <algorithm>
 namespace JE{

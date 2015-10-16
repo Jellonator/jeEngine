@@ -1,7 +1,7 @@
-#include "jeEntity.h"
-#include "jeGroup.h"
-#include "jeWorld.h"
-#include "UTIL/jeMath.h"
+#include "JE/jeEntity.h"
+#include "JE/jeGroup.h"
+#include "JE/jeWorld.h"
+#include "JE/UTIL/jeMath.h"
 namespace JE{
 Entity::Entity(float x, float y) : JE::Point(x, y){
 	this->layer = 0;
@@ -29,7 +29,7 @@ void Entity::OnRemove(World* world){};
 
 void Entity::destroy(){
 	//tell the entity it is being removed
-	for (int i = 0; i < this->__GROUPS__.size(); ++i){
+	for (unsigned int i = 0; i < this->__GROUPS__.size(); ++i){
 		//if (group == nullptr) continue;
 		if (this->__GROUPS__[i].expired()) continue;
 		this->__GROUPS__[i].lock()->remove(shared_from_this());

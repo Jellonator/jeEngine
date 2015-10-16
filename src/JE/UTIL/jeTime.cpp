@@ -1,5 +1,5 @@
-#include "../jeMain.h"
-#include "jeTime.h"
+#include "JE/jeMain.h"
+#include "JE/UTIL/jeTime.h"
 #include <iostream>
 namespace JE{
 namespace TIME{

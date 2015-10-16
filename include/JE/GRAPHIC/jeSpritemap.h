@@ -125,6 +125,17 @@ class Spritemap : public Image
          */
 		void useData(std::shared_ptr<SpritemapData> data);
 		void useData(const std::shared_ptr<Spritemap>& spritemap);
+		
+		int getFrameCount();
+		int getAnimFrameCount(int anim);
+		
+		int getAnimCount();
+		
+		float getFrameLength(int frame);
+		float getAnimFrameLength(int anim, int frame);
+		
+		SDL_Rect& getFrameRect(int frame);
+		SDL_Rect& getAnimFrameRect(int anim, int frame);
 	protected:
 	private:
 };

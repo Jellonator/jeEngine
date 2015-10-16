@@ -13,7 +13,6 @@
 #include "GRAPHIC/jeTilemap.h"
 #include "GRAPHIC/jeCanvas.h"
 #include "GRAPHIC/jeCamera.h"
-#include "UTIL/jeData.h"
 #include "UTIL/jeEvent.h"
 #include "UTIL/jeTime.h"
 #include "UTIL/jeMath.h"
