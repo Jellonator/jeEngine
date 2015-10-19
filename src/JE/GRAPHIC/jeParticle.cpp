@@ -25,7 +25,7 @@ int spritemapAnim, int spritemapType):JE::Entity(x, y){//such a long constructor
 	if (spritemap && (spritemapType == SPRITEMAP_TYPE_ANIM_INDIVIDUAL || spritemapType == SPRITEMAP_TYPE_FADE)){
 		this->spritemap = std::shared_ptr<Spritemap>(new JE::GRAPHICS::Spritemap());
 		this->spritemap->useTexture(spritemap->texture);
-		this->spritemap->useData(spritemap->data);
+		this->spritemap->useData(*spritemap);
 		this->spritemap->play(spritemapAnim, true);
 		this->use_spritemap = true;
 	}
@@ -52,7 +52,7 @@ void Particle::OnUpdate(){if (JE::TIME::dt < 0) return;
 				std::shared_ptr<Emitter> emitter = this->parent.lock();
 				float a = this->life / this->mlife;
 				a = JE::MATH::normalize(a, 0.0f, 1-emitter->types[this->type].fadeAt);
-				int n_frames = (int)this->spritemap->getAnim(this->spritemap->anim)->frames.size();
+				int n_frames = this->spritemap->getCurrentAnim().getFrameCount();
 				int d = JE::MATH::clamp(int(a*n_frames), 0, n_frames - 1);
 				this->spritemap->setFrame(d);
 			}
@@ -254,7 +254,7 @@ void Emitter::setSpritemap(int type, const std::shared_ptr<Spritemap>& spritemap
 	if ((int)this->types.size() <= type) this->newType(type);
 	this->types[type].spritemap = std::make_shared<Spritemap>();
 	this->types[type].spritemap->useTexture(spritemap->texture);
-	this->types[type].spritemap->useData(spritemap->data);
+	this->types[type].spritemap->useData(*spritemap);
 	this->types[type].spritemapType = spritemapType;
 	this->types[type].spritemapAnim = anim;
 	this->types[type].spritemap->play(anim, true);
