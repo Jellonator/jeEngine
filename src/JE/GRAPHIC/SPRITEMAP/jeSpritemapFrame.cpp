@@ -7,6 +7,8 @@
 namespace JE{namespace GRAPHICS{
 
 Frame::Frame(int x, int y, int w, int h, float length){
+	this->rect = {0, 0, 1, 1};
+	this->length = 1;
 	this->setSize(x, y, w, h);
 	this->setLength(length);
 }

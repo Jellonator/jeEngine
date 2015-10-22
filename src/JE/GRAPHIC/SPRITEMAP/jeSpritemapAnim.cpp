@@ -2,8 +2,8 @@
 #include "JE/GRAPHIC/SPRITEMAP/jeSpritemapAnim.h"
 #include "JE/GRAPHIC/SPRITEMAP/jeSpritemapData.h"
 #include "JE/GRAPHIC/SPRITEMAP/jeSpritemapFrame.h"
-#include <iostream>
 #include <algorithm>
+
 namespace JE{namespace GRAPHICS{
 Anim::Anim(){
 	this->speed = 1;
@@ -22,18 +22,24 @@ float Anim::getSpeed() const{
 	return this->speed;
 }
 
-Frame& Anim::getFrameFromData(unsigned int index, SpritemapData& data){
-	unsigned int ID = this->getFrameID(index);
-	Frame& ret = data.getFrame(ID);
-	return ret;
+unsigned int Anim::getFrameID(unsigned int index) const{
+	return this->frames.at(index);
 }
 
-unsigned int Anim::getFrameID(unsigned int index) const{
-	return this->frames[index];
+Frame& Anim::getFrameFromData(SpritemapData& data, unsigned int index) {
+	return data.getFrame(this->getFrameID(index));
 }
 
 unsigned int Anim::getFrameCount() const{
 	return this->frames.size();
+}
+
+unsigned int Anim::first() const{
+	return 0;
+}
+
+unsigned int Anim::last() const{
+	return this->frames.size()-1;
 }
 
 //setters

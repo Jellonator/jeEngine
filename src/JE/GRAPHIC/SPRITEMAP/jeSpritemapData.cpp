@@ -2,8 +2,8 @@
 #include "JE/GRAPHIC/SPRITEMAP/jeSpritemapAnim.h"
 #include "JE/GRAPHIC/SPRITEMAP/jeSpritemapData.h"
 #include "JE/GRAPHIC/SPRITEMAP/jeSpritemapFrame.h"
-#include <iostream>
 #include <algorithm>
+
 namespace JE{namespace GRAPHICS{
 SpritemapData::SpritemapData(){
 
@@ -13,40 +13,41 @@ SpritemapData::~SpritemapData(){
 
 }
 
-void SpritemapData::newFrame(int x, int y, int w, int h, float time, unsigned int ID){
-	this->frames.emplace(this->frames.begin() + ID, x, y, w, h, time);
+unsigned int SpritemapData::newFrame(int x, int y, int w, int h, float time, unsigned int ID){
+	this->frames.resize(std::max((int)this->frames.size(), (int)ID+1));
+	this->frames.at(ID).setLength(time);
+	this->frames.at(ID).setSize(x, y, w, h);
+	return ID;
 }
 
-void SpritemapData::newFrame(int x, int y, int w, int h, float time){
+unsigned int SpritemapData::newFrame(int x, int y, int w, int h, float time){
 	this->frames.emplace_back(x, y, w, h, time);
+	return this->frames.size()-1;
 }
 
-void SpritemapData::newAnim(unsigned int ID, float speed){
-	this->anims.emplace(this->anims.begin() + ID, speed);
+Anim& SpritemapData::newAnim(std::string name, float speed){
+	this->anims.emplace(name, speed);
+	return this->anims.at(name);
 }
 
-void SpritemapData::newAnim(float speed){
-	this->anims.emplace_back(speed);
+void SpritemapData::addFrameToAnim(std::string anim, unsigned int frame, unsigned int ID){
+	this->getAnim(anim).addFrame(frame, ID);
 }
 
-void SpritemapData::addFrameToAnim(unsigned int anim, unsigned int frame, unsigned int ID){
-	this->anims[anim].addFrame(frame, ID);
+void SpritemapData::addFrameToAnim(std::string anim, unsigned int frame){
+	this->getAnim(anim).addFrame(frame);
 }
 
-void SpritemapData::addFrameToAnim(unsigned int anim, unsigned int frame){
-	this->anims[anim].addFrame(frame);
-}
-
-Frame& SpritemapData::getFrame(unsigned int anim, unsigned int frame){
-	return this->anims[anim].getFrameFromData(frame, *this);
+Frame& SpritemapData::getFrame(std::string anim, unsigned int frame){
+	return this->getAnim(anim).getFrameFromData(*this, frame);
 }
 
 Frame& SpritemapData::getFrame(unsigned int frame){
-	return this->frames[frame];
+	return this->frames.at(frame);
 }
 
-Anim& SpritemapData::getAnim(unsigned int anim){
-	return this->anims[anim];
+Anim& SpritemapData::getAnim(std::string anim){
+	return this->anims.at(anim);
 }
 
 unsigned int SpritemapData::getAnimCount() const {
@@ -55,6 +56,19 @@ unsigned int SpritemapData::getAnimCount() const {
 
 unsigned int SpritemapData::getFrameCount() const {
 	return this->frames.size();
+}
+
+bool SpritemapData::doesContainFrame(const Frame& frame, unsigned int* position){
+	for (std::vector<Frame>::size_type i = 0; i != this->frames.size(); ++i){
+		Frame& other_frame = this->frames[i];
+		if (&other_frame == &frame){
+			if (position != nullptr){
+				*position = i;
+			}
+			return true;
+		}
+	}
+	return false;
 }
 
 };};

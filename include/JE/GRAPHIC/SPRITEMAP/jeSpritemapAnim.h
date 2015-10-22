@@ -16,14 +16,16 @@ public:
 	
 	//getters
 	float getSpeed() const;
-	Frame& getFrameFromData(unsigned int index, SpritemapData& data);
 	unsigned int getFrameID(unsigned int index) const;
 	unsigned int getFrameCount() const;
+	Frame& getFrameFromData(SpritemapData& data, unsigned int index);
+	unsigned int first() const;
+	unsigned int last() const;
 	
 	//setters
 	void setSpeed(float speed);
-	void addFrame(unsigned int frame, unsigned int ID);
 	void addFrame(unsigned int frame);
+	void addFrame(unsigned int frame, unsigned int ID);
 	void removeFrame(unsigned int ID);
 	void clearFrames();
 	

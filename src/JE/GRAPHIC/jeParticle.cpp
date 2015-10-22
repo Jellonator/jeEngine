@@ -26,7 +26,7 @@ int spritemapAnim, int spritemapType):JE::Entity(x, y){//such a long constructor
 		this->spritemap = std::shared_ptr<Spritemap>(new JE::GRAPHICS::Spritemap());
 		this->spritemap->useTexture(spritemap->texture);
 		this->spritemap->useData(*spritemap);
-		this->spritemap->play(spritemapAnim, true);
+		this->spritemap->play("", true);
 		this->use_spritemap = true;
 	}
 	this->spritemapType = spritemapType;
@@ -257,7 +257,7 @@ void Emitter::setSpritemap(int type, const std::shared_ptr<Spritemap>& spritemap
 	this->types[type].spritemap->useData(*spritemap);
 	this->types[type].spritemapType = spritemapType;
 	this->types[type].spritemapAnim = anim;
-	this->types[type].spritemap->play(anim, true);
+	this->types[type].spritemap->play("", true);
 	this->types[type].use_spritemap = true;
 	this->types[type].use_graphic = false;
 	//this->types[type].graphic = NULL;
