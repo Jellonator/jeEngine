@@ -43,7 +43,9 @@ void Particle::setAcceleration(float accel_x, float accel_y){
 }
 
 void Particle::update(float dt){
-	
+	this->life -= dt;
+	this->x += this->speed_x * dt;
+	this->y += this->speed_y * dt;
 }
 
 void Particle::setTypeName(const std::string& name){
