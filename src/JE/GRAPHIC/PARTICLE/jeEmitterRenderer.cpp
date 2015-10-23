@@ -20,18 +20,31 @@ void EmitterRenderer::draw(const EmitterType& type, const Particle& particle){
 	JE::GRAPHICS::drawRect(particle.getX() - 1, particle.getY() - 1, 3, 3, true);
 }
 
-EmitterRendererImage::EmitterRendererImage(JE::GRAPHICS::Image& image) : EmitterRenderer(), 
-image(image)
-{
-	
-}
+//Image renderer
+EmitterRendererImage::EmitterRendererImage(JE::GRAPHICS::Image& image) : EmitterRenderer(), image(image){}
 
-EmitterRendererImage::~EmitterRendererImage(){
-	
-}
+EmitterRendererImage::~EmitterRendererImage(){}
 
 void EmitterRendererImage::draw(const EmitterType& type, const Particle& particle){
 	this->image.draw(particle.getX(), particle.getY());
+}
+
+//Spritemap renderer
+EmitterRendererSpritemap::EmitterRendererSpritemap(JE::GRAPHICS::Spritemap& spritemap, const std::string& name) : EmitterRenderer(),
+spritemap(spritemap) {
+	this->animation = name;
+}
+
+EmitterRendererSpritemap::~EmitterRendererSpritemap(){}
+
+void EmitterRendererSpritemap::draw(const EmitterType& type, const Particle& particle){
+	this->spritemap.play(this->animation);
+	this->spritemap.update(particle.getTimeAlive());// really inefficient but idgaf
+	this->spritemap.draw(particle.getX(), particle.getY());
+}
+
+Spritemap& EmitterRendererSpritemap::getSpritemap(){
+	return this->spritemap;
 }
 
 }}

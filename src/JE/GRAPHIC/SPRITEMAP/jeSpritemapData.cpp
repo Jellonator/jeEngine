@@ -25,20 +25,20 @@ unsigned int SpritemapData::newFrame(int x, int y, int w, int h, float time){
 	return this->frames.size()-1;
 }
 
-Anim& SpritemapData::newAnim(std::string name, float speed){
+Anim& SpritemapData::newAnim(const std::string& name, float speed){
 	this->anims.emplace(name, speed);
 	return this->anims.at(name);
 }
 
-void SpritemapData::addFrameToAnim(std::string anim, unsigned int frame, unsigned int ID){
+void SpritemapData::addFrameToAnim(const std::string& anim, unsigned int frame, unsigned int ID){
 	this->getAnim(anim).addFrame(frame, ID);
 }
 
-void SpritemapData::addFrameToAnim(std::string anim, unsigned int frame){
+void SpritemapData::addFrameToAnim(const std::string& anim, unsigned int frame){
 	this->getAnim(anim).addFrame(frame);
 }
 
-Frame& SpritemapData::getFrame(std::string anim, unsigned int frame){
+Frame& SpritemapData::getFrame(const std::string& anim, unsigned int frame){
 	return this->getAnim(anim).getFrameFromData(*this, frame);
 }
 
@@ -46,7 +46,7 @@ Frame& SpritemapData::getFrame(unsigned int frame){
 	return this->frames.at(frame);
 }
 
-Anim& SpritemapData::getAnim(std::string anim){
+Anim& SpritemapData::getAnim(const std::string& anim){
 	return this->anims.at(anim);
 }
 

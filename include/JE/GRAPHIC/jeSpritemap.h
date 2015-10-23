@@ -21,9 +21,9 @@ public:
 	
 	//getter functions
 	std::shared_ptr<SpritemapData> getData();
-	Frame& getFrame(std::string anim, unsigned int frame);
+	Frame& getFrame(const std::string& anim, unsigned int frame);
 	Frame& getFrame(unsigned int frame);
-	Anim& getAnim(std::string anim);
+	Anim& getAnim(const std::string& anim);
 	Anim& getCurrentAnim();
 	Frame& getCurrentFrame();
 	bool doesContainFrame(const Frame& frame, unsigned int* position = nullptr);
@@ -35,25 +35,26 @@ public:
 	//data management
 	unsigned int newFrame(int x, int y, int w, int h, float time, unsigned int ID);
 	unsigned int newFrame(int x, int y, int w, int h, float time = 1.0f);
-	Anim& newAnim(std::string name, float speed = 1.0f);
-	void addFrameToAnim(std::string anim, unsigned int frame, unsigned int ID);
-	void addFrameToAnim(std::string anim, unsigned int frame);
+	Anim& newAnim(const std::string& name, float speed = 1.0f);
+	void addFrameToAnim(const std::string& anim, unsigned int frame, unsigned int ID);
+	void addFrameToAnim(const std::string& anim, unsigned int frame);
 
 	//setter functions
 	void setFrame(unsigned int frame);
+	void setFrame(const std::string& name, unsigned int frame);
 	void setFrameNoAnim(unsigned int frame);
 	void setSpeed(float speed);
 
 	//animation functions
 	void updateClip();
-	void play(std::string anim, bool loop = true, bool reset = true, unsigned int frame = 0);
+	void play(const std::string& anim, bool loop = true, bool reset = true, unsigned int frame = 0);
 	void pause();/**< \brief pause the animation. */
 	void resume();/**< \brief resume the animation. */
 	void reset();/**< \brief reset the animation. */
 	void update(float dt = JE::TIME::dt);
 	
 	//drawing functions
-	void drawFrame(std::string anim, unsigned int frame, float x = 0, float y = 0, float angle = 0, const std::shared_ptr<Entity>& parent = NULL);
+	void drawFrame(const std::string& anim, unsigned int frame, float x = 0, float y = 0, float angle = 0, const std::shared_ptr<Entity>& parent = NULL);
 	void drawFrameNoAnim(unsigned int frame, float x = 0, float y = 0, float angle = 0, const std::shared_ptr<Entity>& parent = NULL);
 	void drawWhole(float x = 0, float y = 0, float angle = 0, const std::shared_ptr<Entity>& parent = NULL);
 	

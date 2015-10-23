@@ -13,9 +13,9 @@ public:
 	SpritemapData();
 	virtual ~SpritemapData();
 	
-	Frame& getFrame(std::string anim, unsigned int frame);
+	Frame& getFrame(const std::string& anim, unsigned int frame);
 	Frame& getFrame(unsigned int frame);
-	Anim& getAnim(std::string name);
+	Anim& getAnim(const std::string& name);
 	
 	bool doesContainFrame(const Frame& frame, unsigned int* position = nullptr);
 	/** \brief Adds a new frame to the spritemap.
@@ -32,14 +32,14 @@ public:
 	 * \param int ID, the ID to set the anim to.
 	 * \param 1 float speed, the speed of the animation.
 	 */
-	Anim& newAnim(std::string name, float speed = 1.0f);
+	Anim& newAnim(const std::string& name, float speed = 1.0f);
 	/** \brief Adds a frame to an animation.
 	 * \param anim int, the animation to add the frame to.
 	 * \param frame int, the frame to add.
 	 * \param -1 int pos, the position to set the frame to.
 	 */
-	void addFrameToAnim(std::string anim, unsigned int frame, unsigned int ID);
-	void addFrameToAnim(std::string anim, unsigned int frame);
+	void addFrameToAnim(const std::string& anim, unsigned int frame, unsigned int ID);
+	void addFrameToAnim(const std::string& anim, unsigned int frame);
 
 	unsigned int getFrameCount() const;
 	unsigned int getAnimCount() const;

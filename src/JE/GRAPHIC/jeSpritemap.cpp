@@ -50,21 +50,21 @@ unsigned int Spritemap::newFrame(int x, int y, int w, int h, float time){
 }
 
 //new anim
-Anim& Spritemap::newAnim(std::string name, float speed){
+Anim& Spritemap::newAnim(const std::string& name, float speed){
 	return this->data->newAnim(name, speed);
 }
 
 //add frame
-void Spritemap::addFrameToAnim(std::string anim, unsigned int frame, unsigned int ID){
+void Spritemap::addFrameToAnim(const std::string& anim, unsigned int frame, unsigned int ID){
 	this->data->addFrameToAnim(anim, frame, ID);
 }
 
-void Spritemap::addFrameToAnim(std::string anim, unsigned int frame){
+void Spritemap::addFrameToAnim(const std::string& anim, unsigned int frame){
 	this->data->addFrameToAnim(anim, frame);
 }
 
 //get frame
-Frame& Spritemap::getFrame(std::string anim, unsigned int frame){
+Frame& Spritemap::getFrame(const std::string& anim, unsigned int frame){
 	return this->data->getFrame(anim, frame);
 }
 
@@ -73,7 +73,7 @@ Frame& Spritemap::getFrame(unsigned int frame){
 }
 
 //get anim
-Anim& Spritemap::getAnim(std::string anim){
+Anim& Spritemap::getAnim(const std::string& anim){
 	return this->data->getAnim(anim);
 }
 
@@ -122,6 +122,12 @@ void Spritemap::updateClip(){
 	this->use_clip = true;
 }
 
+void Spritemap::setFrame(const std::string& name, unsigned int frame){
+	this->anim = name;
+	this->frame = frame;
+	this->playing = false;
+}
+
 void Spritemap::setFrame(unsigned int frame){
 	this->frame = frame;
 	this->updateClip();
@@ -132,7 +138,7 @@ void Spritemap::setFrameNoAnim(unsigned int frame){
 	this->clip = this->getFrame(frame).getRect();
 }
 
-void Spritemap::play(std::string anim, bool loop, bool reset, unsigned int frame){
+void Spritemap::play(const std::string& anim, bool loop, bool reset, unsigned int frame){
 	if (anim == this->anim && this->playing){
 		if (!reset) return;
 	}
@@ -140,6 +146,7 @@ void Spritemap::play(std::string anim, bool loop, bool reset, unsigned int frame
 	this->frame = frame;
 	this->playing = true;
 	this->looping = loop;
+	this->time = 0;
 	this->updateClip();
 }
 
@@ -171,7 +178,7 @@ void Spritemap::useData(std::shared_ptr<SpritemapData> data){
 	this->data = data;
 }
 
-void Spritemap::drawFrame(std::string anim, unsigned int frame, float x, float y, float angle, const std::shared_ptr<Entity>& parent){
+void Spritemap::drawFrame(const std::string& anim, unsigned int frame, float x, float y, float angle, const std::shared_ptr<Entity>& parent){
 	int temp = this->frame;
 	this->setFrame(frame);
 	this->draw(x, y, angle, parent);
