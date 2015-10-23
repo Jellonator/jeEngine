@@ -6,7 +6,7 @@
 #include "GRAPHIC/jeImage.h"
 #include "GRAPHIC/jeKeyframe.h"
 #include "GRAPHIC/jeModel.h"
-#include "GRAPHIC/jeParticle.h"
+#include "GRAPHIC/jeEmitter.h"
 #include "GRAPHIC/jeProgram.h"
 #include "GRAPHIC/jeShader.h"
 #include "GRAPHIC/jeSpritemap.h"

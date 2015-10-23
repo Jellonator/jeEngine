@@ -21,12 +21,13 @@ EmitterType& Emitter::getType(const std::string& name){
 	return this->type_m.at(name);
 }
 
-void Emitter::emit(const std::string& name, int ammount, float offset_x, float offset_y, float offset_angle){
+void Emitter::create(const std::string& name, int ammount, float offset_x, float offset_y, float offset_angle){
 	for (int i = 0; i < ammount; ++i){
 		if ((int)this->particle_v.size() < this->max_particles){
 			EmitterType emitter_type = this->getType(name);
 			this->particle_v.emplace_back(emitter_type.getRandomPositionX(), emitter_type.getRandomPositionY(), emitter_type.getRandomLife());
 			Particle& part = this->particle_v.back();
+			this->active_v.push_back(this->particle_v.size()-1);
 			
 			float speedx, speedy;
 			emitter_type.getRandomSpeedXY(speedx, speedy);
@@ -35,10 +36,12 @@ void Emitter::emit(const std::string& name, int ammount, float offset_x, float o
 			part.setSlow(emitter_type.getRandomSlow());
 			part.setTypeName(name);
 			
-			
 		} else if (this->emptyslot_v.size() > 0){
-			Particle& part = this->particle_v.at(this->emptyslot_v.back());
+			auto position = this->emptyslot_v.back();
+			Particle& part = this->particle_v.at(position);
 			EmitterType& emitter_type = this->getType(name);
+			this->active_v.push_back(position);
+			this->emptyslot_v.pop_back();
 			
 			float speedx, speedy;
 			emitter_type.getRandomSpeedXY(speedx, speedy);
@@ -49,12 +52,32 @@ void Emitter::emit(const std::string& name, int ammount, float offset_x, float o
 			part.setSlow(emitter_type.getRandomSlow());
 			part.setTypeName(name);
 			
-			this->emptyslot_v.pop_back();
-			
 		} else {
 			//Nowhere to put in a new particle; failure.
 			return;
 		}
+	}
+}
+
+void Emitter::update(float dt){
+	std::vector<std::vector<Particle>::size_type>::iterator i = this->active_v.begin();
+	while (i != this->active_v.end()){
+		Particle& part = this->particle_v.at(*i);
+		part.update(dt);
+		if (part.isDead()){
+			this->emptyslot_v.push_back(*i);
+			i = this->active_v.erase(i);
+		} else {
+			++i;
+		}
+	}
+}
+
+void Emitter::draw(){
+	for (auto& index : this->active_v){
+		Particle& part = this->particle_v[index];
+		EmitterType& etype = this->type_m[part.getTypeName()];
+		etype.draw(part);
 	}
 }
 

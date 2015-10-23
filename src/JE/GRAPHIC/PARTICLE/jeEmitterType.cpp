@@ -1,10 +1,11 @@
 #include "JE/GRAPHIC/PARTICLE/jeEmitterType.h"
 #include "JE/GRAPHIC/PARTICLE/jeParticle.h"
 #include "JE/GRAPHIC/jeEmitter.h"
+#include "JE/GRAPHIC/jeGraphic.h"
 #include "JE/UTIL/jeMath.h"
 
 namespace JE{ namespace GRAPHICS{
-	
+
 EmitterType::EmitterType(){
 	this->x1 = 0;
 	this->x2 = 0;
@@ -176,10 +177,11 @@ void EmitterType::getRandomSpeedXY(float& speed_x, float& speed_y) const{
 	particle.x += particle.speed_x * dt;
 	particle.y += particle.speed_y * dt;
 	particle.life -= dt;
-}
-
-void EmitterType::draw(Particle& particle, float offset_x, float offset_y){
-	
 }*/
+
+void EmitterType::draw(Particle& particle){
+	JE::GRAPHICS::setColor(255, 255, 255);
+	JE::GRAPHICS::drawRect(particle.getX() - 2, particle.getY() - 2, 5, 5, true);
+}
 
 }}

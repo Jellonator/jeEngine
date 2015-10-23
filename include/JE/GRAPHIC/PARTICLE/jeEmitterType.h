@@ -51,7 +51,7 @@ public:
 	
 	//Particle functions
 	//void update(Particle& particle, float dt);
-	//void draw(Particle& particle, float offset_x, float offset_y);
+	void draw(Particle& particle);
 	
 private:
 	float x1, y1, x2, y2;

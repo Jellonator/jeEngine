@@ -19,9 +19,12 @@ public:
 	void setAcceleration(float accel_x, float accel_y);
 	
 	void setTypeName(const std::string& name);
+	const std::string& getTypeName() const;
+	bool isDead() const;
 	
 	void update(float dt);
-	void draw();
+	float getX();
+	float getY();
 	
 private:
 	float x, y;
