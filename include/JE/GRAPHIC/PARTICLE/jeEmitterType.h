@@ -1,10 +1,12 @@
 #pragma once
+#include <memory>
 
 namespace JE{ namespace GRAPHICS{
 
 class Particle;
 class Emitter;
 class EmitterType;
+class EmitterRenderer;
 
 class EmitterType {
 public:
@@ -48,10 +50,15 @@ public:
 	float getRandomLife() const;
 	float getRandomAngle() const;
 	
-	
 	//Particle functions
 	//void update(Particle& particle, float dt);
 	void draw(Particle& particle);
+	
+	template <class RType, class... Args>
+	void setRenderer(Args... arguments){
+		std::unique_ptr<RType> ptr(new RType(arguments...));
+		this->renderer = std::move(ptr);
+	}
 	
 private:
 	float x1, y1, x2, y2;
@@ -60,6 +67,7 @@ private:
 	float slow1, slow2;
 	float life1, life2;
 	float accel_x1, accel_y1, accel_x2, accel_y2;
+	std::unique_ptr<EmitterRenderer> renderer;
 };
 
 }}

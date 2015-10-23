@@ -21,16 +21,20 @@ public:
 	void setTypeName(const std::string& name);
 	const std::string& getTypeName() const;
 	bool isDead() const;
+	float getLife() const;
+	float getLifePercent() const;
+	float getTimeAlive() const;
 	
 	void update(float dt);
-	float getX();
-	float getY();
+	float getX() const;
+	float getY() const;
 	
 private:
 	float x, y;
 	float speed_x, speed_y;
 	float slow;
 	float life;
+	float life_initial;
 	float accel_x, accel_y;
 	std::string type_name;
 };

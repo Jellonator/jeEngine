@@ -2,6 +2,7 @@
 
 #define this_ptr shared_from_this()
 
+#include "GRAPHIC/PARTICLE/jeEmitterRenderer.h"
 #include "GRAPHIC/PARTICLE/jeEmitterType.h"
 #include "GRAPHIC/PARTICLE/jeParticle.h"
 #include "GRAPHIC/jeGraphic.h"

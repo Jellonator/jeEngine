@@ -1,5 +1,6 @@
 #include "JE/GRAPHIC/PARTICLE/jeEmitterType.h"
 #include "JE/GRAPHIC/PARTICLE/jeParticle.h"
+#include "JE/GRAPHIC/PARTICLE/jeEmitterRenderer.h"
 #include "JE/GRAPHIC/jeEmitter.h"
 #include "JE/GRAPHIC/jeGraphic.h"
 #include "JE/UTIL/jeMath.h"
@@ -180,8 +181,9 @@ void EmitterType::getRandomSpeedXY(float& speed_x, float& speed_y) const{
 }*/
 
 void EmitterType::draw(Particle& particle){
-	JE::GRAPHICS::setColor(255, 255, 255);
-	JE::GRAPHICS::drawRect(particle.getX() - 2, particle.getY() - 2, 5, 5, true);
+	if (this->renderer){
+		this->renderer->draw(*this, particle);
+	}
 }
 
 }}
