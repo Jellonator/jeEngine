@@ -9,11 +9,11 @@ class Entity;
 class Group : public std::enable_shared_from_this<Group>
 {
 	public:
-        /** \brief A group for containing entities.
-         * \param order int, the ordering for entities. Defaults to no order(fastest).
-         * \param drawmode int, the drawing mode. Defaults to all(renders all entities in order).
-         * \param updatemode int, the update mode. Defaults to all(updates all entities in order).
-         */
+		/** \brief A group for containing entities.
+		 * \param order int, the ordering for entities. Defaults to no order(fastest).
+		 * \param drawmode int, the drawing mode. Defaults to all(renders all entities in order).
+		 * \param updatemode int, the update mode. Defaults to all(updates all entities in order).
+		 */
 		Group(int drawmode = JE_WORLD_MODE_ALL, int updatemode = JE_WORLD_MODE_ALL);
 		virtual ~Group();
 		std::vector<std::shared_ptr<Group>> groups;
@@ -30,23 +30,23 @@ class Group : public std::enable_shared_from_this<Group>
 
 		void begin();/**< \brief Initiates the group. */
 		/** \brief Updates all entities in the group or sub-group.
-         * \param int group, the group to update, if not specified it instead updates all of this group's entities.
-         */
+		 * \param int group, the group to update, if not specified it instead updates all of this group's entities.
+		 */
 		void update(float dt, int group = -1);
 		/** \brief Draws all entities in the group or sub-group.
-         * \param int group, the group to draw, if not specified it instead draws all of this group's entities.
-         */
+		 * \param int group, the group to draw, if not specified it instead draws all of this group's entities.
+		 */
 		void draw(int group = -1);
 		void end();/**< \brief Closes the group. */
 
-        /** \brief Adds an entity to the specified Group.
-         * \param Entity* entity, the entity to add.
-         */
+		/** \brief Adds an entity to the specified Group.
+		 * \param Entity* entity, the entity to add.
+		 */
 		virtual void add(std::shared_ptr<Entity> entity);
 
-        /** \brief Removes an entity from the specified group.
-         * \param Entity* entity, the entity to remove.
-         */
+		/** \brief Removes an entity from the specified group.
+		 * \param Entity* entity, the entity to remove.
+		 */
 		virtual void remove(std::shared_ptr<Entity> entity);
 		void move(int from, int to);
 		void clear();
@@ -63,26 +63,26 @@ class Group : public std::enable_shared_from_this<Group>
 		int getID(std::shared_ptr<Entity> entity);
 
 		/** \brief Changes the order of a group.
-         * \param JE_ORDER order, the order to use.
+		 * \param JE_ORDER order, the order to use.
 		 */
 		//void changeOrder(int order);
 
-        /** \brief Adds an entity to a sub-group.
-         * \param Entity* entity, the entity to add.
-         * \param unsigned int group, the sub-group to add the entity to.
+		/** \brief Adds an entity to a sub-group.
+		 * \param Entity* entity, the entity to add.
+		 * \param unsigned int group, the sub-group to add the entity to.
 		 */
 		void addToGroup(std::shared_ptr<Entity> entity, unsigned int group);
 
-        /** \brief Removes an entity from a sub-group.
-         * \param Entity* entity, the entity to remove.
-         * \param unsigned int group, the sub-group to remove from.
+		/** \brief Removes an entity from a sub-group.
+		 * \param Entity* entity, the entity to remove.
+		 * \param unsigned int group, the sub-group to remove from.
 		 */
 		void removeFromGroup(std::shared_ptr<Entity> entity, unsigned int group);
 
-        /** \brief Get a sub-group pointer from a group.
-         * \param unsigned int index, the index of the sub-group to retrieve.
-         * \return Group*, a pointer to a group.
-         */
+		/** \brief Get a sub-group pointer from a group.
+		 * \param unsigned int index, the index of the sub-group to retrieve.
+		 * \return Group*, a pointer to a group.
+		 */
 		std::shared_ptr<Group> getGroup(unsigned int index);
 		const std::shared_ptr<Group>& getGroupConst(unsigned int index);
 
@@ -93,13 +93,13 @@ class Group : public std::enable_shared_from_this<Group>
 		 */
 		void addGroup(unsigned int group, int drawmode = -1, int updatemode = -1);
 
-        /** \brief Removes a group form the world
-         * \param unsigned int group, the group to remove.
+		/** \brief Removes a group form the world
+		 * \param unsigned int group, the group to remove.
 		 */
 		void removeGroup(unsigned int group);
-        /** \brief Clears the world of all entities.
-         * \param int level. 0 means entities in this group only. 1 means entities and sub-groups in this group only. 2 means all entities will be removed from their assosiated groups this group.  Sub-groups are also removed.
-         */
+		/** \brief Clears the world of all entities.
+		 * \param int level. 0 means entities in this group only. 1 means entities and sub-groups in this group only. 2 means all entities will be removed from their assosiated groups this group.  Sub-groups are also removed.
+		 */
 		void deleteAll();
 		
 		void updateEntities();

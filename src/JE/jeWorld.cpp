@@ -46,10 +46,10 @@ void World::OnEnd(){
 }
 void World::add(std::shared_ptr<Entity> entity){
 	Group::add(entity);
-	entity->OnAdd(this);
+	entity->OnAdd(*this);
 }
 void World::remove(std::shared_ptr<Entity> entity){
 	Group::remove(entity);
-	entity->OnRemove(this);
+	entity->OnRemove(*this);
 }
 };

@@ -16,16 +16,16 @@ Entity::~Entity(){
 
 void Entity::OnCreate(){};
 
-void Entity::OnAdd(Group* group){};
-void Entity::OnAdd(World* world){};
+void Entity::OnAdd(const Group& group){};
+void Entity::OnAdd(const World& world){};
 
 void Entity::OnUpdate(float dt){};
 
 void Entity::OnDraw(){
 };
 
-void Entity::OnRemove(Group* group){};
-void Entity::OnRemove(World* world){};
+void Entity::OnRemove(const Group& group){};
+void Entity::OnRemove(const World& world){};
 
 void Entity::destroy(){
 	//tell the entity it is being removed

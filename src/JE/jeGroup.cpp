@@ -96,7 +96,7 @@ void Group::_add(std::shared_ptr<Entity> entity){
 	std::weak_ptr<JE::Group> weak = shared_from_this();
 	entity->__GROUPS__.push_back(weak);
 	//Tell the entity is was added
-	entity->OnAdd(this);
+	entity->OnAdd(*this);
 	this->needUpdateEntityLayering = true;
 }
 
@@ -104,7 +104,7 @@ void Group::remove(std::shared_ptr<Entity> entity){
 	this->entities_remove.push_back(entity);
 }
 void Group::_remove(std::shared_ptr<Entity> entity){
-	entity->OnRemove(this);
+	entity->OnRemove(*this);
 	unsigned int i = 0;
 	while (i < this->entities.size()){
 		if (entity == this->entities[i]) {
