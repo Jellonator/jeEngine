@@ -1,5 +1,6 @@
 #include "JE/JE.h"
 #include <iostream>
+#include <vector>
 
 int main(int argc, char** argv){
 	JE::initWindow("Hello", 640, 480);

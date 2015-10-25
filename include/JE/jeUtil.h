@@ -22,7 +22,7 @@ void initWindow(std::string name, int w, int h, int wflags = 0, int rflags = 0);
 std::string fileOpen(std::string file);
 void init();/**< \brief Initiates jelloEngine. */
 void quit();
-void update(bool update_world = true);/**< \brief Updates the engine and the active world. */
+void update();/**< \brief Updates the engine and the active world. */
 void setFramerate(int framerate);
 namespace STRING{
 	int toInt(std::string string);

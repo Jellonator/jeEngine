@@ -3,7 +3,6 @@
 #include "JE/UTIL/jeMath.h"
 #include "JE/UTIL/jeTime.h"
 #include "JE/jeUtil.h"
-#include "JE/jeWorld.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -47,7 +46,6 @@ void init(){
 	SDL_GetVersion(&ver);
 	std::cout << "JE: Using SDL version " << (int)ver.major << "." <<
 		(int)ver.minor << "." << (int)ver.patch << std::endl;
-	setWorld(std::make_shared<World>());
 	
 	srand(time(nullptr));
 }
@@ -101,21 +99,8 @@ void setFramerate(int framerate){
 	target_framerate = framerate;
 	time_i = SDL_GetTicks();
 }
-void update(bool update_world){
+void update(){
 	TIME::calculate();
-	if (target_framerate <= 0){
-		JE::TIME::dt = JE::TIME::_dt;
-		if (update_world) world->update(JE::TIME::dt);
-	} else {
-		//time_i is limited from 0 to 1.5x of the target framerate(prevents getting behind and updating like 50 million times)
-		time_i = JE::MATH::clamp(time_i + JE::TIME::time - JE::TIME::ptime, 0.0f, 1.5f * 1000.0f / float(target_framerate));
-		if (time_i < 0) time_i = 0;
-		while (time_i >= 1000.0f / float(target_framerate)){
-			time_i -= 1000.0f / float(target_framerate);
-			JE::TIME::dt = 1.0f / 50.0f;
-			if (update_world) world->update(JE::TIME::dt);
-		}
-	}
 }
 std::string fileOpen(std::string file){
 	std::ifstream in(file.c_str());
@@ -153,7 +138,6 @@ namespace GRAPHICS{
 			fix_resize = true;
 			should_resize = false;
 		}
-		world->draw();
 	}
 	void resize(){
 		int w, h;
