@@ -2,6 +2,18 @@
 #include <iostream>
 #include <vector>
 
+class MyEntity : public JE::Entity {
+public:
+	std::string say;
+	MyEntity(std::string say) : JE::Entity()
+		, say(say){
+		
+	}
+	void OnUpdate(JE::Group& group, float dt){
+		std::cout << this->say << " ";
+	}
+};
+
 int main(int argc, char** argv){
 	JE::initWindow("Hello", 640, 480);
 	JE::GRAPHICS::Spritemap spritemap("test.png");	
@@ -34,7 +46,21 @@ int main(int argc, char** argv){
 	ev_cont.addEvent(ev_quit);
 	
 	float time = 0;
-	while(!ev_quit->pressed){
+	
+	JE::Group group;
+	auto& entity_hello = group.add<MyEntity>("Hello");
+	auto& entity_foo   = group.add<MyEntity>("Foobar");
+	auto& entity_world = group.add<MyEntity>("World!");
+	group.update(0.1f);
+	group.addToGroup("group", entity_hello);
+	group.addToGroup("group", entity_foo);
+	group.addToGroup("group", entity_world);
+	std::cout << std::endl;
+	group.remove(entity_foo);
+	group.update(0.1f);
+	std::cout << std::endl;
+	
+	/*while(!ev_quit->pressed){
 		JE::update();
 		ev_cont.poll();
 		time -= JE::TIME::dt;
@@ -49,7 +75,7 @@ int main(int argc, char** argv){
 		spritemap.draw();
 		emitter.draw();
 		JE::GRAPHICS::flip();
-	}
+	}*/
 	
 	return 0;
 }

@@ -1,20 +1,24 @@
 #pragma once
 #include "jeMain.h"
 #include "jeUtil.h"
+#include <vector>
 #include <memory>
+#include <string>
+#include <map>
 
 namespace JE{
 class World;
 class Entity;
 
+typedef Entity* entity_def;
+typedef std::vector<entity_def> entity_vec;
+typedef std::vector<entity_def>::size_type entity_vec_size;
+typedef std::vector<entity_def>::iterator entity_vec_iter;
+typedef std::map<std::string, entity_vec> group_map;
+
 class Group
 {
 public:
-	/** \brief A group for containing entities.
-	 * \param order int, the ordering for entities. Defaults to no order(fastest).
-	 * \param drawmode int, the drawing mode. Defaults to all(renders all entities in order).
-	 * \param updatemode int, the update mode. Defaults to all(updates all entities in order).
-	 */
 	Group();
 	virtual ~Group();
 	
@@ -22,31 +26,43 @@ public:
 	void draw();
 	
 	template <class EntityType, class... ArgType>
-	void add(ArgType... args){
-		std::unique_ptr<EntityType> entity_add(new EntityType(args...));
-		this->entities_add.push_back(entity_add);
+	EntityType& add(ArgType... args){
+		EntityType* e = new EntityType(args...);
+		this->entities_add.push_back(e);
+		return *e;
 	}
 	void remove(const Entity& entity);
-	void remove(std::vector<std::unique_ptr<Entity>>::iterator);
+	void remove(entity_vec_iter index);
 	void updateEntities();
 	
 	void clear();
 	void setSort(bool sort);
 	void setCorrectRemove(bool do_correct_remove);
 	
-	unsigned int size() const;
+	//regular getters
 	bool getSort() const;
 	bool getCorrectRemove() const;
+	entity_vec::size_type getSize() const;
+	entity_vec::iterator getBegin();
+	entity_vec::iterator getEnd();
 	
-	//Overloaders
-	Entity& getEntity(std::vector<std::unique_ptr<Entity>>::size_type value);
-	Entity& operator[](std::vector<std::unique_ptr<Entity>>::size_type value);
-	const Entity& getEntity(std::vector<std::unique_ptr<Entity>>::size_type value) const;
-	const Entity& operator[](std::vector<std::unique_ptr<Entity>>::size_type value) const;
+	//group functions
+	void addToGroup(const std::string& group, Entity& entity);
+	void removeFromGroup(const std::string& group, Entity& entity);
+	entity_vec::iterator getGroupBegin(const std::string& group);
+	entity_vec::iterator getGroupEnd(const std::string& group);
+	entity_vec::size_type getGroupSize(const std::string& group);
+	
+	//entity getters
+	Entity& getEntity(entity_vec_size value);
+	Entity& operator[](entity_vec_size value);
+	const Entity& getEntity(entity_vec_size value) const;
+	const Entity& operator[](entity_vec_size value) const;
 private:
-	std::vector<std::unique_ptr<Entity>> entities;
-	std::vector<std::unique_ptr<Entity>> entities_add;
-	std::vector<std::vector<std::unique_ptr<Entity>>::iterator> entities_remove;
+	entity_vec entities;
+	entity_vec entities_add;
+	std::vector<entity_vec_iter> entities_remove;
+	group_map entity_groups;
 	
 	bool needUpdateEntityLayering;
 	bool do_sort;

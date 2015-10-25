@@ -101,6 +101,7 @@ void setFramerate(int framerate){
 }
 void update(){
 	TIME::calculate();
+	JE::TIME::dt = JE::TIME::_dt;
 }
 std::string fileOpen(std::string file){
 	std::ifstream in(file.c_str());

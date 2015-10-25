@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <vector>
 #include <memory>
+#include <string>
 namespace JE{
 class Group;
 class World;
@@ -22,5 +23,7 @@ class Entity : public Point, public std::enable_shared_from_this<Entity>
 		
 		virtual void moveBy(float move_x, float move_y);
 		virtual void moveTo(float move_x, float move_y, bool force = false);
+	private:
+		std::vector<std::string> _groups_v;
 };
 };

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 namespace JE{
+
 Group::Group(){
 	this->needUpdateEntityLayering = false;
 	this->do_sort = true;
@@ -15,41 +16,44 @@ Group::~Group(){
 
 void Group::update(float dt){
 	this->updateEntities();
-	for (std::unique_ptr<Entity>& entity : this->entities){
+	for (entity_def& entity : this->entities){
 		entity->OnUpdate(*this, dt);
 	}
 }
 
 void Group::draw(){
 	this->updateEntities();
-	for (std::unique_ptr<Entity>& entity : this->entities){
+	for (entity_def& entity : this->entities){
 		entity->OnDraw();
 	}
 }
 
 void Group::remove(const Entity& entity){
-	std::vector<std::unique_ptr<Entity>>::iterator iter = this->entities.begin();
+	entity_vec_iter iter = this->entities.begin();
 	while (iter != this->entities.end()){
 		//dereference iterator -> dereference unique_ptr -> pointer
-		if (&**iter == &entity) this->remove(iter);
+		if (*iter == &entity) this->remove(iter);
 		++iter;
 	}
 }
 
-void Group::remove(std::vector<std::unique_ptr<Entity>>::iterator index){
+void Group::remove(entity_vec_iter index){
 	this->entities_remove.push_back(index);
 }
 
-bool sortEntity(const std::unique_ptr<Entity>& a, const std::unique_ptr<Entity>& b) { return a->layer < b->layer; }
+bool sortEntity(const entity_def& a, const entity_def& b) { return a->layer < b->layer; }
 void Group::updateEntities(){
-	for (std::vector<std::unique_ptr<Entity>>::size_type i = 0; i != this->entities_add.size(); ++i){
-		this->entities.emplace_back();
-		std::swap(this->entities.back(), this->entities_add.at(i));
+	for (entity_vec_iter iter = this->entities_add.begin(); iter != this->entities_add.end(); ++iter){
+		this->entities.push_back(*iter);
 	}
 	this->entities_add.clear();
 	
 	//long type definition. Would use auto, but the verboseness is probably better
-	for (std::vector<std::vector<std::unique_ptr<Entity>>::iterator>::size_type i = 0; i != this->entities_remove.size(); ++i){
+	for (entity_vec::size_type i = 0; i != this->entities_remove.size(); ++i){
+		//Entity& entity = *this->entities.at(i);
+		/*for (std::vector<std::string>::iterator iter = entity.groups.begin(); iter != entity.groups.end(); ++iter){
+			this->removeFromGroup(*iter, entity.getEntity());
+		}*/
 		this->entities.erase(this->entities_remove.at(i));
 	}
 	this->entities_remove.clear();
@@ -74,8 +78,16 @@ void Group::setCorrectRemove(bool do_correct_remove){
 	this->correct_remove = do_correct_remove;
 }
 
-unsigned int Group::size() const{
+entity_vec::size_type Group::getSize() const{
 	return this->entities.size();
+}
+
+entity_vec::iterator Group::getBegin(){
+	return this->entities.begin();
+}
+
+entity_vec::iterator Group::getEnd(){
+	return this->entities.end();
 }
 
 bool Group::getSort() const{
@@ -86,20 +98,55 @@ bool Group::getCorrectRemove() const{
 	return this->correct_remove;
 }
 
-Entity& Group::getEntity(std::vector<std::unique_ptr<Entity>>::size_type value){
+Entity& Group::getEntity(entity_vec_size value){
 	return *this->entities.at(value);
 }
 
-Entity& Group::operator[](std::vector<std::unique_ptr<Entity>>::size_type value){
+Entity& Group::operator[](entity_vec_size value){
 	return *this->entities.at(value);
 }
 
-const Entity& Group::getEntity(std::vector<std::unique_ptr<Entity>>::size_type value) const{
+const Entity& Group::getEntity(entity_vec_size value) const{
 	return *this->entities.at(value);
 }
 
-const Entity& Group::operator[](std::vector<std::unique_ptr<Entity>>::size_type value) const{
+const Entity& Group::operator[](entity_vec_size value) const{
 	return *this->entities.at(value);
+}
+
+void Group::addToGroup(const std::string& group, Entity& entity){
+	this->entity_groups[group].push_back(&entity);
+	entity._groups_v.push_back(group);
+}
+
+void Group::removeFromGroup(const std::string& group, Entity& entity){
+	for (entity_vec::iterator iter = this->entity_groups[group].begin(); iter != this->entity_groups[group].end(); ++iter){
+		if (*iter == &entity){
+			iter = this->entity_groups[group].erase(iter);
+		} else {
+			++iter;
+		}
+	}
+	
+	for (std::vector<std::string>::iterator iter = entity._groups_v.begin(); iter != entity._groups_v.end(); ++iter){
+		if (*iter == group){
+			iter = entity._groups_v.erase(iter);
+		} else {
+			++iter;
+		}
+	}
+}
+
+entity_vec::iterator Group::getGroupBegin(const std::string& group){
+	return this->entity_groups[group].begin();
+}
+
+entity_vec::iterator Group::getGroupEnd(const std::string& group){
+	return this->entity_groups[group].end();
+}
+
+entity_vec::size_type Group::getGroupSize(const std::string& group){
+	return this->entity_groups[group].size();
 }
 
 }
