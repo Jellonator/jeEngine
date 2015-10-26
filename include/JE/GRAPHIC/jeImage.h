@@ -39,8 +39,7 @@ class Image : public Graphic
          * \param Entity* parent, the parent Entity.
          * \param SDL_Renderer* renderer, The renderer to use, defaults to the default renderer(JE::renderer)
          */
-		//virtual void drawExt(float x = 0, float y = 0, Camera* camera = NULL, Entity* parent = NULL, float angle = 0, SDL_Renderer* renderer = renderer);
-		virtual void draw(float x = 0, float y = 0, float angle = 0, const std::shared_ptr<Entity>& parent = NULL);
+		virtual void draw(float x = 0, float y = 0, float angle = 0);
         /** \brief Loads an image as a texture.
          * \param file std::string, the file to load.
          * \param JE::renderer SDL_Renderer* renderer, the renderer to use.
@@ -72,8 +71,7 @@ class Image : public Graphic
 		void centerOrigin();
 		void setColor(int r, int g, int b, int a = 255);
 		void getSize(int* width, int* height);
-		void drawSection(float x, float y, int section_x, int section_y, int section_width, int section_height,
-		const std::shared_ptr<Entity>& entity = NULL);
+		void drawSection(float x, float y, int section_x, int section_y, int section_width, int section_height);
 		void setFlip(bool x, bool y);
 	protected:
 	private:

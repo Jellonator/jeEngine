@@ -52,7 +52,7 @@ class Graphic : public JE::Point
          * \param jeGRAPHICS::Camera* camera, the camera to use
          * \param jeEntity* parent, the grapic's parent entity
          */
-		virtual void draw(float x = 0, float y = 0, float angle = 0, const std::shared_ptr<Entity>& parent = NULL);
+		virtual void draw(float x = 0, float y = 0, float angle = 0);
 
 		/** \brief Updates the graphic. */
 
@@ -115,8 +115,7 @@ namespace GRAPHICS{
 	void drawCircle(float x, float y, float radius, int points, bool fill);
 
 	class Image;
-	void drawImgRectStretch(const std::shared_ptr<Image>& image, float x, float y, float w, float h,
-		float tileWidth, float tileHeight, const std::shared_ptr<Entity>& entity = NULL);/**< \brief experimental */
+	void drawImgRectStretch(Image& image, float x, float y, float w, float h, float tileWidth, float tileHeight);/**< \brief experimental */
 	//void drawImgRectRepeat(Image* image, float x, float y, float w, float h, float tileWidth, float tileHeight, GRAPHICS::Camera* camera = NULL, Entity* entity = NULL);
 	//void drawImgRectSmart(Image* image, float x, float y, float w, float h, float tileWidth, float tileHeight, GRAPHICS::Camera* camera = NULL, Entity* entity = NULL);
 	void resize(int width, int height);

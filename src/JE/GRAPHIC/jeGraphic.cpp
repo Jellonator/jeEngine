@@ -19,7 +19,7 @@ Graphic::~Graphic()
 }
 
 //void Graphic::drawExt(float x, float y, GRAPHICS::Camera* camera, Entity* entity, float angle, SDL_Renderer* renderer){}
-void Graphic::draw(float x, float y, float angle, const std::shared_ptr<Entity>& entity){}
+void Graphic::draw(float x, float y, float angle){}
 void Graphic::update(){}
 
 void Graphic::setOrigin(float x, float y, bool adjustPosition){
@@ -122,66 +122,65 @@ void drawCircle(float x, float y, float radius, int points, bool fill){
 	glEnd();
 }
 
-void drawImgRectStretch(const std::shared_ptr<Image>& image, float x, float y, float w, float h,
-	float tileWidth, float tileHeight, const std::shared_ptr<Entity>& entity){
+void drawImgRectStretch(Image& image, float x, float y, float w, float h, float tileWidth, float tileHeight){
 //store texture width
 	int tw, th;
-	image->texture->getSize(&tw, &th);
+	image.texture->getSize(&tw, &th);
 	//make sure image is big enough
 	if (tw >= tileWidth*2 && th >= tileHeight*2){
 	//store temporary information
-		SDL_Rect temprect = image->clip;
-		bool tempbool = image->use_clip;
-		float tempWidth = image->width;
-		float tempHeight = image->height;
+		SDL_Rect temprect = image.clip;
+		bool tempbool = image.use_clip;
+		float tempWidth = image.width;
+		float tempHeight = image.height;
 		//Set size to corner
-		image->setSize(tileWidth,tileHeight);
+		image.setSize(tileWidth,tileHeight);
 	//Drawing operations
 		//upper left
-		image->setClip(0,0,tileWidth,tileHeight);
-		image->draw(x, y, 0, entity);
+		image.setClip(0,0,tileWidth,tileHeight);
+		image.draw(x, y, 0);
 		//upper right
-		image->setClip(tw-tileWidth, 0,tileWidth,tileHeight);
-		image->draw(x+w-tileWidth, y, 0, entity);
+		image.setClip(tw-tileWidth, 0,tileWidth,tileHeight);
+		image.draw(x+w-tileWidth, y, 0);
 		//lower left
-		image->setClip(0,th-tileHeight, tileWidth,tileHeight);
-		image->draw(x, y+h-tileHeight, 0, entity);
+		image.setClip(0,th-tileHeight, tileWidth,tileHeight);
+		image.draw(x, y+h-tileHeight, 0);
 		//lower right
-		image->setClip(tw-tileWidth, th-tileHeight,tileWidth,tileHeight);
-		image->draw(x+w-tileWidth, y+h-tileHeight, 0, entity);
+		image.setClip(tw-tileWidth, th-tileHeight,tileWidth,tileHeight);
+		image.draw(x+w-tileWidth, y+h-tileHeight, 0);
 	//Now draw the sides
 	//top/bottom size
 		if (h > tileHeight*2){
-			image->setSize(w-tileWidth*2,tileHeight);
+			image.setSize(w-tileWidth*2,tileHeight);
 			//top side
-			image->setClip(tileWidth,0,tw-tileWidth*2,tileHeight);
-			image->draw(x+tileWidth,y, 0, entity);
+			image.setClip(tileWidth,0,tw-tileWidth*2,tileHeight);
+			image.draw(x+tileWidth,y, 0);
 			//bottom side
-			image->setClip(tileWidth,th-tileHeight,tw-tileWidth*2,tileHeight);
-			image->draw(x+tileWidth,y+h-tileHeight, 0, entity);
+			image.setClip(tileWidth,th-tileHeight,tw-tileWidth*2,tileHeight);
+			image.draw(x+tileWidth,y+h-tileHeight, 0);
 		}
 	//left/right sizes
 		if (w > tileWidth*2){
-			image->setSize(tileWidth, h-tileHeight*2);
+			image.setSize(tileWidth, h-tileHeight*2);
 			//left side
-			image->setClip(0,tileHeight,tileWidth,tw-tileHeight*2);
-			image->draw(x,y+tileHeight, 0, entity);
+			image.setClip(0,tileHeight,tileWidth,tw-tileHeight*2);
+			image.draw(x,y+tileHeight, 0);
 			//right side
-			image->setClip(tw-tileWidth,tileHeight,tileWidth,tw-tileHeight*2);
-			image->draw(x+w-tileWidth,y+tileHeight, 0, entity);
+			image.setClip(tw-tileWidth,tileHeight,tileWidth,tw-tileHeight*2);
+			image.draw(x+w-tileWidth,y+tileHeight, 0);
 		}
 	//and the center
 		if (h > tileHeight*2 && w > tileWidth*2){
-			image->setSize(w-tileWidth*2,h-tileHeight*2);
-			image->setClip(tileWidth,tileHeight,tw-tileWidth*2,th-tileHeight*2);
-			image->draw(x+tileWidth,y+tileHeight, 0, entity);
+			image.setSize(w-tileWidth*2,h-tileHeight*2);
+			image.setClip(tileWidth,tileHeight,tw-tileWidth*2,th-tileHeight*2);
+			image.draw(x+tileWidth,y+tileHeight, 0);
 		}
 	//Reset image
-		image->clip = temprect;
-		image->width = tempWidth;
-		image->height = tempHeight;
-		image->use_clip = tempbool;
+		image.clip = temprect;
+		image.width = tempWidth;
+		image.height = tempHeight;
+		image.use_clip = tempbool;
 	}
 }
-}
-}
+
+}}

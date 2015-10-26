@@ -110,10 +110,10 @@ void Spritemap::update(float dt){
 	}
 }
 
-void Spritemap::drawWhole(float x, float y, float angle, const std::shared_ptr<Entity>& parent){
+void Spritemap::drawWhole(float x, float y, float angle){
 	bool temp = this->use_clip;
 	this->use_clip = false;
-	this->draw(x,y,angle,parent);
+	this->draw(x,y,angle);
 	this->use_clip = temp;
 }
 
@@ -178,16 +178,17 @@ void Spritemap::useData(std::shared_ptr<SpritemapData> data){
 	this->data = data;
 }
 
-void Spritemap::drawFrame(const std::string& anim, unsigned int frame, float x, float y, float angle, const std::shared_ptr<Entity>& parent){
+void Spritemap::drawFrame(const std::string& anim, unsigned int frame, float x, float y, float angle){
 	int temp = this->frame;
 	this->setFrame(frame);
-	this->draw(x, y, angle, parent);
+	this->draw(x, y, angle);
 	this->setFrameNoAnim(temp);
 }
-void Spritemap::drawFrameNoAnim(unsigned int frame, float x, float y, float angle, const std::shared_ptr<Entity>& parent){
+
+void Spritemap::drawFrameNoAnim(unsigned int frame, float x, float y, float angle){
 	int temp = this->frame;
 	this->setFrameNoAnim(frame);
-	this->draw(x, y, angle, parent);
+	this->draw(x, y, angle);
 	this->setFrameNoAnim(temp);
 }
 

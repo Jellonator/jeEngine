@@ -74,15 +74,11 @@ void Image::setColor(int r, int g, int b, int a){
 	SDL_SetTextureColorMod(this->texture->get(),r,g,b);
 	SDL_SetTextureAlphaMod(this->texture->get(),a);
 }
-void Image::draw(float x, float y, float angle, const std::shared_ptr<Entity>& parent){
+void Image::draw(float x, float y, float angle){
 	bool do_rotate = (std::abs(angle + this->angle) > 0.001 || this->flip_x != 1 || this->flip_y != 1);
 	float draw_x, draw_y, draw_w, draw_h, texture_x, texture_y, texture_w, texture_h;
 	draw_x = x + this->x;
 	draw_y = y + this->y;
-	if (parent){
-		draw_x += parent->x;
-		draw_y += parent->y;
-	}
 	texture_x = 0;
 	texture_y = 0;
 	SDL_GL_BindTexture(this->texture->get(), &texture_w, &texture_h);
@@ -201,12 +197,11 @@ void Image::centerOrigin(){
 void Image::getSize(int* width, int* height){
 	SDL_QueryTexture(this->texture->get(), NULL, NULL, width, height);
 }
-void Image::drawSection(float x, float y, int section_x, int section_y, int section_width, int section_height,
-	const std::shared_ptr<Entity>& entity){
+void Image::drawSection(float x, float y, int section_x, int section_y, int section_width, int section_height){
 	SDL_Rect previous_rect = this->clip;
 	bool previous_bool = this->use_clip;
 	this->setClip(section_x, section_y, section_width, section_height);
-	this->draw(x, y, 0, entity);
+	this->draw(x, y, 0);
 	this->clip = previous_rect;
 	this->use_clip = previous_bool;
 }

@@ -54,9 +54,9 @@ public:
 	void update(float dt = JE::TIME::dt);
 	
 	//drawing functions
-	void drawFrame(const std::string& anim, unsigned int frame, float x = 0, float y = 0, float angle = 0, const std::shared_ptr<Entity>& parent = NULL);
-	void drawFrameNoAnim(unsigned int frame, float x = 0, float y = 0, float angle = 0, const std::shared_ptr<Entity>& parent = NULL);
-	void drawWhole(float x = 0, float y = 0, float angle = 0, const std::shared_ptr<Entity>& parent = NULL);
+	void drawFrame(const std::string& anim, unsigned int frame, float x = 0, float y = 0, float angle = 0);
+	void drawFrameNoAnim(unsigned int frame, float x = 0, float y = 0, float angle = 0);
+	void drawWhole(float x = 0, float y = 0, float angle = 0);
 	
 	//use data functions
 	void useData(std::shared_ptr<SpritemapData> data);
