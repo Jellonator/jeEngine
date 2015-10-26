@@ -61,13 +61,13 @@ void Arm::setIsRelative(bool relative){
 void Arm::getOffset(float* x, float* y){
 	this->getHinge(x, y);
 }
-void Arm::getOffset(std::string name, float* x, float* y){
+void Arm::getOffset(const std::string& name, float* x, float* y){
 	this->getHinge(name, x, y);
 }
 void Arm::setLength(float length){
 	this->length = length;
 }
-void Arm::setLength(std::string name, float length){
+void Arm::setLength(const std::string& name, float length){
 	auto arm = this->getArm(name);
 	if (arm != nullptr) arm->setLength(length);
 }
@@ -79,7 +79,7 @@ float Arm::getAngle(){
 		return p->getAngle() + this->angle;
 	}
 }
-float Arm::getAngle(std::string name){
+float Arm::getAngle(const std::string& name){
 	auto arm = this->getArm(name);
 	if (arm != nullptr){
 		return arm->getAngle();
@@ -89,7 +89,7 @@ float Arm::getAngle(std::string name){
 float Arm::getLength(){
 	return this->length;
 }
-float Arm::getLength(std::string name){
+float Arm::getLength(const std::string& name){
 	auto arm = this->getArm(name);
 	if (arm != nullptr){
 		return arm->getLength();
@@ -100,7 +100,7 @@ void Arm::setOffset(float offset_x, float offset_y){
 	this->x = offset_x;
 	this->y = offset_y;
 }
-void Arm::setOffset(std::string name, float offset_x, float offset_y){
+void Arm::setOffset(const std::string& name, float offset_x, float offset_y){
 	auto arm = this->getArm(name);
 	if (arm != nullptr) arm->setOffset(offset_x, offset_y);
 }
@@ -138,15 +138,15 @@ void Arm::getEndLocal(float* x, float* y){
 	*x = JE::MATH::Xangle(angle, this->length, this->x);
 	*y = JE::MATH::Yangle(angle, this->length, this->y);
 }
-void Arm::getEnd(std::string name, float* x, float* y){
+void Arm::getEnd(const std::string& name, float* x, float* y){
 	auto arm = this->getArm(name);
 	if (arm != nullptr) arm->getEnd(x, y);
 }
-void Arm::getHinge(std::string name, float* x, float* y){
+void Arm::getHinge(const std::string& name, float* x, float* y){
 	auto arm = this->getArm(name);
 	if (arm != nullptr) arm->getHinge(x, y);
 }
-std::shared_ptr<Arm> Arm::newArm(std::string name, float angle, float length, float offset_x, float offset_y){
+std::shared_ptr<Arm> Arm::newArm(const std::string& name, float angle, float length, float offset_x, float offset_y){
 	size_t seperator = name.find('.');
 	if (seperator != name.npos){
 		std::string self_name = name.substr(0, seperator);
@@ -164,7 +164,7 @@ std::shared_ptr<Arm> Arm::newArm(std::string name, float angle, float length, fl
 	}
 	return nullptr;
 }
-std::shared_ptr<Arm> Arm::getArm(std::string name){
+std::shared_ptr<Arm> Arm::getArm(const std::string& name){
 	if (name == "") return shared_from_this();
 	size_t seperator = name.find('.');
 	if (seperator != name.npos){
@@ -181,7 +181,7 @@ std::shared_ptr<Arm> Arm::getArm(int ID){
 	if (ID >= (int)this->arm_vec.size() || ID < 0) return nullptr;
 	return this->arm_vec[ID];
 }
-std::shared_ptr<Arm> Arm::operator[](std::string name){
+std::shared_ptr<Arm> Arm::operator[](const std::string& name){
 	return this->getArm(name);
 }
 std::shared_ptr<Arm> Arm::operator[](int ID){
@@ -205,11 +205,11 @@ void Arm::rotate(float angle){
 void Arm::setAngle(float angle){
 	this->angle = angle;
 }
-void Arm::rotate(std::string name, float angle){
+void Arm::rotate(const std::string& name, float angle){
 	auto arm = this->getArm(name);
 	if (arm != nullptr) arm->rotate(angle);
 }
-void Arm::setAngle(std::string name, float angle){
+void Arm::setAngle(const std::string& name, float angle){
 	auto arm = this->getArm(name);
 	if (arm != nullptr) arm->setAngle(angle);
 }

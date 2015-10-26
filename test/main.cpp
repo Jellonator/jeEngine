@@ -14,7 +14,41 @@ public:
 	}
 };
 
+class MyLock{public:
+	MyLock(){
+		std::cout << "Lock created!" << std::endl;
+	}
+	virtual ~MyLock(){
+		std::cout << "Lock deleted!" << std::endl;
+	}
+};
+
+class MyLockCreator{public:
+	MyLockCreator(){
+		
+	}
+	virtual ~MyLockCreator(){
+		
+	}
+	MyLock lock(){
+		MyLock lock;
+		return lock;
+	}
+};
+
+
 int main(int argc, char** argv){
+	
+	std::cout << "before" << std::endl;
+	MyLockCreator locker;
+	{
+		std::cout << "start" << std::endl;
+		MyLock l = locker.lock();
+		std::cout << "mid" << std::endl;
+		std::cout << "end" << std::endl;
+	}
+	std::cout << "after" << std::endl;
+	
 	JE::initWindow("Hello", 640, 480);
 	JE::GRAPHICS::Spritemap spritemap("test.png");	
 	JE::GRAPHICS::Anim& anim = spritemap.newAnim("foo", 2.0f);

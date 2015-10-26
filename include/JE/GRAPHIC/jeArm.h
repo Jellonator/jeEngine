@@ -1,8 +1,8 @@
 #pragma once
+#include "ARMATURE/jeKeyFrame.h"
+#include "ARMATURE/jeAnimation.h"
 #include "../UTIL/jeTime.h"
 #include "../jePoint.h"
-#include "jeKeyframe.h"
-#include "jeAnimation.h"
 #include <map>
 #include <vector>
 #include <memory>
@@ -30,10 +30,10 @@ public:
 	void setIsRelative(bool relative);
 	
 	//fail-safe child setters
-	void rotate(std::string name, float angle);
-	void setAngle(std::string name, float angle);
-	void setLength(std::string name, float length);
-	void setOffset(std::string name, float offset_x, float offset_y);
+	void rotate(const std::string& name, float angle);
+	void setAngle(const std::string& name, float angle);
+	void setLength(const std::string& name, float length);
+	void setOffset(const std::string& name, float offset_x, float offset_y);
 	
 	//get variables
 	float getLength();
@@ -44,23 +44,23 @@ public:
 	//bool isPlaying();
 	
 	//fail-safe child getters
-	float getLength(std::string name);
-	float getAngle(std::string name);
-	void getOffset(std::string name, float* x, float* y);
-	void getEnd(std::string name, float* x, float* y);
-	void getHinge(std::string name, float* x, float* y);
+	float getLength(const std::string& name);
+	float getAngle(const std::string& name);
+	void getOffset(const std::string& name, float* x, float* y);
+	void getEnd(const std::string& name, float* x, float* y);
+	void getHinge(const std::string& name, float* x, float* y);
 	
 	//get arms(operator is kinda useless but whatever)
-	std::shared_ptr<Arm> getArm(std::string name);
+	std::shared_ptr<Arm> getArm(const std::string& name);
 	std::shared_ptr<Arm> getArm(int ID);
-	std::shared_ptr<Arm> operator[](std::string name);
+	std::shared_ptr<Arm> operator[](const std::string& name);
 	std::shared_ptr<Arm> operator[](int ID);
 	
 	//debug draw for armature system
 	void draw(float x = 0, float y = 0);
 	
 	//create a new arm with the name, can create arms in children. Arm is not created if the parent does not exist
-	std::shared_ptr<Arm> newArm(std::string name, float angle, float length, float offset_x = 0, float offset_y = 0);
+	std::shared_ptr<Arm> newArm(const std::string& name, float angle, float length, float offset_x = 0, float offset_y = 0);
 	
 	//update
 	void update(float dt = JE::TIME::dt);

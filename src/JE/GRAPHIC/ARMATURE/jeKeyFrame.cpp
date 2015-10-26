@@ -1,5 +1,5 @@
+#include "JE/GRAPHIC/ARMATURE/jeKeyFrame.h"
 #include "JE/UTIL/jeMath.h"
-#include "JE/GRAPHIC/jeKeyframe.h"
 #include <iostream>
 
 namespace JE{namespace ARM{
@@ -25,18 +25,18 @@ namespace JE{namespace ARM{
 	}
 	
 	//wow I keep mispelling 'label' as 'lavel' and 'labal'
-	void Keyframe::setData(std::string label, float angle, float length, float x, float y){
+	void Keyframe::setData(const std::string& label, float angle, float length, float x, float y){
 		this->setAngle(label, angle);
 		this->setLength(label, length);
 		this->setOffset(label, x, y);
 	}
-	void Keyframe::setAngle(std::string label, float angle){
+	void Keyframe::setAngle(const std::string& label, float angle){
 		this->data_angle[label] = angle;
 	}
-	void Keyframe::setLength(std::string label, float length){
+	void Keyframe::setLength(const std::string& label, float length){
 		this->data_length[label] = length;
 	}
-	void Keyframe::setOffset(std::string label, float x, float y){
+	void Keyframe::setOffset(const std::string& label, float x, float y){
 		this->data_pos[label].x = x;
 		this->data_pos[label].y = y;
 	}

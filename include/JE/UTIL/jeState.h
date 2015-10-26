@@ -26,7 +26,7 @@ private:
 		this->needs_sort = false;
 		//sort by state priority.
 		std::sort(this->state_vector.begin(), this->state_vector.end(),
-		[&](std::string a_string, std::string b_string){
+		[&](const Key& a_string, const Key& b_string){
 			//const StateType<Key>& a = state_types[a_string];
 			//const StateType<Key>& b = state_types[b_string];
 			return this->state_types[a_string].priority < this->state_types[b_string].priority;
@@ -55,7 +55,7 @@ public:
 		}
 		return false;
 	}
-	bool pop(Key name){
+	bool pop(const Key& name){
 		bool ret = false;
 		unsigned int i = 0;
 		while (i < this->state_vector.size()){
@@ -66,7 +66,7 @@ public:
 		}
 		return ret;
 	}
-	bool addType(Key name, int priority, Value value){
+	bool addType(const Key& name, int priority, Value value){
 		if (this->state_types.count(name) >= 1){
 			return false;
 		}
@@ -76,7 +76,7 @@ public:
 		this->state_types[name].value = value;
 		return true;
 	}
-	bool removeType(Key name){
+	bool removeType(const Key& name){
 		if (this->state_types.count(name) >= 1){
 			this->state_types.erase(name);
 			this->pop(name);

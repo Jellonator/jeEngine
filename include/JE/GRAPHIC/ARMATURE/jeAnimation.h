@@ -1,9 +1,8 @@
 #pragma once
-#include "../UTIL/jeTime.h"
-#include "../jePoint.h"
-#include "jeKeyframe.h"
-#include "jeArm.h"
-#include "jeArm.h"
+#include "../../UTIL/jeTime.h"
+#include "../../jePoint.h"
+#include "../jeArm.h"
+#include "jeKeyFrame.h"
 #include <map>
 #include <vector>
 #include <memory>
@@ -20,7 +19,7 @@ class Animator{public:
 	virtual ~Animator();
 	void update(float dt = JE::TIME::dt);
 	void apply(const std::shared_ptr<Arm>& arm);
-	void play(std::string name, bool loop = true, int start = 0);
+	void play(const std::string& name, bool loop = true, int start = 0);
 	bool isPlaying();
 	void stop();
 private:
@@ -42,36 +41,35 @@ public:
 	friend Keyframe;
 	friend Animator;
 	//keyframe functions
-	std::shared_ptr<Keyframe> newKeyframe(std::string name);
-	void addKeyframe(std::string name, std::shared_ptr<Keyframe> frame);
-	std::shared_ptr<Keyframe> getKeyframe(std::string name);
-	//std::shared_ptr<Keyframe> getKeyframe(std::string anim_name, int position);
-	bool hasKeyframe(std::string name);
-	//void update(Arm* arm, float dt = JE::TIME::dt);
-	void apply(const std::shared_ptr<Arm>& arm, std::string name);
-	void apply(const std::shared_ptr<Arm>& arm, std::string name, float ammount);
+	std::shared_ptr<Keyframe> newKeyframe(const std::string& name);
+	std::shared_ptr<Keyframe> getKeyframe(const std::string& name);
+	void addKeyframe(const std::string& name, std::shared_ptr<Keyframe> frame);
+	bool hasKeyframe(const std::string& name);
+	void apply(const std::shared_ptr<Arm>& arm, const std::string& name);
+	void apply(const std::shared_ptr<Arm>& arm, const std::string& name, float ammount);
+	
 	//merge keyframes
 	std::shared_ptr<Keyframe> mergeKeyframes(std::vector<std::pair<std::string, float>> vec_frames);
 	void mergeKeyframes(std::vector<std::pair<std::string, float>> vec_frames, std::shared_ptr<Keyframe> ret_frame);
+	
 	//animator create
 	std::shared_ptr<Animator> createAnimator();
-	//animation functions
-	bool hasAnimation(std::string name);
-	void newAnimation(std::string name, std::vector<std::pair<std::string, float>> frames);
-	float getFrameTime(std::string anim, int position);
-	std::string getFrameName(std::string anim, int position);
-	std::string getFramePrev(std::string anim, int position);
-	int getAnimLength(std::string anim);
 	
-	void setAnimFrames(std::string, std::vector<std::pair<std::string, float>> frames);
-	void addAnimFrame(std::string, std::pair<std::string, float> frame);
-	void addAnimFrames(std::string, std::vector<std::pair<std::string, float>> frames);
+	//animation functions
+	bool hasAnimation(const std::string& name);
+	void newAnimation(const std::string& name, std::vector<std::pair<std::string, float>> frames);
+	float getFrameTime(const std::string& anim, int position);
+	std::string getFrameName(const std::string& anim, int position);
+	std::string getFramePrev(const std::string& anim, int position);
+	int getAnimLength(const std::string& anim);
+	
+	void setAnimFrames(const std::string&, std::vector<std::pair<std::string, float>> frames);
+	void addAnimFrame(const std::string&, std::pair<std::string, float> frame);
+	void addAnimFrames(const std::string&, std::vector<std::pair<std::string, float>> frames);
 private:
 	//storage for keyframes
 	std::map<std::string, std::shared_ptr<Keyframe>> keyframe_map;
 	//animation stuff
 	std::map<std::string, std::vector<std::pair<std::string, float>>> animation_map;
-	
-	//void update(Arm* arm, float dt = JE::TIME::dt);
 };
 }}

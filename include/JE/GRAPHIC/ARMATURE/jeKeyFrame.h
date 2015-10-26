@@ -2,8 +2,8 @@
 #include <string>
 #include <map>
 #include <memory>
-#include "../jePoint.h"
-#include "jeArm.h"
+#include "../../jePoint.h"
+#include "../jeArm.h" 
 namespace JE{namespace ARM{
 	class Arm;
 	class Keyframe{public:
@@ -14,10 +14,10 @@ namespace JE{namespace ARM{
 		std::map<std::string, float> data_length;
 		std::map<std::string, Point> data_pos;
 		
-		void setData(std::string label, float angle, float length, float x = 0, float y = 0);
-		void setAngle(std::string label, float angle);
-		void setLength(std::string label, float length);
-		void setOffset(std::string label, float x, float y);
+		void setData(const std::string& label, float angle, float length, float x = 0, float y = 0);
+		void setAngle(const std::string& label, float angle);
+		void setLength(const std::string& label, float length);
+		void setOffset(const std::string& label, float x, float y);
 		void setTime(float t);
 		
 		void apply(const std::shared_ptr<Arm>& arm);

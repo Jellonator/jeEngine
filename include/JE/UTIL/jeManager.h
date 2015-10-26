@@ -15,44 +15,51 @@ class Manager{
 public:
 	Manager();
 	virtual ~Manager();
-	void newResource(Key key, Reference ref);
-	void removeResource(Key key);
-	std::shared_ptr<Value> getResource(Key key);
-	bool hasResource(Key key);
-	bool isResourceLoaded(Key key);
-	Reference getReference(Key key);
+	void newResource(const Key& key, const Reference& ref);
+	void removeResource(const Key& key);
+	std::shared_ptr<Value> getResource(const Key& key);
+	bool hasResource(const Key& key);
+	bool isResourceLoaded(const Key& key);
+	Reference getReference(const Key& key);
 private:
 	std::map<Key, Reference> file_names;
 	std::map<Key, std::weak_ptr<Value>> pointers;
 };
+
 template <typename Key, typename Value, typename Reference>
 Manager<Key,Value,Reference>::Manager(){}
+
 template <typename Key, typename Value, typename Reference>
 Manager<Key,Value,Reference>::~Manager(){}
+
 template <typename Key, typename Value, typename Reference>
-void Manager<Key,Value,Reference>::newResource(Key key, Reference ref){
+void Manager<Key,Value,Reference>::newResource(const Key& key, const Reference& ref){
 	this->file_names[key] = ref;
 	//std::cout << "Adding resource '" << key << ",'" << " which links to " << ref << std::endl;
 }
+
 template <typename Key, typename Value, typename Reference>
-void Manager<Key,Value,Reference>::removeResource(Key key){
+void Manager<Key,Value,Reference>::removeResource(const Key& key){
 	this->file_names.erase(key);
 	this->pointers.erase(key);
 }
+
 template <typename Key, typename Value, typename Reference>
-Reference Manager<Key,Value,Reference>::getReference(Key key){
+Reference Manager<Key,Value,Reference>::getReference(const Key& key){
 	return this->file_names[key];
 }
+
 template <typename Key, typename Value, typename Reference>
-bool Manager<Key,Value,Reference>::hasResource(Key key){
+bool Manager<Key,Value,Reference>::hasResource(const Key& key){
 	return (this->file_names.count(key) >= 1);
 }
 template <typename Key, typename Value, typename Reference>
-bool Manager<Key,Value,Reference>::isResourceLoaded(Key key){
+bool Manager<Key,Value,Reference>::isResourceLoaded(const Key& key){
 	return (!this->pointers[key].expired());
 }
+
 template <typename Key, typename Value, typename Reference>
-std::shared_ptr<Value> Manager<Key,Value,Reference>::getResource(Key key){
+std::shared_ptr<Value> Manager<Key,Value,Reference>::getResource(const Key& key){
 	//return a null pointer if there is no such resource
 	if (!this->hasResource(key)) return nullptr;
 	//make sure to initialize the weak pointer(pretty sure it does this automatically, but you can never be too careful).
@@ -68,4 +75,5 @@ std::shared_ptr<Value> Manager<Key,Value,Reference>::getResource(Key key){
 		return ptr;
 	}
 }
+
 }

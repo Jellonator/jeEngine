@@ -1,4 +1,4 @@
-#include "JE/GRAPHIC/jeAnimation.h"
+#include "JE/GRAPHIC/ARMATURE/jeAnimation.h"
 #include "JE/UTIL/jeMath.h"
 #include <iostream>
 
@@ -64,7 +64,7 @@ namespace JE{namespace ARM{
 		}
 		this->frame_update = true;
 	}
-	void Animator::play(std::string name, bool loop, int start){
+	void Animator::play(const std::string& name, bool loop, int start){
 		if (this->animation_name == name) return;
 		this->animation_name = name;
 		this->animation_loop = loop;
@@ -81,45 +81,45 @@ namespace JE{namespace ARM{
 		
 	}
 	//Animation/keyframe functions
-	bool Animation::hasKeyframe(std::string name){
+	bool Animation::hasKeyframe(const std::string& name){
 		return (this->keyframe_map.count(name) > 0);
 	}
-	std::shared_ptr<Keyframe> Animation::getKeyframe(std::string name){
+	std::shared_ptr<Keyframe> Animation::getKeyframe(const std::string& name){
 		if (!this->hasKeyframe(name)) return nullptr;
 		return this->keyframe_map[name];
 	}
-	std::shared_ptr<Keyframe> Animation::newKeyframe(std::string name){
+	std::shared_ptr<Keyframe> Animation::newKeyframe(const std::string& name){
 		std::shared_ptr<Keyframe> frame = std::make_shared<Keyframe>();
 		this->keyframe_map[name] = frame;
 		return frame;
 	}
-	void Animation::addKeyframe(std::string name, std::shared_ptr<Keyframe> frame){
+	void Animation::addKeyframe(const std::string& name, std::shared_ptr<Keyframe> frame){
 		this->keyframe_map[name] = frame;
 	}
-	void Animation::apply(const std::shared_ptr<Arm>& arm, std::string name){
+	void Animation::apply(const std::shared_ptr<Arm>& arm, const std::string& name){
 		std::shared_ptr<Keyframe> frame = this->getKeyframe(name);
 		if (frame != nullptr){
 			frame->apply(arm);
 		}
 	}
-	void Animation::apply(const std::shared_ptr<Arm>& arm, std::string name, float ammount){
+	void Animation::apply(const std::shared_ptr<Arm>& arm, const std::string& name, float ammount){
 		std::shared_ptr<Keyframe> frame = this->getKeyframe(name);
 		if (frame != nullptr){
 			frame->apply(arm, ammount);
 		}
 	}
-	float Animation::getFrameTime(std::string anim, int position){
+	float Animation::getFrameTime(const std::string& anim, int position){
 		return std::get<1>(this->animation_map[anim][position]);
 	}
-	std::string Animation::getFrameName(std::string anim, int position){
+	std::string Animation::getFrameName(const std::string& anim, int position){
 		return std::get<0>(this->animation_map[anim][position]);
 	}
-	std::string Animation::getFramePrev(std::string anim, int position){
+	std::string Animation::getFramePrev(const std::string& anim, int position){
 		--position;
 		if (position < 0) position = this->getAnimLength(anim)-1;
 		return this->getFrameName(anim, position);
 	}
-	int Animation::getAnimLength(std::string anim){
+	int Animation::getAnimLength(const std::string& anim){
 		return this->animation_map[anim].size();
 	}
 	void Animation::mergeKeyframes(std::vector<std::pair<std::string, float>> vec_frames, std::shared_ptr<Keyframe> ret_frame){
@@ -269,19 +269,19 @@ namespace JE{namespace ARM{
 		return std::make_shared<Animator>(shared_from_this());
 	}
 	
-	void Animation::newAnimation(std::string name, std::vector<std::pair<std::string, float>> frames){
+	void Animation::newAnimation(const std::string& name, std::vector<std::pair<std::string, float>> frames){
 		this->animation_map[name] = frames;
 	}
-	bool Animation::hasAnimation(std::string name){
+	bool Animation::hasAnimation(const std::string& name){
 		return (this->animation_map.count(name) > 0);
 	}
-	void Animation::addAnimFrame(std::string name, std::pair<std::string, float> frame){
+	void Animation::addAnimFrame(const std::string& name, std::pair<std::string, float> frame){
 		this->animation_map[name].push_back(frame);
 	}
-	void Animation::setAnimFrames(std::string name, std::vector<std::pair<std::string, float>> frames){
+	void Animation::setAnimFrames(const std::string& name, std::vector<std::pair<std::string, float>> frames){
 		this->animation_map[name] = frames;
 	}
-	void Animation::addAnimFrames(std::string name, std::vector<std::pair<std::string, float>> frames){
+	void Animation::addAnimFrames(const std::string& name, std::vector<std::pair<std::string, float>> frames){
 		for (auto f : frames){
 			this->addAnimFrame(name, f);
 		}

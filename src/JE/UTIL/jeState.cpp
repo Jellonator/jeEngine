@@ -1,3 +1,7 @@
+#include "JE/UTIL/jeState.h"
+#include "JE/UTIL/jeManager.h"
+//include the state machine anyways to make sure that it compiles
+
 /*  You can't put typedefs in .cpp files without having some weird linkage crap, so yeah.
  *  I could delete this file, but I won't. Don't ask why.
  *
@@ -39,8 +43,8 @@ void ofContract(){
 using namespace std;
 template<class K,class V,class R>
 struct M{
-void newResource(K k, R r){this->f[k]=r;}
-shared_ptr<V>getResource(K k){
+void newResource(const K& k, R r){this->f[k]=r;}
+shared_ptr<V>getResource(const K& k){
 if(this->p[k].expired()){
 auto r=make_shared<V>(this->f[k]);
 this->p[k]=r;

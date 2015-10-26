@@ -2,12 +2,11 @@
 #include "jePoint.h"
 #include <cstddef>
 #include <vector>
-#include <memory>
 #include <string>
 namespace JE{
 class Group;
 class World;
-class Entity : public Point, public std::enable_shared_from_this<Entity>
+class Entity : public Point
 {
 	friend Group;
 	public:
