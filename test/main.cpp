@@ -1,115 +1,60 @@
 #include "JE/JE.h"
+#include "JE/jeMask.h"
+#include "JE/MASK/jeHitbox.h"
 #include <iostream>
 #include <vector>
 
-class MyEntity : public JE::Entity {
-public:
-	std::string say;
-	MyEntity(std::string say) : JE::Entity()
-		, say(say){
-		
-	}
-	void OnUpdate(JE::Group& group, float dt){
-		std::cout << this->say << " ";
-	}
-};
+void drawTile(int x, int y, int r, int g, int b, bool fill = true){
+	JE::GRAPHICS::setColor(r, g, b);
+	JE::GRAPHICS::drawRect(x * 64 + 8, y * 64 + 8, 48, 48, fill);
+}
 
-class MyLock{public:
-	MyLock(){
-		std::cout << "Lock created!" << std::endl;
-	}
-	virtual ~MyLock(){
-		std::cout << "Lock deleted!" << std::endl;
-	}
-};
-
-class MyLockCreator{public:
-	MyLockCreator(){
-		
-	}
-	virtual ~MyLockCreator(){
-		
-	}
-	MyLock lock(){
-		MyLock lock;
-		return lock;
-	}
-};
-
+void drawHitbox(JE::MASK::Hitbox& box, int r, int g, int b){
+	JE::GRAPHICS::setColor(r, g, b);
+	JE::GRAPHICS::drawRect(
+		box.getLeft() * 64 + 8, 
+		box.getTop() * 64 + 8, 
+		48 + 64 * (box.getWidth() - 1), 
+		48 + 64 * (box.getHeight() - 1), 
+		true
+	);
+	drawTile(box.getX(), box.getY(), (r + 64) % 255, (g + 64) % 255, (b + 64) % 255, false);
+}
 
 int main(int argc, char** argv){
-	
-	std::cout << "before" << std::endl;
-	MyLockCreator locker;
-	{
-		std::cout << "start" << std::endl;
-		MyLock l = locker.lock();
-		std::cout << "mid" << std::endl;
-		std::cout << "end" << std::endl;
-	}
-	std::cout << "after" << std::endl;
-	
 	JE::initWindow("Hello", 640, 480);
-	JE::GRAPHICS::Spritemap spritemap("test.png");	
-	JE::GRAPHICS::Anim& anim = spritemap.newAnim("foo", 2.0f);
-	spritemap.newFrame(16, 0, 32, 32, 1.0f);
-	JE::TIME::setDeltaTimeLimit();
-	
-	for (int i = 0; i < 4; ++i){
-		unsigned int frame_id = spritemap.newFrame(i*32, 0, 32, 32);
-		anim.addFrame(frame_id);
-		//frame.setSize(i*32, 0, 8, 32);
-		//std::cout << "Anim has frames: " << anim.getFrameCount() << std::endl;
-		std::cout << "ID of new frame: " << frame_id << std::endl;
-	}
-	spritemap.play("foo");
-	
-	JE::GRAPHICS::Emitter emitter;
-	JE::GRAPHICS::EmitterType& emitter_basic = emitter.newType("foo");
-	emitter_basic.setSpeed(300, 400);
-	emitter_basic.setAngle(60, 120);
-	emitter_basic.setSlow(350);
-	emitter_basic.setLife(10);
-	emitter_basic.setPosition(-25, -25, 25, 25);
-	emitter_basic.setAcceleration(450, -50, 450, 50);
-	JE::GRAPHICS::Image image("sparkles.png");
-	emitter_basic.setRenderer<JE::GRAPHICS::EmitterRendererSpritemap>(spritemap, "foo");
 	
 	JE::EVENT::Container ev_cont;
 	std::shared_ptr<JE::EVENT::Quit> ev_quit = std::make_shared<JE::EVENT::Quit>();
+	std::shared_ptr<JE::EVENT::Keyboard> ev_up = std::make_shared<JE::EVENT::Keyboard>(SDLK_UP);
+	std::shared_ptr<JE::EVENT::Keyboard> ev_left = std::make_shared<JE::EVENT::Keyboard>(SDLK_LEFT);
+	std::shared_ptr<JE::EVENT::Keyboard> ev_down = std::make_shared<JE::EVENT::Keyboard>(SDLK_DOWN);
+	std::shared_ptr<JE::EVENT::Keyboard> ev_right = std::make_shared<JE::EVENT::Keyboard>(SDLK_RIGHT);
 	ev_cont.addEvent(ev_quit);
+	ev_cont.addEvent(ev_up);
+	ev_cont.addEvent(ev_left);
+	ev_cont.addEvent(ev_down);
+	ev_cont.addEvent(ev_right);
 	
 	float time = 0;
+	JE::MASK::Hitbox player(-1, -1, 1, 1);
+	//player.moveTo(1, 1);
+	JE::MASK::PointMask tile(3, 3);
 	
-	JE::Group group;
-	auto& entity_hello = group.add<MyEntity>("Hello");
-	auto& entity_foo   = group.add<MyEntity>("Foobar");
-	auto& entity_world = group.add<MyEntity>("World!");
-	group.update(0.1f);
-	group.addToGroup("group", entity_hello);
-	group.addToGroup("group", entity_foo);
-	group.addToGroup("group", entity_world);
-	std::cout << std::endl;
-	group.remove(entity_foo);
-	group.update(0.1f);
-	std::cout << std::endl;
-	
-	/*while(!ev_quit->pressed){
+	while(!ev_quit->pressed){
 		JE::update();
 		ev_cont.poll();
-		time -= JE::TIME::dt;
-		while (time < 0){
-			time += 0.01f;
-			emitter.create("foo", 2, 100, 100);
-		}
-		spritemap.update(JE::TIME::dt);
-		emitter.update(JE::TIME::dt);
+		
+		if (ev_up->pressed)    tile.getCollide(player,  0, -1, player.ptrX(), player.ptrY());
+		if (ev_left->pressed)  tile.getCollide(player, -1,  0, player.ptrX(), player.ptrY());
+		if (ev_down->pressed)  tile.getCollide(player,  0,  1, player.ptrX(), player.ptrY());
+		if (ev_right->pressed) tile.getCollide(player,  1,  0, player.ptrX(), player.ptrY());
 		
 		JE::GRAPHICS::draw();
-		spritemap.draw();
-		emitter.draw();
+		drawHitbox(player, 0, 255, 0);
+		drawTile(tile.getX(), tile.getY(), player.containsPoint(tile.getX(), tile.getY()) ? 255 : 0, 0, 255);
 		JE::GRAPHICS::flip();
-	}*/
+	}
 	
 	return 0;
 }
