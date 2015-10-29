@@ -1,27 +1,22 @@
 #include "JE/JE.h"
 #include "JE/jeMask.h"
 #include "JE/MASK/jeHitbox.h"
+#include "JE/MASK/jeMultimask.h"
 #include <iostream>
 #include <vector>
+#include "JE/GRAPHIC/jeCamera.h"
 
-void drawTile(int x, int y, int r, int g, int b, bool fill = true){
-	JE::GRAPHICS::setColor(r, g, b);
-	JE::GRAPHICS::drawRect(x * 64 + 8, y * 64 + 8, 48, 48, fill);
-}
+class MyBase{
+	
+};
 
-void drawHitbox(JE::MASK::Hitbox& box, int r, int g, int b){
-	JE::GRAPHICS::setColor(r, g, b);
-	JE::GRAPHICS::drawRect(
-		box.getLeft() * 64 + 8, 
-		box.getTop() * 64 + 8, 
-		48 + 64 * (box.getWidth() - 1), 
-		48 + 64 * (box.getHeight() - 1), 
-		true
-	);
-	drawTile(box.getX(), box.getY(), (r + 64) % 255, (g + 64) % 255, (b + 64) % 255, false);
-}
+class MyChild{
+	
+};
 
 int main(int argc, char** argv){
+	
+	//return 0;
 	JE::initWindow("Hello", 800, 608);
 	
 	JE::EVENT::Container ev_cont;
@@ -37,9 +32,17 @@ int main(int argc, char** argv){
 	ev_cont.addEvent(ev_right);
 	
 	//float time = 0;
-	JE::MASK::Hitbox tile(-1, -1, 1, 1);
-	tile.moveTo(6, 4);
-	JE::MASK::Hitbox player(-1,1, 1, 4);
+	JE::MASK::Multimask tile;
+	JE::MASK::Hitbox& player_box1 = tile.addMask<JE::MASK::Hitbox>(-1, -1, 1, 1);
+	JE::MASK::Hitbox& player_box2 = tile.addMask<JE::MASK::Hitbox>(-1, -1, 1, 1);
+	tile.moveTo(16, 12);
+	JE::MASK::Hitbox player(0, 0, 1, 2);
+	
+	player_box1.moveTo(-1, -1);
+	player_box2.moveTo( 1,  1);
+	
+	JE::GRAPHICS::Camera camera;
+	camera.setScale(32);
 	
 	while(!ev_quit->pressed){
 		JE::update();
@@ -51,8 +54,14 @@ int main(int argc, char** argv){
 		if (ev_right->pressed) tile.getCollide(player,  1,  0, player.ptrX(), player.ptrY());
 		
 		JE::GRAPHICS::draw();
-		drawHitbox(tile, tile.containsRect(player) ? 255 : 0, 0, 255);
-		drawHitbox(player, 0, 255, 0);
+		camera.push();
+		
+		JE::GRAPHICS::setColorF(1, 0, 0);
+		tile.draw(0, 0);
+		JE::GRAPHICS::setColorF(0, 1, 0);
+		player.draw(0, 0);
+		
+		camera.pop();
 		JE::GRAPHICS::flip();
 	}
 	

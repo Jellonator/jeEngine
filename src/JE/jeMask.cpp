@@ -1,6 +1,7 @@
 #include "JE/jeMask.h"
 #include "JE/MASK/jeHitbox.h"
-#include <iostream>
+#include "JE/MASK/jeMaskiterator.h"
+#include "JE/GRAPHIC/jeGraphic.h"
 
 namespace JE{ namespace MASK{
 	
@@ -13,7 +14,50 @@ Mask::~Mask(){
 	
 }
 
-bool Mask::getCollide(const PointMask& point, int move_x, int move_y, int* out_x, int* out_y){
+bool Mask::callCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* out_y){
+	return box.getCollide(*this, move_x, move_y, out_x, out_y);
+}
+
+bool Mask::callCollide(PointMask& point, int move_x, int move_y, int* out_x, int* out_y){
+	return point.getCollide(*this, move_x, move_y, out_x, out_y);
+}
+
+bool Mask::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+	return mask_list.getCollide(*this, move_x, move_y, out_x, out_y);
+}
+
+bool Mask::getCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+	std::vector<Mask*> mask_vec = mask_list.getMaskListMove(this->getLeft(), this->getRight(), this->getRight(), this->getBottom(), -move_x, -move_y);
+	int current_x = this->getX();
+	int current_y = this->getY();
+	bool ret = false;
+	
+	for (auto mask : mask_vec){
+		int temp_x, temp_y;
+		
+		//translate mask based on its parent
+		mask->moveBy(mask_list.getX(), mask_list.getY());
+		bool did_collide = (mask->callCollide(*this, move_x, move_y, &temp_x, &temp_y));
+		mask->moveBy(-mask_list.getX(), -mask_list.getY());
+		
+		if (did_collide){
+			ret = true;
+			*out_x = temp_x;
+			*out_y = temp_y;
+			move_x = temp_x - mask->getX();
+			move_y = temp_y - mask->getY();
+		}
+	}
+	
+	if (!ret){
+		*out_x = mask_list.getX() + move_x;
+		*out_y = mask_list.getY() + move_y;
+	}
+	
+	return ret;
+}
+
+bool Mask::getCollide(PointMask& point, int move_x, int move_y, int* out_x, int* out_y){
 	int current_x = point.x;
 	int current_y = point.y;
 	int new_x = point.x + move_x;
@@ -52,7 +96,7 @@ bool Mask::getCollide(const PointMask& point, int move_x, int move_y, int* out_x
 	return ret;
 }
 
-bool Mask::getCollide(const Hitbox& box, int move_x, int move_y, int* out_x, int* out_y){
+bool Mask::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* out_y){
 	Hitbox duplicate = box;
 	bool ret = false;
 	
@@ -132,6 +176,10 @@ void Mask::setX(int value){
 
 void Mask::setY(int value){
 	this->y = value;
+}
+
+void Mask::draw(int x, int y){
+	JE::GRAPHICS::drawRect(this->getX() + x, this->getY() + y, 1, 1, true);
 }
 
 }}

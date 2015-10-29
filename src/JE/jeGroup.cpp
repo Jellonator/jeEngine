@@ -41,19 +41,22 @@ void Group::remove(entity_vec_iter index){
 	this->entities_remove.push_back(index);
 }
 
-bool sortEntity(const entity_def& a, const entity_def& b) { return a->layer < b->layer; }
+bool sortEntity(const entity_def& a, const entity_def& b) { 
+	return a->layer < b->layer; 
+}
+
 void Group::updateEntities(){
 	for (entity_vec_iter iter = this->entities_add.begin(); iter != this->entities_add.end(); ++iter){
 		this->entities.push_back(*iter);
 	}
 	this->entities_add.clear();
 	
-	//long type definition. Would use auto, but the verboseness is probably better
 	for (entity_vec::size_type i = 0; i != this->entities_remove.size(); ++i){
-		//Entity& entity = *this->entities.at(i);
-		/*for (std::vector<std::string>::iterator iter = entity.groups.begin(); iter != entity.groups.end(); ++iter){
-			this->removeFromGroup(*iter, entity.getEntity());
-		}*/
+		Entity* entity = this->entities.at(i);
+		for (std::vector<std::string>::iterator iter = entity->_groups_v.begin(); iter != entity->_groups_v.end(); ++iter){
+			this->removeFromGroup(*iter, *entity);
+		}
+		delete entity;
 		this->entities.erase(this->entities_remove.at(i));
 	}
 	this->entities_remove.clear();

@@ -1,4 +1,6 @@
 #include "JE/MASK/jeHitbox.h"
+#include "JE/MASK/jeMaskiterator.h"
+#include "JE/GRAPHIC/jeGraphic.h"
 #include <algorithm>
 
 namespace JE{ namespace MASK{
@@ -14,7 +16,19 @@ Hitbox::~Hitbox(){
 	
 }
 
-bool Hitbox::getCollide(const PointMask& point, int move_x, int move_y, int* out_x, int* out_y){
+bool Hitbox::callCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* out_y){
+	return box.getCollide(*this, move_x, move_y, out_x, out_y);
+}
+
+bool Hitbox::callCollide(PointMask& point, int move_x, int move_y, int* out_x, int* out_y){
+	return point.getCollide(*this, move_x, move_y, out_x, out_y);
+}
+
+bool Hitbox::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+	return mask_list.getCollide(*this, move_x, move_y, out_x, out_y);
+}
+
+bool Hitbox::getCollide(PointMask& point, int move_x, int move_y, int* out_x, int* out_y){
 	bool ret = false;
 	int new_x = point.getX() + move_x;
 	int new_y = point.getY();
@@ -54,7 +68,7 @@ bool Hitbox::getCollide(const PointMask& point, int move_x, int move_y, int* out
 	return ret;
 }
 
-bool Hitbox::getCollide(const Hitbox& box, int move_x, int move_y, int* out_x, int* out_y){
+bool Hitbox::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* out_y){
 	Hitbox duplicate = box;
 	bool ret = false;
 	
@@ -164,6 +178,10 @@ bool Hitbox::containsRect(int x1, int y1, int x2, int y2) const{
 
 bool Hitbox::containsRect(const Hitbox& rect) const{
 	return this->containsRect(rect.getX1(), rect.getY1(), rect.getX2(), rect.getY2());
+}
+
+void Hitbox::draw(int x, int y){
+	JE::GRAPHICS::drawRect(this->getLeft() + x, this->getTop() + y, this->getWidth(), this->getHeight(), true);
 }
 
 }}
