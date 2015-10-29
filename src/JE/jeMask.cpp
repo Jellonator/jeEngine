@@ -57,6 +57,7 @@ bool Mask::getCollide(const Hitbox& box, int move_x, int move_y, int* out_x, int
 	bool ret = false;
 	
 	if (duplicate.containsPointStretch(this->x, this->y, move_x, 0)){
+		ret = true;
 		if (move_x > 0){
 			duplicate.setX(this->x - duplicate.getX2() - 1);
 		} else {
@@ -67,6 +68,7 @@ bool Mask::getCollide(const Hitbox& box, int move_x, int move_y, int* out_x, int
 	}
 	
 	if (duplicate.containsPointStretch(this->x, this->y, 0, move_y)){
+		ret = true;
 		if (move_y > 0){
 			duplicate.setY(this->y - duplicate.getY2() - 1);
 		} else {

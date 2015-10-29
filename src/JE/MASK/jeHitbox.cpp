@@ -1,4 +1,5 @@
 #include "JE/MASK/jeHitbox.h"
+#include <algorithm>
 
 namespace JE{ namespace MASK{
 
@@ -17,14 +18,70 @@ bool Hitbox::getCollide(const PointMask& point, int move_x, int move_y, int* out
 	bool ret = false;
 	int new_x = point.getX() + move_x;
 	int new_y = point.getY();
-	if (){
-		
+	
+	if (this->containsRect(
+		std::min(point.getX(), new_x), 
+		std::min(point.getY(), new_y), 
+		std::max(point.getX(), new_x), 
+		std::max(point.getY(), new_y)
+	)){
+		ret = true;
+		if (move_x > 0){
+			new_x = this->getLeft() - 1;
+		} else {
+			new_x = this->getRight() + 1;
+		}
 	}
-	return true;
+	
+	new_y += move_y;
+	if (this->containsRect(
+		std::min(point.getX(), new_x), 
+		std::min(point.getY(), new_y), 
+		std::max(point.getX(), new_x), 
+		std::max(point.getY(), new_y)
+	)){
+		ret = true;
+		if (move_y > 0){
+			new_y = this->getTop() - 1;
+		} else {
+			new_y = this->getBottom() + 1;
+		}
+	}
+	
+	if (out_x) *out_x = new_x;
+	if (out_y) *out_y = new_y;
+	
+	return ret;
 }
 
-bool Hitbox::getCollide(const Hitbox& point, int move_x, int move_y, int* out_x, int* out_y){
-	return true;
+bool Hitbox::getCollide(const Hitbox& box, int move_x, int move_y, int* out_x, int* out_y){
+	Hitbox duplicate = box;
+	bool ret = false;
+	
+	if (this->containsRectStretch(duplicate, move_x, 0)){
+		ret = true;
+		if (move_x > 0){
+			duplicate.setX(this->getLeft() - duplicate.getX2() - 1);
+		} else {
+			duplicate.setX(this->getRight() - duplicate.getX1() + 1);
+		}
+	} else {
+		duplicate.moveBy(move_x, 0);
+	}
+	
+	if (this->containsRectStretch(duplicate, 0, move_y)){
+		ret = true;
+		if (move_y > 0){
+			duplicate.setY(this->getTop() - duplicate.getY2() - 1);
+		} else {
+			duplicate.setY(this->getBottom() - duplicate.getY1() + 1);
+		}
+	} else {
+		duplicate.moveBy(0, move_y);
+	}
+	
+	if (out_x) *out_x = duplicate.getX();
+	if (out_y) *out_y = duplicate.getY();
 }
 
 int Hitbox::getWidth() const{
@@ -90,11 +147,18 @@ void Hitbox::getStretch(int& x1, int& y1, int& x2, int& y2, int move_x, int move
 	else y2 += move_y;
 }
 
+bool Hitbox::containsRectStretch(const Hitbox& rect, int move_x, int move_y) const{
+	int stretch_x1, stretch_y1, stretch_x2, stretch_y2;
+	rect.getStretch(stretch_x1, stretch_y1, stretch_x2, stretch_y2, move_x, move_y);
+	
+	return this->containsRect(stretch_x1, stretch_y1, stretch_x2, stretch_y2);
+}
+
 bool Hitbox::containsRect(int x1, int y1, int x2, int y2) const{
-	if (x2 < this->getX1()
-	||  x1 > this->getX2()
-	||  y2 < this->getY1()
-	||  y1 > this->getY2()) return false;
+	if (x2 < this->getLeft()
+	||  x1 > this->getRight()
+	||  y2 < this->getTop()
+	||  y1 > this->getBottom()) return false;
 	return true;
 }
 

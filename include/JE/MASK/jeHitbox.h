@@ -29,6 +29,7 @@ public:
 	
 	bool containsRect(int x1, int y1, int x2, int y2) const;
 	bool containsRect(const Hitbox& rect) const;
+	bool containsRectStretch(const Hitbox& rect, int move_x, int move_y) const;
 private:
 	int x1;
 	int y1;

@@ -22,24 +22,24 @@ void drawHitbox(JE::MASK::Hitbox& box, int r, int g, int b){
 }
 
 int main(int argc, char** argv){
-	JE::initWindow("Hello", 640, 480);
+	JE::initWindow("Hello", 800, 608);
 	
 	JE::EVENT::Container ev_cont;
 	std::shared_ptr<JE::EVENT::Quit> ev_quit = std::make_shared<JE::EVENT::Quit>();
-	std::shared_ptr<JE::EVENT::Keyboard> ev_up = std::make_shared<JE::EVENT::Keyboard>(SDLK_UP);
-	std::shared_ptr<JE::EVENT::Keyboard> ev_left = std::make_shared<JE::EVENT::Keyboard>(SDLK_LEFT);
-	std::shared_ptr<JE::EVENT::Keyboard> ev_down = std::make_shared<JE::EVENT::Keyboard>(SDLK_DOWN);
-	std::shared_ptr<JE::EVENT::Keyboard> ev_right = std::make_shared<JE::EVENT::Keyboard>(SDLK_RIGHT);
+	std::shared_ptr<JE::EVENT::Keyboard> ev_up = std::make_shared<JE::EVENT::Keyboard>(SDLK_UP, true);
+	std::shared_ptr<JE::EVENT::Keyboard> ev_left = std::make_shared<JE::EVENT::Keyboard>(SDLK_LEFT, true);
+	std::shared_ptr<JE::EVENT::Keyboard> ev_down = std::make_shared<JE::EVENT::Keyboard>(SDLK_DOWN, true);
+	std::shared_ptr<JE::EVENT::Keyboard> ev_right = std::make_shared<JE::EVENT::Keyboard>(SDLK_RIGHT, true);
 	ev_cont.addEvent(ev_quit);
 	ev_cont.addEvent(ev_up);
 	ev_cont.addEvent(ev_left);
 	ev_cont.addEvent(ev_down);
 	ev_cont.addEvent(ev_right);
 	
-	float time = 0;
-	JE::MASK::Hitbox player(-1, -1, 1, 1);
-	//player.moveTo(1, 1);
-	JE::MASK::PointMask tile(3, 3);
+	//float time = 0;
+	JE::MASK::Hitbox tile(-1, -1, 1, 1);
+	tile.moveTo(6, 4);
+	JE::MASK::Hitbox player(-1,1, 1, 4);
 	
 	while(!ev_quit->pressed){
 		JE::update();
@@ -51,8 +51,8 @@ int main(int argc, char** argv){
 		if (ev_right->pressed) tile.getCollide(player,  1,  0, player.ptrX(), player.ptrY());
 		
 		JE::GRAPHICS::draw();
+		drawHitbox(tile, tile.containsRect(player) ? 255 : 0, 0, 255);
 		drawHitbox(player, 0, 255, 0);
-		drawTile(tile.getX(), tile.getY(), player.containsPoint(tile.getX(), tile.getY()) ? 255 : 0, 0, 255);
 		JE::GRAPHICS::flip();
 	}
 	
