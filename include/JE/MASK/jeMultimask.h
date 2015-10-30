@@ -26,6 +26,9 @@ public:
 	virtual int getTop() const;
 	virtual int getBottom() const;
 	
+	//void generator functions
+	void generateFromPoints(int x1, int y1, int x2, int y2, int x3, int y3);
+	
 private:
 	std::vector<std::shared_ptr<Mask>> mask_vec;
 	int stored_left;

@@ -95,4 +95,35 @@ int Multimask::getBottom() const{
 	return value;
 }
 
+bool isPointInsideTriangle (float x, float y, float x1, float y1, float x2, float y2, float x3, float y3){
+	float s = y1 * x3 - x1 * y3 + (y3 - y1) * x + (x1 - x3) * y;
+	float t = x1 * y2 - y1 * x2 + (y1 - y2) * x + (x2 - x1) * y;
+
+	if ((s < 0) != (t < 0))
+		return false;
+
+	float A = -y2 * x3 + y1 * (x3 - x2) + x1 * (y2 - y3) + x2 * y3;
+	if (A < 0.0){
+		s = -s;
+		t = -t;
+		A = -A;
+	}
+	return s > 0 && t > 0 && (s + t) < A;
+}
+
+void Multimask::generateFromPoints(int x1, int y1, int x2, int y2, int x3, int y3){
+	int x_left  = std::min(std::min(x1, x2), x3);
+	int x_right = std::max(std::max(x1, x2), x3);
+	int y_top   = std::min(std::min(y1, y2), y3);
+	int y_bottom= std::max(std::max(y1, y2), y3);
+	
+	for (int iter_x = x_left; iter_x <= x_right; ++iter_x){
+	for (int iter_y = y_top; iter_y <= y_bottom; ++iter_y){
+		if (isPointInsideTriangle(iter_x, iter_y, x1,y1, x2,y2, x3,y3)){
+			this->addMask<PointMask>(iter_x, iter_y);
+		}
+	}
+	}
+}
+
 }}
