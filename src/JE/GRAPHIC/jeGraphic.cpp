@@ -36,7 +36,7 @@ Color forecolor;
 void flip(){
 	SDL_GL_SwapWindow(window);
 	//SDL_RenderPresent(renderer);
-	glLoadIdentity();
+	//glLoadIdentity();
 	glClearColor(backcolor.r, backcolor.g, backcolor.b, backcolor.a);
 	/* Clear The Screen And The Depth Buffer */
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );

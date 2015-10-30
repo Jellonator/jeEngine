@@ -42,8 +42,7 @@ int main(int argc, char** argv){
 	player_box2.moveTo(32, 48);
 	
 	JE::GRAPHICS::Camera camera;
-	camera.setScale(8);
-	SDL_enableK
+	//camera.setScale(0.125 * 0.0125);
 	while(!ev_quit->pressed){
 		JE::update();
 		ev_cont.poll();
@@ -54,14 +53,15 @@ int main(int argc, char** argv){
 		if (ev_right->pressed) tile.getCollide(player,  1,  0, player.ptrX(), player.ptrY());
 		
 		JE::GRAPHICS::draw();
-		camera.push();
+		//camera.push();
 		
 		JE::GRAPHICS::setColorF(1, 0, 0);
+		JE::GRAPHICS::drawRect(-0.3, -0.3, 0.5, 0.5, true);
 		tile.draw(0, 0);
 		JE::GRAPHICS::setColorF(0, 1, 0);
 		player.draw(0, 0);
 		
-		camera.pop();
+		//camera.pop();
 		JE::GRAPHICS::flip();
 	}
 	
