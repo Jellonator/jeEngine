@@ -28,6 +28,12 @@ bool Hitbox::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* o
 	return mask_list.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
+/*
+ * There is a *slight* difference between this function and the function declared in jeMask.
+ * Using '*this' here will allow the object to call a function based on what 'this' is.
+ * In this case, 'this' refers to a Hitbox. If this function were to not be declared,
+ * then the other object would think this was a Mask.
+ */
 bool Hitbox::getCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
 	std::vector<Mask*> mask_vec = mask_list.getMaskListAll();
 	int output_x = mask_list.getX() + move_x;
