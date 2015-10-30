@@ -32,18 +32,18 @@ int main(int argc, char** argv){
 	ev_cont.addEvent(ev_right);
 	
 	//float time = 0;
-	JE::MASK::Multimask tile;
-	JE::MASK::Hitbox& player_box1 = tile.addMask<JE::MASK::Hitbox>(-1, -1, 1, 1);
-	JE::MASK::Hitbox& player_box2 = tile.addMask<JE::MASK::Hitbox>(-1, -1, 1, 1);
-	tile.moveTo(16, 12);
-	JE::MASK::Hitbox player(0, 0, 1, 2);
+	JE::MASK::Multimask tile(0, 0);
+	JE::MASK::Hitbox& player_box1 = tile.addMask<JE::MASK::Hitbox>(0, 0, 7, 7);
+	JE::MASK::Hitbox& player_box2 = tile.addMask<JE::MASK::Hitbox>(0, 0, 7, 7);
+
+	JE::MASK::Hitbox player(0, 0, 7, 7);
 	
-	player_box1.moveTo(-1, -1);
-	player_box2.moveTo( 1,  1);
+	player_box1.moveTo(32, 32);
+	player_box2.moveTo(32, 48);
 	
 	JE::GRAPHICS::Camera camera;
-	camera.setScale(32);
-	
+	camera.setScale(8);
+	SDL_enableK
 	while(!ev_quit->pressed){
 		JE::update();
 		ev_cont.poll();

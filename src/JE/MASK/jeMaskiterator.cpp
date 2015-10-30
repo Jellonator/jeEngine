@@ -17,8 +17,8 @@ bool Maskiterator::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, i
 	bool ret = false;
 	
 	Hitbox new_box = box;
-	int current_x = box.getX() + move_x;
-	int current_y = box.getY() + move_y;
+	int current_x = new_box.getX() + move_x;
+	int current_y = new_box.getY() + move_y;
 	
 	for (auto m : this->getMaskListAll()){//Move(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, 0)){
 		int temp_x;
@@ -26,8 +26,8 @@ bool Maskiterator::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, i
 		if (m->getCollide(new_box, move_x, 0, &temp_x, nullptr)){
 			ret = true;
 			if (std::abs(temp_x - new_box.getX()) < std::abs(current_x - new_box.getX())){
-				new_box.setX(temp_x);
 				current_x = temp_x;
+				new_box.setX(temp_x);
 			}
 		}
 		m->moveBy(-this->getX(), -this->getY());

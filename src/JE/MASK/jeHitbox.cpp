@@ -96,6 +96,8 @@ bool Hitbox::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* ou
 	
 	if (out_x) *out_x = duplicate.getX();
 	if (out_y) *out_y = duplicate.getY();
+	
+	return ret;
 }
 
 int Hitbox::getWidth() const{
