@@ -34,7 +34,8 @@ int main(int argc, char** argv){
 	//float time = 0;
 	JE::MASK::Multimask tile(32, 32);
 	tile.generateFromPoints(0,0, 15,0, 0,31);
-	JE::MASK::Hitbox player(0, 0, 7, 7);
+	JE::MASK::Multimask player(0,0);
+	player.generateFromPoints(0,-6, 6,4, -6,4);
 	
 	JE::GRAPHICS::Camera camera;
 	camera.setScale(8);

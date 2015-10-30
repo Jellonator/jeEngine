@@ -28,6 +28,46 @@ bool Hitbox::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* o
 	return mask_list.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
+bool Hitbox::getCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+	std::vector<Mask*> mask_vec = mask_list.getMaskListAll();
+	int output_x = mask_list.getX() + move_x;
+	int output_y = mask_list.getY() + move_y;
+	int current_x = mask_list.getX();
+	int current_y = mask_list.getY();
+	bool ret = false;
+	
+	for (auto mask : mask_vec){
+		int temp_x;
+		
+		mask->moveBy(current_x, current_y);
+		bool did_collide = mask->callCollide(*this, move_x, 0, &temp_x, nullptr);
+		if (did_collide){
+			ret = true;
+			move_x = temp_x - mask->getX();
+			output_x = mask_list.getX() + move_x;
+		}
+		mask->moveBy(-current_x, -current_y);
+	}
+	
+	for (auto mask : mask_vec){
+		int temp_y;
+		
+		mask->moveBy(current_x, current_y);
+		bool did_collide = mask->callCollide(*this, 0, move_y, nullptr, &temp_y);
+		if (did_collide){
+			ret = true;
+			move_y = temp_y - mask->getY();
+			output_y = mask_list.getY() + move_y;
+		}
+		mask->moveBy(-current_x, -current_y);
+	}
+	
+	if (out_x) *out_x = output_x;
+	if (out_y) *out_y = output_y;
+	
+	return ret;
+}
+
 bool Hitbox::getCollide(PointMask& point, int move_x, int move_y, int* out_x, int* out_y){
 	bool ret = false;
 	int new_x = point.getX() + move_x;

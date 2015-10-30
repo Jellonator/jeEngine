@@ -13,6 +13,46 @@ Maskiterator::~Maskiterator(){
 	
 }
 
+bool Maskiterator::getCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+	std::vector<Mask*> mask_vec = mask_list.getMaskListAll();
+	int output_x = mask_list.getX() + move_x;
+	int output_y = mask_list.getY() + move_y;
+	int current_x = mask_list.getX();
+	int current_y = mask_list.getY();
+	bool ret = false;
+	
+	for (auto mask : mask_vec){
+		int temp_x;
+		
+		mask->moveBy(current_x, current_y);
+		bool did_collide = mask->callCollide(*this, move_x, 0, &temp_x, nullptr);
+		if (did_collide){
+			ret = true;
+			move_x = temp_x - mask->getX();
+			output_x = mask_list.getX() + move_x;
+		}
+		mask->moveBy(-current_x, -current_y);
+	}
+	
+	for (auto mask : mask_vec){
+		int temp_y;
+		
+		mask->moveBy(current_x, current_y);
+		bool did_collide = mask->callCollide(*this, 0, move_y, nullptr, &temp_y);
+		if (did_collide){
+			ret = true;
+			move_y = temp_y - mask->getY();
+			output_y = mask_list.getY() + move_y;
+		}
+		mask->moveBy(-current_x, -current_y);
+	}
+	
+	if (out_x) *out_x = output_x;
+	if (out_y) *out_y = output_y;
+	
+	return ret;
+}
+
 bool Maskiterator::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* out_y){
 	bool ret = false;
 	
@@ -20,7 +60,9 @@ bool Maskiterator::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, i
 	int current_x = new_box.getX() + move_x;
 	int current_y = new_box.getY() + move_y;
 	
-	for (auto m : this->getMaskListAll()){//Move(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, 0)){
+	auto mask_vector = this->getMaskListMove(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, move_y);
+	
+	for (auto m : mask_vector){
 		int temp_x;
 		m->moveBy(this->getX(), this->getY());
 		if (m->getCollide(new_box, move_x, 0, &temp_x, nullptr)){
@@ -33,7 +75,7 @@ bool Maskiterator::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, i
 		m->moveBy(-this->getX(), -this->getY());
 	}
 	
-	for (auto m : this->getMaskListAll()){//Move(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), 0, move_y)){
+	for (auto m : mask_vector){
 		int temp_y;
 		m->moveBy(this->getX(), this->getY());
 		if (m->getCollide(new_box, 0, move_y, nullptr, &temp_y)){

@@ -15,6 +15,7 @@ public:
 	
 	virtual bool getCollide(Hitbox& box, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool getCollide(PointMask& point, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
+	virtual bool getCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	
 	virtual bool callCollide(Hitbox& box, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool callCollide(PointMask& point, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);

@@ -27,32 +27,41 @@ bool Mask::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* out
 }
 
 bool Mask::getCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
-	std::vector<Mask*> mask_vec = mask_list.getMaskListMove(this->getLeft(), this->getRight(), this->getRight(), this->getBottom(), -move_x, -move_y);
-	int current_x = this->getX();
-	int current_y = this->getY();
+	std::vector<Mask*> mask_vec = mask_list.getMaskListAll();
+	int output_x = mask_list.getX() + move_x;
+	int output_y = mask_list.getY() + move_y;
+	int current_x = mask_list.getX();
+	int current_y = mask_list.getY();
 	bool ret = false;
 	
 	for (auto mask : mask_vec){
-		int temp_x, temp_y;
+		int temp_x;
 		
-		//translate mask based on its parent
-		mask->moveBy(mask_list.getX(), mask_list.getY());
-		bool did_collide = (mask->callCollide(*this, move_x, move_y, &temp_x, &temp_y));
-		mask->moveBy(-mask_list.getX(), -mask_list.getY());
-		
+		mask->moveBy(current_x, current_y);
+		bool did_collide = mask->callCollide(*this, move_x, 0, &temp_x, nullptr);
 		if (did_collide){
 			ret = true;
-			*out_x = temp_x;
-			*out_y = temp_y;
 			move_x = temp_x - mask->getX();
-			move_y = temp_y - mask->getY();
+			output_x = mask_list.getX() + move_x;
 		}
+		mask->moveBy(-current_x, -current_y);
 	}
 	
-	if (!ret){
-		*out_x = mask_list.getX() + move_x;
-		*out_y = mask_list.getY() + move_y;
+	for (auto mask : mask_vec){
+		int temp_y;
+		
+		mask->moveBy(current_x, current_y);
+		bool did_collide = mask->callCollide(*this, 0, move_y, nullptr, &temp_y);
+		if (did_collide){
+			ret = true;
+			move_y = temp_y - mask->getY();
+			output_y = mask_list.getY() + move_y;
+		}
+		mask->moveBy(-current_x, -current_y);
 	}
+	
+	if (out_x) *out_x = output_x;
+	if (out_y) *out_y = output_y;
 	
 	return ret;
 }
