@@ -51,12 +51,5 @@ namespace MATH{
 		if (!left != !(pos < to)) pos = to;
 		return pos;
 	}
-	float linearTween(float pos, float to, float speed){
-		bool left = (pos < to);
-		if (pos < to) pos += speed;
-		else if (pos > to) pos -= speed;
-		if (!left != !(pos < to)) pos = to;
-		return pos;
-	}
 };
 }

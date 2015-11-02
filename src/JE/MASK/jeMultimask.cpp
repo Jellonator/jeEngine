@@ -1,5 +1,6 @@
 #include "JE/MASK/jeMultimask.h"
-
+#include "JE/UTIL/jeMath.h"
+#include <cmath>
 namespace JE{ namespace MASK{
 
 Multimask::Multimask(int x, int y) : JE::MASK::MaskList(x, y){
@@ -95,34 +96,52 @@ int Multimask::getBottom() const{
 	return value;
 }
 
-bool isPointInsideTriangle (float x, float y, float x1, float y1, float x2, float y2, float x3, float y3){
-	float s = y1 * x3 - x1 * y3 + (y3 - y1) * x + (x1 - x3) * y;
-	float t = x1 * y2 - y1 * x2 + (y1 - y2) * x + (x2 - x1) * y;
-
-	if ((s < 0) != (t < 0))
-		return false;
-
-	float A = -y2 * x3 + y1 * (x3 - x2) + x1 * (y2 - y3) + x2 * y3;
-	if (A < 0.0){
-		s = -s;
-		t = -t;
-		A = -A;
-	}
-	return s > 0 && t > 0 && (s + t) < A;
+bool isPointOnLine(float point_x, float point_y, float line_x1, float line_y1, float line_x2, float line_y2){
+	float crossproduct = (line_y2 - point_y) * (line_x1 - point_x) - (line_x2 - point_x) * (line_y1 - point_y);
+	return (std::abs(crossproduct) < 5.5f);
 }
 
-void Multimask::generateFromPoints(int x1, int y1, int x2, int y2, int x3, int y3){
-	int x_left  = std::min(std::min(x1, x2), x3);
-	int x_right = std::max(std::max(x1, x2), x3);
-	int y_top   = std::min(std::min(y1, y2), y3);
-	int y_bottom= std::max(std::max(y1, y2), y3);
-	
-	for (int iter_x = x_left; iter_x <= x_right; ++iter_x){
-	for (int iter_y = y_top; iter_y <= y_bottom; ++iter_y){
-		if (isPointInsideTriangle(iter_x, iter_y, x1,y1, x2,y2, x3,y3)){
-			this->addMask<PointMask>(iter_x, iter_y);
-		}
+void Multimask::generateFromPoints(std::vector<std::pair<int,int>> points){
+	if (points.size() == 0) return;
+	if (points.size() == 1){
+		this->addMask<PointMask>(std::get<0>(points.front()), std::get<1>(points.front()));
 	}
+	
+	auto* previous = &points.back();
+	int current_x = previous->first;
+	int current_y = previous->second;
+	
+	for (std::vector<std::pair<int,int>>::iterator next = points.begin(); next != points.end(); ++next){
+		int diff_x = std::abs(previous->first - next->first);
+		int diff_y = std::abs(previous->second - next->second);
+		int new_x = next->first;
+		int new_y = next->second;
+		
+		while (current_x != new_x || current_y != new_y){
+			//Only needs to move on x axis
+			if (current_x != new_x && current_y == new_y){
+				current_x = JE::MATH::linearTween(current_x, new_x, 1);
+				
+			//Only needs to move on y axis
+			} else if (current_x == new_x && current_y != new_y){
+				current_y = JE::MATH::linearTween(current_y, new_y, 1);
+				
+			//Pick axis to move on based on differences
+			} else {
+				int diff = std::abs(current_x-new_x)*diff_y - std::abs(current_y-new_y)*diff_x;
+				//If X difference is greater than or equal to Y difference
+				if (diff >= 0){
+					current_x = JE::MATH::linearTween(current_x, new_x, 1);
+				}
+				//If Y difference is greater than or equal to X difference
+				if (diff <= 0) {
+					current_y = JE::MATH::linearTween(current_y, new_y, 1);
+				} 
+			}
+			this->addMask<PointMask>(current_x, current_y);
+		}
+		
+		previous = &*next;
 	}
 }
 

@@ -32,12 +32,19 @@ int main(int argc, char** argv){
 	tile.addNewType<JE::MASK::Hitbox>("half-left",  0,0, 3,7);
 	tile.addNewType<JE::MASK::Hitbox>("half-right", 4,0, 7,7);
 	
-	tile.setRect("full", 2,4, 8,6);
-	tile.setRect("half-bottom", 3,4, 7,4);
-	tile.emptyRect(4,4, 6,4);
+	JE::MASK::Multimask& slope_bottom_left = tile.addNewType<JE::MASK::Multimask>("slope-bottom-left");
+	JE::MASK::Multimask& slope_bottom_right = tile.addNewType<JE::MASK::Multimask>("slope-bottom-right");
+	slope_bottom_left.generateFromPoints({{0,0}, {0,7}, {7,6}});
+	slope_bottom_right.generateFromPoints({{7,0}, {0,7}, {7,7}});
 	
-	JE::MASK::Hitbox player(0,0, 7,7);
-	//player.generateFromPoints(7,11, 7,0, 0,11);
+	//tile.setRect("full", 2,4, 8,6);
+	//tile.setRect("half-bottom", 3,4, 7,4);
+	tile.setTile("slope-bottom-left", 3,4);
+	tile.setTile("slope-bottom-right", 7,4);
+	//tile.emptyRect(4,4, 6,4);
+	
+	JE::MASK::Multimask player(0,0);
+	player.generateFromPoints({{0,-6}, {10,-2}, {5,8}, {12,12}, {-6,12}});
 	
 	JE::GRAPHICS::Camera camera;
 	camera.setScale(8);
@@ -54,9 +61,9 @@ int main(int argc, char** argv){
 		JE::GRAPHICS::draw();
 		camera.push();
 		
-		JE::GRAPHICS::setColorF(1, 0, 0);
+		JE::GRAPHICS::setColorF(1, 0, 0, 0.6);
 		tile.draw(0, 0);
-		JE::GRAPHICS::setColorF(0, 1, 0);
+		JE::GRAPHICS::setColorF(0, 1, 0, 0.6);
 		player.draw(0, 0);
 		
 		camera.pop();

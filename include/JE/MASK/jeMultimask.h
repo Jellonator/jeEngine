@@ -2,6 +2,7 @@
 #include "jeMaskList.h"
 #include <vector>
 #include <memory>
+#include <tuple>
 
 namespace JE{ namespace MASK{
 
@@ -27,7 +28,7 @@ public:
 	virtual int getBottom() const;
 	
 	//void generator functions
-	void generateFromPoints(int x1, int y1, int x2, int y2, int x3, int y3);
+	void generateFromPoints(std::vector<std::pair<int,int>> points);
 	
 private:
 	std::vector<std::shared_ptr<Mask>> mask_vec;
