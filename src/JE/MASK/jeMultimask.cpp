@@ -104,7 +104,8 @@ bool isPointOnLine(float point_x, float point_y, float line_x1, float line_y1, f
 void Multimask::generateFromPoints(std::vector<std::pair<int,int>> points){
 	if (points.size() == 0) return;
 	if (points.size() == 1){
-		this->addMask<PointMask>(std::get<0>(points.front()), std::get<1>(points.front()));
+		this->addMask<PointMask>(points.front().first, points.front().second);
+		return;
 	}
 	
 	auto* previous = &points.back();
