@@ -25,9 +25,10 @@ int main(int argc, char** argv){
 	
 	//float time = 0;
 	JE::MASK::Multimask tile(32, 32);
-	tile.generateFromPoints(0,0, 15,0, 0,31);
-	JE::MASK::Multimask player(0,0);
-	player.generateFromPoints(15,31, 15,0, 0,31);
+	tile.addMask<JE::MASK::Hitbox>(0,0,15,7);
+	tile.addMask<JE::MASK::Hitbox>(7,9,15+8,7+10);
+	JE::MASK::Hitbox player(0,0, 7,7);
+	//player.generateFromPoints(7,11, 7,0, 0,11);
 	
 	JE::GRAPHICS::Camera camera;
 	camera.setScale(8);

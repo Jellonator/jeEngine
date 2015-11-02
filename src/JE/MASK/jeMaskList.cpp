@@ -103,12 +103,11 @@ bool MaskList::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* 
 	bool ret = false;
 	
 	Hitbox new_box = box;
-	int current_x = new_box.getX() + move_x;
-	int current_y = new_box.getY() + move_y;
+	int current_x = box.getX() + move_x;
+	int current_y = box.getY() + move_y;
 	
 	MaskListIterator mask_iter = this->getMaskListAll();//(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, move_y);
 	
-	//Mask* this_mask;
 	int offset_x, offset_y;
 	while (Mask* this_mask = mask_iter.get_next(&offset_x, &offset_y)){
 		offset_x += this->getX();
@@ -120,20 +119,21 @@ bool MaskList::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* 
 		if (this_mask->getCollide(new_box, move_x, 0, &temp_x, nullptr)){
 			ret = true;
 			if (std::abs(temp_x - new_box.getX()) < std::abs(current_x - new_box.getX())){
-				current_x = temp_x;
 				new_box.setX(temp_x);
+				current_x = temp_x;
 			}
 		}
 		this_mask->moveBy(-offset_x, -offset_y);
 	}
 	
+	mask_iter.reset();
 	while (Mask* this_mask = mask_iter.get_next(&offset_x, &offset_y)){
 		offset_x += this->getX();
 		offset_y += this->getY();
 		
 		int temp_y;
 		
-		this_mask->moveBy(offset_x, offset_y);
+		this_mask->moveBy(this->getX(), this->getY());
 		if (this_mask->getCollide(new_box, 0, move_y, nullptr, &temp_y)){
 			ret = true;
 			if (std::abs(temp_y - new_box.getY()) < std::abs(current_y - new_box.getY())){
@@ -141,7 +141,7 @@ bool MaskList::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* 
 				new_box.setY(temp_y);
 			}
 		}
-		this_mask->moveBy(-offset_x, -offset_y);
+		this_mask->moveBy(-this->getX(), -this->getY());
 	}
 	
 	if (out_x) *out_x = current_x;

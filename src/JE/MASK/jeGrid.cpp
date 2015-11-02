@@ -6,12 +6,14 @@ Grid::Grid(int width, int height, int tile_width, int tile_height) : MaskList(),
 mask_grid_vec(width, std::vector<std::shared_ptr<Mask>>(height, nullptr)) {
 	this->tileWidth = tile_width;
 	this->tileHeight = tile_height;
+	this->mask_type_map["empty"] = nullptr;
 }
 
 Grid::Grid(int x, int y, int width, int height, int tile_width, int tile_height) : MaskList(x, y),
 mask_grid_vec(width, std::vector<std::shared_ptr<Mask>>(height, nullptr)) {
 	this->tileWidth = tile_width;
 	this->tileHeight = tile_height;
+	this->mask_type_map["empty"] = nullptr;
 }
 
 Grid::~Grid(){
@@ -68,7 +70,7 @@ MaskListIterator Grid::getMaskList(int left, int top, int right, int bottom){
 	right = std::min(right, (int)this->mask_grid_vec.size()-1);
 	bottom = std::min(bottom, (int)this->mask_grid_vec.front().size()-1);
 	
-	for (int ix = left; ix <= right; ++ ix){
+	for (int ix = left; ix <= right; ++ix){
 		auto& sub_vector = this->mask_grid_vec[ix];
 		
 		for (int iy = top; iy <= bottom; ++iy){
