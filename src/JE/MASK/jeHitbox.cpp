@@ -1,5 +1,5 @@
 #include "JE/MASK/jeHitbox.h"
-#include "JE/MASK/jeMaskiterator.h"
+#include "JE/MASK/jeMaskList.h"
 #include "JE/GRAPHIC/jeGraphic.h"
 #include <algorithm>
 
@@ -24,7 +24,7 @@ bool Hitbox::callCollide(PointMask& point, int move_x, int move_y, int* out_x, i
 	return point.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
-bool Hitbox::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+bool Hitbox::callCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
 	return mask_list.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
@@ -34,7 +34,7 @@ bool Hitbox::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* o
  * In this case, 'this' refers to a Hitbox. If this function were to not be declared,
  * then the other object would think this was a Mask.
  */
-bool Hitbox::getCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+bool Hitbox::getCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
 	std::vector<Mask*> mask_vec = mask_list.getMaskListAll();
 	int output_x = mask_list.getX() + move_x;
 	int output_y = mask_list.getY() + move_y;

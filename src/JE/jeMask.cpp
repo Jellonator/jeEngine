@@ -1,6 +1,6 @@
 #include "JE/jeMask.h"
 #include "JE/MASK/jeHitbox.h"
-#include "JE/MASK/jeMaskiterator.h"
+#include "JE/MASK/jeMaskList.h"
 #include "JE/GRAPHIC/jeGraphic.h"
 
 namespace JE{ namespace MASK{
@@ -22,11 +22,11 @@ bool Mask::callCollide(PointMask& point, int move_x, int move_y, int* out_x, int
 	return point.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
-bool Mask::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+bool Mask::callCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
 	return mask_list.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
-bool Mask::getCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+bool Mask::getCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
 	std::vector<Mask*> mask_vec = mask_list.getMaskListAll();
 	int output_x = mask_list.getX() + move_x;
 	int output_y = mask_list.getY() + move_y;

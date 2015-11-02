@@ -2,7 +2,7 @@
 
 namespace JE{ namespace MASK{
 
-Multimask::Multimask(int x, int y) : JE::MASK::Maskiterator(x, y){
+Multimask::Multimask(int x, int y) : JE::MASK::MaskList(x, y){
 	
 }
 

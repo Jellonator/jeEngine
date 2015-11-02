@@ -1,11 +1,11 @@
 #pragma once
-#include "jeMaskiterator.h"
+#include "jeMaskList.h"
 #include <vector>
 #include <memory>
 
 namespace JE{ namespace MASK{
 
-class Multimask : public Maskiterator{
+class Multimask : public MaskList{
 public:
 	Multimask(int x = 0, int y = 0);
 	virtual ~Multimask();

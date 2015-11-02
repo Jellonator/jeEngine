@@ -6,14 +6,6 @@
 #include <vector>
 #include "JE/GRAPHIC/jeCamera.h"
 
-class MyBase{
-	
-};
-
-class MyChild{
-	
-};
-
 int main(int argc, char** argv){
 	
 	//return 0;
