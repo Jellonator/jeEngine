@@ -1,12 +1,14 @@
 #pragma once
 #include "jeMain.h"
 #include "jeUtil.h"
+#include "jeMask.h"
 #include <vector>
 #include <memory>
 #include <string>
 #include <map>
 
 namespace JE{
+
 class World;
 class Entity;
 
@@ -52,6 +54,15 @@ public:
 	entity_vec::iterator getGroupBegin(const std::string& group);
 	entity_vec::iterator getGroupEnd(const std::string& group);
 	entity_vec::size_type getGroupSize(const std::string& group);
+	
+	void getCollideEntity(     JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y);
+	void getCollideMask(       JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y);
+	void getCollideEntityGroup(JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y, const std::string& group);
+	void getCollideMaskGroup(  JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y, const std::string& group);
+	template <class... Arg>
+	void getCollideEntityGroups(JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y, Arg... groups);
+	template <class... Arg>
+	void getCollideMaskGroups(JE::MASK::Mask& mask,  int move_x, int move_y, int* get_x, int* get_y, Arg... groups);
 	
 	//entity getters
 	Entity& getEntity(entity_vec_size value);

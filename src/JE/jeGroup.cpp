@@ -152,4 +152,20 @@ entity_vec::size_type Group::getGroupSize(const std::string& group){
 	return this->entity_groups[group].size();
 }
 
+void Group::getCollideEntity(JE::Entity& entity, int move_x, int move_y, int* get_x, int* get_y){
+	this->getCollideMask(entity.getMask(), move_x, move_y, get_x, get_y);
+}
+
+void Group::getCollideMask(JE::MASK::Mask& mask, int move_x, int move_y, int* get_x, int* get_y){
+	
+}
+
+void Group::getCollideEntityGroup(JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y, const std::string& group){
+	this->getCollideMaskGroup(entity.getMask(), move_x, move_y, get_x, get_y, group);
+}
+
+void Group::getCollideMaskGroup(JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y, const std::string& group){
+	
+}
+
 }
