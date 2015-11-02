@@ -19,14 +19,17 @@ public:
 	virtual int getRight() const;
 	virtual int getTop() const;
 	virtual int getBottom() const;
+	void limitToBounds(int& left, int& top, int& right, int& bottom) const;
 	
 	virtual MaskListIterator getMaskList(int left, int top, int right, int bottom);
 	virtual MaskListIterator getMaskListAll();
 	Mask* getMask(int x, int y);
 	
 	// Setters
-	void setTile(int x, int y, const std::string& name);
+	void setTile(const std::string& name, int x, int y);
 	void emptyTile(int x, int y);
+	void setRect(const std::string& name, int x1, int y1, int x2, int y2);
+	void emptyRect(int x1, int y1, int x2, int y2);
 	
 	template <class TName, class... TArgs>
 	TName& addNewType(const std::string& name, TArgs... arguments) {

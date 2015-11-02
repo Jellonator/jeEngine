@@ -2,6 +2,7 @@
 #include "JE/jeMask.h"
 #include "JE/MASK/jeHitbox.h"
 #include "JE/MASK/jeMultimask.h"
+#include "JE/MASK/jeGrid.h"
 #include <iostream>
 #include <vector>
 #include "JE/GRAPHIC/jeCamera.h"
@@ -24,9 +25,17 @@ int main(int argc, char** argv){
 	ev_cont.addEvent(ev_right);
 	
 	//float time = 0;
-	JE::MASK::Multimask tile(32, 32);
-	tile.addMask<JE::MASK::Hitbox>(0,0,15,7);
-	tile.addMask<JE::MASK::Hitbox>(7,9,15+8,7+10);
+	JE::MASK::Grid tile(0,0, 12,9, 8,8);
+	tile.addNewType<JE::MASK::Hitbox>("full",       0,0, 7,7);
+	tile.addNewType<JE::MASK::Hitbox>("half-top",   0,0, 7,3);
+	tile.addNewType<JE::MASK::Hitbox>("half-bottom",0,4, 7,7);
+	tile.addNewType<JE::MASK::Hitbox>("half-left",  0,0, 3,7);
+	tile.addNewType<JE::MASK::Hitbox>("half-right", 4,0, 7,7);
+	
+	tile.setRect("full", 2,4, 8,6);
+	tile.setRect("half-bottom", 3,4, 7,4);
+	tile.emptyRect(4,4, 6,4);
+	
 	JE::MASK::Hitbox player(0,0, 7,7);
 	//player.generateFromPoints(7,11, 7,0, 0,11);
 	

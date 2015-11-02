@@ -6,18 +6,24 @@ Grid::Grid(int width, int height, int tile_width, int tile_height) : MaskList(),
 mask_grid_vec(width, std::vector<std::shared_ptr<Mask>>(height, nullptr)) {
 	this->tileWidth = tile_width;
 	this->tileHeight = tile_height;
-	this->mask_type_map["empty"] = nullptr;
 }
 
 Grid::Grid(int x, int y, int width, int height, int tile_width, int tile_height) : MaskList(x, y),
 mask_grid_vec(width, std::vector<std::shared_ptr<Mask>>(height, nullptr)) {
 	this->tileWidth = tile_width;
 	this->tileHeight = tile_height;
-	this->mask_type_map["empty"] = nullptr;
 }
 
 Grid::~Grid(){
 	
+}
+
+void Grid::limitToBounds(int& left, int& top, int& right, int& bottom) const{
+	left = std::max(left, 0);
+	top = std::max(top, 0);
+	
+	right = std::min(right, (int)this->mask_grid_vec.size()-1);
+	bottom = std::min(bottom, (int)this->mask_grid_vec.front().size()-1);
 }
 
 bool Grid::isInBounds(int x, int y) const{
@@ -32,7 +38,7 @@ Mask* Grid::getMask(int x, int y){
 	return this->mask_grid_vec[x][y].get();
 }
 
-void Grid::setTile(int x, int y, const std::string& name){
+void Grid::setTile(const std::string& name, int x, int y){
 	if (this->isInBounds(x, y)) {
 		this->mask_grid_vec[x][y] = this->mask_type_map[name];
 	}
@@ -41,6 +47,24 @@ void Grid::setTile(int x, int y, const std::string& name){
 void Grid::emptyTile(int x, int y){
 	if (this->isInBounds(x, y)) {
 		this->mask_grid_vec[x][y] = nullptr;
+	}
+}
+
+void Grid::setRect(const std::string& name, int x1, int y1, int x2, int y2){
+	this->limitToBounds(x1, y1, x2, y2);
+	for (int ix = x1; ix <= x2; ++ix){
+		for (int iy = y1; iy <= y2; ++iy){
+			this->setTile(name, ix, iy);
+		}
+	}
+}
+
+void Grid::emptyRect(int x1, int y1, int x2, int y2){
+	this->limitToBounds(x1, y1, x2, y2);
+	for (int ix = x1; ix <= x2; ++ix){
+		for (int iy = y1; iy <= y2; ++iy){
+			this->emptyTile(ix, iy);
+		}
 	}
 }
 
@@ -63,12 +87,7 @@ int Grid::getBottom() const{
 
 MaskListIterator Grid::getMaskList(int left, int top, int right, int bottom){
 	MaskListIterator iter;
-	
-	left = std::max(left, 0);
-	top = std::max(top, 0);
-	
-	right = std::min(right, (int)this->mask_grid_vec.size()-1);
-	bottom = std::min(bottom, (int)this->mask_grid_vec.front().size()-1);
+	this->limitToBounds(left, top, right, bottom);
 	
 	for (int ix = left; ix <= right; ++ix){
 		auto& sub_vector = this->mask_grid_vec[ix];
