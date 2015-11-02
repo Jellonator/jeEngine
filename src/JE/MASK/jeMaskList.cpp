@@ -133,7 +133,7 @@ bool MaskList::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* 
 		
 		int temp_y;
 		
-		this_mask->moveBy(this->getX(), this->getY());
+		this_mask->moveBy(offset_x, offset_y);
 		if (this_mask->getCollide(new_box, 0, move_y, nullptr, &temp_y)){
 			ret = true;
 			if (std::abs(temp_y - new_box.getY()) < std::abs(current_y - new_box.getY())){
@@ -141,7 +141,7 @@ bool MaskList::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* 
 				new_box.setY(temp_y);
 			}
 		}
-		this_mask->moveBy(-this->getX(), -this->getY());
+		this_mask->moveBy(-offset_x, -offset_y);
 	}
 	
 	if (out_x) *out_x = current_x;
@@ -184,7 +184,7 @@ bool MaskList::getCollide(PointMask& point, int move_x, int move_y, int* out_x, 
 		
 		int temp_y;
 		
-		this_mask->moveBy(this->getX(), this->getY());
+		this_mask->moveBy(offset_x, offset_y);
 		if (this_mask->getCollide(new_point, 0, move_y, nullptr, &temp_y)){
 			ret = true;
 			if (std::abs(temp_y - new_point.getY()) < std::abs(current_y - new_point.getY())){
@@ -192,7 +192,7 @@ bool MaskList::getCollide(PointMask& point, int move_x, int move_y, int* out_x, 
 				new_point.setY(temp_y);
 			}
 		}
-		this_mask->moveBy(-this->getX(), -this->getY());
+		this_mask->moveBy(-offset_x, -offset_y);
 	}
 	
 	if (out_x) *out_x = current_x;
