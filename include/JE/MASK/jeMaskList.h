@@ -5,22 +5,25 @@
 
 namespace JE{ namespace MASK{
 	
-class MaskListIterator : public Mask{
+class MaskListIterator{
+public:
+	MaskListIterator();
 	Mask* get_next(int* get_x, int* get_y);
 	void addMask(Mask*, int x, int y);
+	void reset();
 private:
-	std::vector<std::pair<int, int>> position_vec;
-	std::vector<Mask*> mask_vect;
-}
+	std::vector<std::tuple<Mask*, int, int>> mask_vec;
+	std::vector<std::tuple<Mask*, int, int>>::size_type mask_position;
+};
 
 class MaskList : public Mask{
 public:
 	MaskList(int x = 0, int y = 0);
 	virtual ~MaskList();
 	
-	virtual std::vector<Mask*> getMaskList(int left, int top, int right, int bottom);
-	virtual std::vector<Mask*> getMaskListAll();
-	std::vector<Mask*> getMaskListMove(int left, int top, int right, int bottom, int move_x, int move_y);
+	virtual MaskListIterator getMaskList(int left, int top, int right, int bottom);
+	virtual MaskListIterator getMaskListAll();
+	MaskListIterator getMaskListMove(int left, int top, int right, int bottom, int move_x, int move_y);
 	
 	virtual bool getCollide(Hitbox& box, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool getCollide(PointMask& point, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);

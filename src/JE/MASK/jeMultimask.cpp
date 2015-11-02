@@ -10,8 +10,8 @@ Multimask::~Multimask(){
 	
 }
 
-std::vector<Mask*> Multimask::getMaskList(int left, int top, int right, int bottom){
-	std::vector<Mask*> vec;
+MaskListIterator Multimask::getMaskList(int left, int top, int right, int bottom){
+	MaskListIterator vec;
 	
 	for (auto& m : this->mask_vec){
 		m->moveBy(this->getX(), this->getY());
@@ -19,7 +19,7 @@ std::vector<Mask*> Multimask::getMaskList(int left, int top, int right, int bott
 		&&  m->getLeft() <= right 
 		&&  m->getBottom() >= top
 		&&  m->getTop() <= bottom){
-			vec.push_back(m.get());
+			vec.addMask(m.get(), 0, 0);
 		}
 		m->moveBy(-this->getX(), -this->getY());
 	}
@@ -27,10 +27,10 @@ std::vector<Mask*> Multimask::getMaskList(int left, int top, int right, int bott
 	return vec;
 }
 
-std::vector<Mask*> Multimask::getMaskListAll(){
-	std::vector<Mask*> vec;
+MaskListIterator Multimask::getMaskListAll(){
+	MaskListIterator vec;
 	for (auto& m : this->mask_vec){
-		vec.push_back(m.get());
+		vec.addMask(m.get(), 0, 0);
 	}
 	return vec;
 }

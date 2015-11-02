@@ -5,6 +5,32 @@
 
 namespace JE{ namespace MASK{
 
+MaskListIterator::MaskListIterator(){
+	this->reset();
+}
+
+void MaskListIterator::reset(){
+	this->mask_position = 0;
+}
+
+void MaskListIterator::addMask(Mask* mask, int x, int y){
+	this->mask_vec.push_back(std::make_tuple(mask, x, y));
+}
+
+Mask* MaskListIterator::get_next(int* get_x, int* get_y){
+	if (this->mask_position >= this->mask_vec.size()){
+		return nullptr;
+	}
+	
+	Mask* ret = std::get<0>(this->mask_vec[this->mask_position]);
+	if (get_x) *get_x = std::get<1>(this->mask_vec[this->mask_position]);
+	if (get_y) *get_y = std::get<2>(this->mask_vec[this->mask_position]);
+	
+	++ this->mask_position;
+	
+	return ret;
+}
+
 MaskList::MaskList(int x, int y) : JE::MASK::Mask(x, y){
 	this->get_bottom = y;
 	this->get_top = y;
@@ -23,37 +49,48 @@ MaskList::~MaskList(){
  * then the other object would think this was a Mask.
  */
 bool MaskList::getCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
-	std::vector<Mask*> mask_vec = mask_list.getMaskListAll();
 	int output_x = mask_list.getX() + move_x;
 	int output_y = mask_list.getY() + move_y;
 	int current_x = mask_list.getX();
 	int current_y = mask_list.getY();
 	bool ret = false;
 	
-	for (auto mask : mask_vec){
+	MaskListIterator mask_iter = mask_list.getMaskListAll();
+	
+	int offset_x, offset_y;
+	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += current_x;
+		offset_y += current_y;
+		
 		int temp_x;
 		
-		mask->moveBy(current_x, current_y);
-		bool did_collide = mask->callCollide(*this, move_x, 0, &temp_x, nullptr);
+		current_mask->moveBy(offset_x, offset_y);
+		bool did_collide = current_mask->callCollide(*this, move_x, 0, &temp_x, nullptr);
 		if (did_collide){
+			
 			ret = true;
-			move_x = temp_x - mask->getX();
+			move_x = temp_x - current_mask->getX();
 			output_x = mask_list.getX() + move_x;
 		}
-		mask->moveBy(-current_x, -current_y);
+		current_mask->moveBy(-offset_x, -offset_y);
 	}
+	current_x = output_x;
 	
-	for (auto mask : mask_vec){
+	mask_iter.reset();
+	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += current_x;
+		offset_y += current_y;
+		
 		int temp_y;
 		
-		mask->moveBy(current_x, current_y);
-		bool did_collide = mask->callCollide(*this, 0, move_y, nullptr, &temp_y);
+		current_mask->moveBy(offset_x, offset_y);
+		bool did_collide = current_mask->callCollide(*this, 0, move_y, nullptr, &temp_y);
 		if (did_collide){
 			ret = true;
-			move_y = temp_y - mask->getY();
+			move_y = temp_y - current_mask->getY();
 			output_y = mask_list.getY() + move_y;
 		}
-		mask->moveBy(-current_x, -current_y);
+		current_mask->moveBy(-offset_x, -offset_y);
 	}
 	
 	if (out_x) *out_x = output_x;
@@ -69,32 +106,42 @@ bool MaskList::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* 
 	int current_x = new_box.getX() + move_x;
 	int current_y = new_box.getY() + move_y;
 	
-	auto mask_vector = this->getMaskListMove(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, move_y);
+	MaskListIterator mask_iter = this->getMaskListAll();//(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, move_y);
 	
-	for (auto m : mask_vector){
+	//Mask* this_mask;
+	int offset_x, offset_y;
+	while (Mask* this_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += this->getX();
+		offset_y += this->getY();
+		
 		int temp_x;
-		m->moveBy(this->getX(), this->getY());
-		if (m->getCollide(new_box, move_x, 0, &temp_x, nullptr)){
+		
+		this_mask->moveBy(offset_x, offset_y);
+		if (this_mask->getCollide(new_box, move_x, 0, &temp_x, nullptr)){
 			ret = true;
 			if (std::abs(temp_x - new_box.getX()) < std::abs(current_x - new_box.getX())){
 				current_x = temp_x;
 				new_box.setX(temp_x);
 			}
 		}
-		m->moveBy(-this->getX(), -this->getY());
+		this_mask->moveBy(-offset_x, -offset_y);
 	}
 	
-	for (auto m : mask_vector){
+	while (Mask* this_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += this->getX();
+		offset_y += this->getY();
+		
 		int temp_y;
-		m->moveBy(this->getX(), this->getY());
-		if (m->getCollide(new_box, 0, move_y, nullptr, &temp_y)){
+		
+		this_mask->moveBy(offset_x, offset_y);
+		if (this_mask->getCollide(new_box, 0, move_y, nullptr, &temp_y)){
 			ret = true;
 			if (std::abs(temp_y - new_box.getY()) < std::abs(current_y - new_box.getY())){
 				current_y = temp_y;
 				new_box.setY(temp_y);
 			}
 		}
-		m->moveBy(-this->getX(), -this->getY());
+		this_mask->moveBy(-offset_x, -offset_y);
 	}
 	
 	if (out_x) *out_x = current_x;
@@ -110,30 +157,42 @@ bool MaskList::getCollide(PointMask& point, int move_x, int move_y, int* out_x, 
 	int current_x = point.getX() + move_x;
 	int current_y = point.getY() + move_y;
 	
-	for (auto m : this->getMaskListMove(new_point.getLeft(), new_point.getTop(), new_point.getRight(), new_point.getBottom(), move_x, 0)){
+	MaskListIterator mask_iter = this->getMaskListAll();//(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, move_y);
+	
+	int offset_x, offset_y;
+	while (Mask* this_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += this->getX();
+		offset_y += this->getY();
+		
 		int temp_x;
-		m->moveBy(this->getX(), this->getY());
-		if (m->getCollide(new_point, move_x, 0, &temp_x, nullptr)){
+		
+		this_mask->moveBy(offset_x, offset_y);
+		if (this_mask->getCollide(new_point, move_x, 0, &temp_x, nullptr)){
 			ret = true;
 			if (std::abs(temp_x - new_point.getX()) < std::abs(current_x - new_point.getX())){
 				new_point.setX(temp_x);
 				current_x = temp_x;
 			}
 		}
-		m->moveBy(-this->getX(), -this->getY());
+		this_mask->moveBy(-offset_x, -offset_y);
 	}
 	
-	for (auto m : this->getMaskListMove(new_point.getLeft(), new_point.getTop(), new_point.getRight(), new_point.getBottom(), 0, move_y)){
+	mask_iter.reset();
+	while (Mask* this_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += this->getX();
+		offset_y += this->getY();
+		
 		int temp_y;
-		m->moveBy(this->getX(), this->getY());
-		if (m->getCollide(new_point, 0, move_y, nullptr, &temp_y)){
+		
+		this_mask->moveBy(this->getX(), this->getY());
+		if (this_mask->getCollide(new_point, 0, move_y, nullptr, &temp_y)){
 			ret = true;
 			if (std::abs(temp_y - new_point.getY()) < std::abs(current_y - new_point.getY())){
 				current_y = temp_y;
 				new_point.setY(temp_y);
 			}
 		}
-		m->moveBy(-this->getX(), -this->getY());
+		this_mask->moveBy(-this->getX(), -this->getY());
 	}
 	
 	if (out_x) *out_x = current_x;
@@ -154,13 +213,13 @@ bool MaskList::callCollide(MaskList& mask_list, int move_x, int move_y, int* out
 	return mask_list.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
-std::vector<Mask*> MaskList::getMaskList(int left, int top, int right, int bottom){
-	std::vector<Mask*> iter;
+MaskListIterator MaskList::getMaskList(int left, int top, int right, int bottom){
+	MaskListIterator iter;
 	
 	return iter;
 }
 
-std::vector<Mask*> MaskList::getMaskListMove(int left, int top, int right, int bottom, int move_x, int move_y){
+MaskListIterator MaskList::getMaskListMove(int left, int top, int right, int bottom, int move_x, int move_y){
 	return this->getMaskList(
 		left   + std::min(0, move_x), 
 		top    + std::min(0, move_y),
@@ -169,19 +228,22 @@ std::vector<Mask*> MaskList::getMaskListMove(int left, int top, int right, int b
 	);
 }
 
-std::vector<Mask*> MaskList::getMaskListAll(){
-	std::vector<Mask*> iter;
+MaskListIterator MaskList::getMaskListAll(){
+	MaskListIterator iter;
+	
 	return iter;
 }
 
 void MaskList::draw(int x, int y){
-	for (auto child : this->getMaskListAll()){
-		child->draw(x + this->getX(), y + this->getY());
+	MaskListIterator iter = this->getMaskListAll();
+	int offset_x, offset_y;
+	while (Mask* child = iter.get_next(&offset_x, &offset_y)){
+		child->draw(x + this->getX() + offset_x, y + this->getY() + offset_y);
 	}
 }
 
 void MaskList::updateGetters(){
-	auto vec_list = this->getMaskListAll();
+	std::vector<Mask*> vec_list;// = this->getMaskListAll();
 	bool first = true;
 	
 	for (auto mask : vec_list){

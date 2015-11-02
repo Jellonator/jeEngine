@@ -27,7 +27,7 @@ int main(int argc, char** argv){
 	JE::MASK::Multimask tile(32, 32);
 	tile.generateFromPoints(0,0, 15,0, 0,31);
 	JE::MASK::Multimask player(0,0);
-	player.generateFromPoints(0,-6, 6,4, -6,4);
+	player.generateFromPoints(15,31, 15,0, 0,31);
 	
 	JE::GRAPHICS::Camera camera;
 	camera.setScale(8);

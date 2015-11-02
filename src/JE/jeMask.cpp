@@ -27,37 +27,48 @@ bool Mask::callCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, 
 }
 
 bool Mask::getCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
-	std::vector<Mask*> mask_vec = mask_list.getMaskListAll();
 	int output_x = mask_list.getX() + move_x;
 	int output_y = mask_list.getY() + move_y;
 	int current_x = mask_list.getX();
 	int current_y = mask_list.getY();
 	bool ret = false;
+
+	MaskListIterator mask_iter = mask_list.getMaskListAll();
 	
-	for (auto mask : mask_vec){
+	int offset_x, offset_y;
+	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += current_x;
+		offset_y += current_y;
+		
 		int temp_x;
 		
-		mask->moveBy(current_x, current_y);
-		bool did_collide = mask->callCollide(*this, move_x, 0, &temp_x, nullptr);
+		current_mask->moveBy(offset_x, offset_y);
+		bool did_collide = current_mask->callCollide(*this, move_x, 0, &temp_x, nullptr);
 		if (did_collide){
 			ret = true;
-			move_x = temp_x - mask->getX();
+			move_x = temp_x - current_mask->getX();
 			output_x = mask_list.getX() + move_x;
 		}
-		mask->moveBy(-current_x, -current_y);
+		
+		current_mask->moveBy(-offset_x, -offset_y);
 	}
+	current_x = output_x;
 	
-	for (auto mask : mask_vec){
+	mask_iter.reset();
+	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += current_x;
+		offset_y += current_y;
+		
 		int temp_y;
 		
-		mask->moveBy(current_x, current_y);
-		bool did_collide = mask->callCollide(*this, 0, move_y, nullptr, &temp_y);
+		current_mask->moveBy(offset_x, offset_y);
+		bool did_collide = current_mask->callCollide(*this, 0, move_y, nullptr, &temp_y);
 		if (did_collide){
 			ret = true;
-			move_y = temp_y - mask->getY();
+			move_y = temp_y - current_mask->getY();
 			output_y = mask_list.getY() + move_y;
 		}
-		mask->moveBy(-current_x, -current_y);
+		current_mask->moveBy(-offset_x, -offset_y);
 	}
 	
 	if (out_x) *out_x = output_x;

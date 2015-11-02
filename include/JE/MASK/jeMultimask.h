@@ -10,8 +10,8 @@ public:
 	Multimask(int x = 0, int y = 0);
 	virtual ~Multimask();
 	
-	virtual std::vector<Mask*> getMaskList(int left, int top, int right, int bottom);
-	virtual std::vector<Mask*> getMaskListAll();
+	virtual MaskListIterator getMaskList(int left, int top, int right, int bottom);
+	virtual MaskListIterator getMaskListAll();
 	
 	template <class MType, class... ArgTypes>
 	MType& addMask(ArgTypes... arguments){
