@@ -34,7 +34,7 @@ namespace GRAPHICS{
 	extern Color backcolor;/**< \brief the background color */
 	extern Color forecolor;/**< \brief the foreground color */
 	extern SDL_Window* window;/**< \brief SDL_Window* window, the global window. */
-	extern SDL_Renderer* renderer;/**< \brief SDL_Renderer* renderer, the global renderer. */
+	//extern SDL_Renderer* renderer;/**< \brief SDL_Renderer* renderer, the global renderer. */
 	extern SDL_GLContext glcontext;
 	//void draw();/**< \brief Draws the engine and the active world. */
 	//void flip();/**< \brief Flips the screen. */

@@ -86,8 +86,8 @@ class Camera : public Point
 		//void moveToShake(float x, float y, float range, float intensity, float step = JE::dt);
 		void getPoint(float* x, float* y);
 		
-		void push(SDL_Renderer* renderer = renderer);
-		void pop(SDL_Renderer* renderer = renderer);
+		void push();
+		void pop();
 		
 		void getMousePosition(float* x, float* y);
 	protected:

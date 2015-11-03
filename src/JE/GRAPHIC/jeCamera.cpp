@@ -292,7 +292,7 @@ void Camera::getMousePosition(float* x, float* y){
 	*x = mx;
 	*y = my;
 }
-void Camera::push(SDL_Renderer* renderer){
+void Camera::push(){
 	glPushMatrix();
 	this->startClip();
 	float sw = 1;
@@ -306,7 +306,7 @@ void Camera::push(SDL_Renderer* renderer){
 	//	glTranslatef(-this->clip.x, -this->clip.y, 0);
 	//}
 }
-void Camera::pop(SDL_Renderer* renderer){
+void Camera::pop(){
 
 	this->endClip();
 	glPopMatrix();

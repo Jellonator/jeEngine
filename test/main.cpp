@@ -2,6 +2,7 @@
 #include "JE/jeMask.h"
 #include "JE/jeEntity.h"
 #include "JE/jeGroup.h"
+#include "JE/GRAPHIC/jeGraphic.h"
 #include "JE/MASK/jeHitbox.h"
 #include "JE/MASK/jeMultimask.h"
 #include "JE/MASK/jeGrid.h"
