@@ -92,6 +92,7 @@ int main(int argc, char** argv){
 	
 	//return 0;
 	JE::initWindow("Hello", 800, 608);
+	JE::TIME::printFPS = true;
 	
 	ev_quit = std::make_shared<JE::EVENT::Quit>();
 	ev_up = std::make_shared<JE::EVENT::Keyboard>(SDLK_UP);

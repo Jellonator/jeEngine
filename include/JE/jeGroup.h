@@ -35,6 +35,7 @@ public:
 		this->entities_add.push_back(e);
 		this->needUpdateEntityLayering = true;
 		e->OnAdd(*this);
+		e->_group = this;
 		return *e;
 	}
 	void remove(const Entity& entity);
