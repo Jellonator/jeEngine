@@ -9,13 +9,12 @@ namespace JE{
 
 class Group;
 class World;
-class Entity : public Point
+class Entity
 {
-friend Group;
 public:
+friend Group;
 	Entity();
 	virtual ~Entity();
-	int layer;
 
 	virtual void OnCreate();/**< \brief Called when the entity is created. */
 	virtual void OnDraw();/**< \brief Called when the entity is drawn. */
@@ -28,11 +27,19 @@ public:
 	
 	template <class MType, class... MArgs>
 	MType& setMask(MArgs... arguments);
-	JE::MASK::Mask& getMask();
+	JE::MASK::Mask* getMask();
+	
+	void setLayer(int value);
+	
+	inline int getLayer() const{
+		return this->_layer;
+	}
 	
 private:
 	std::vector<std::string> _groups_v;
 	std::unique_ptr<JE::MASK::Mask> _mask_ptr;
+	JE::Group* _group = nullptr;
+	int _layer;
 };
 
 template <class MType, class... MArgs>

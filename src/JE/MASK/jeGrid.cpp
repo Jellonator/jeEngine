@@ -1,4 +1,6 @@
 #include "JE/MASK/jeGrid.h"
+#include "JE/UTIL/jeMath.h"
+#include <algorithm>
 
 namespace JE{ namespace MASK{
 
@@ -73,7 +75,7 @@ int Grid::getLeft() const{
 }
 
 int Grid::getRight() const{
-	return this->getX() * this->mask_grid_vec.size() * this->tileWidth;
+	return this->getX() + this->mask_grid_vec.size() * this->tileWidth;
 }
 
 int Grid::getTop() const{
@@ -87,6 +89,17 @@ int Grid::getBottom() const{
 
 MaskListIterator Grid::getMaskList(int left, int top, int right, int bottom){
 	MaskListIterator iter;
+	
+	left -= this->getX();
+	right -= this->getX();
+	top -= this->getY();
+	bottom -= this->getY();
+	
+	left = std::floor(float(left) / float(this->tileWidth));
+	right = std::ceil(float(right) / float(this->tileWidth));
+	top = std::floor(float(top) / float(this->tileHeight));
+	bottom = std::ceil(float(bottom) / float(this->tileHeight));
+	
 	this->limitToBounds(left, top, right, bottom);
 	
 	for (int ix = left; ix <= right; ++ix){
@@ -123,6 +136,51 @@ MaskListIterator Grid::getMaskListAll(){
 	}
 	
 	return iter;
+}
+
+void Grid::generateFromPoints(const std::string& name, const std::vector<std::pair<int,int>>& points, int offset_x, int offset_y){
+	if (points.size() == 0) return;
+	if (points.size() == 1){
+		this->setTile(name, points.front().first + offset_x, points.front().second + offset_y);
+		return;
+	}
+	
+	auto* previous = &points.back();
+	int current_x = previous->first;
+	int current_y = previous->second;
+	
+	for (std::vector<std::pair<int,int>>::const_iterator next = points.begin(); next != points.end(); ++next){
+		int diff_x = std::abs(previous->first - next->first);
+		int diff_y = std::abs(previous->second - next->second);
+		int new_x = next->first;
+		int new_y = next->second;
+		
+		while (current_x != new_x || current_y != new_y){
+			//Only needs to move on x axis
+			if (current_x != new_x && current_y == new_y){
+				current_x = JE::MATH::linearTween(current_x, new_x, 1);
+				
+			//Only needs to move on y axis
+			} else if (current_x == new_x && current_y != new_y){
+				current_y = JE::MATH::linearTween(current_y, new_y, 1);
+				
+			//Pick axis to move on based on differences
+			} else {
+				int diff = std::abs(current_x-new_x)*diff_y - std::abs(current_y-new_y)*diff_x;
+				//If X difference is greater than or equal to Y difference
+				if (diff >= 0){
+					current_x = JE::MATH::linearTween(current_x, new_x, 1);
+				}
+				//If Y difference is greater than or equal to X difference
+				if (diff <= 0) {
+					current_y = JE::MATH::linearTween(current_y, new_y, 1);
+				} 
+			}
+			this->setTile(name, current_x + offset_x, current_y + offset_y);
+		}
+		
+		previous = &*next;
+	}
 }
 
 }}

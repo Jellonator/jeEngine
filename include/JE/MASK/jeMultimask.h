@@ -28,7 +28,7 @@ public:
 	virtual int getBottom() const;
 	
 	//void generator functions
-	void generateFromPoints(std::vector<std::pair<int,int>> points);
+	void generateFromPoints(const std::vector<std::pair<int,int>>& points);
 	
 private:
 	std::vector<std::shared_ptr<Mask>> mask_vec;

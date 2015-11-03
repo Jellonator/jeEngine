@@ -37,6 +37,8 @@ public:
 		this->mask_type_map[name] = ptr;
 		return *ptr;
 	}
+	
+	void generateFromPoints(const std::string& name, const std::vector<std::pair<int,int>>& points, int offset_x = 0, int offset_y = 0);
 private:
 	std::map<std::string, std::shared_ptr<Mask>> mask_type_map;
 	std::vector<std::vector<std::shared_ptr<Mask>>> mask_grid_vec;

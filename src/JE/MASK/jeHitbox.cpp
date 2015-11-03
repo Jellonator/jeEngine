@@ -41,7 +41,7 @@ bool Hitbox::getCollide(MaskList& mask_list, int move_x, int move_y, int* out_x,
 	int current_y = mask_list.getY();
 	bool ret = false;
 
-	MaskListIterator mask_iter = mask_list.getMaskListAll();
+	MaskListIterator mask_iter = mask_list.getMaskListMove(this->getLeft(), this->getTop(), this->getRight(), this->getBottom(), -move_x, -move_y);
 	
 	int offset_x, offset_y;
 	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){

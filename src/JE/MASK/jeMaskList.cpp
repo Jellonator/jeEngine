@@ -55,7 +55,7 @@ bool MaskList::getCollide(MaskList& mask_list, int move_x, int move_y, int* out_
 	int current_y = mask_list.getY();
 	bool ret = false;
 	
-	MaskListIterator mask_iter = mask_list.getMaskListAll();
+	MaskListIterator mask_iter = mask_list.getMaskListMove(this->getLeft(), this->getTop(), this->getRight(), this->getBottom(), -move_x, -move_y);
 	
 	int offset_x, offset_y;
 	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){
@@ -106,7 +106,7 @@ bool MaskList::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* 
 	int current_x = box.getX() + move_x;
 	int current_y = box.getY() + move_y;
 	
-	MaskListIterator mask_iter = this->getMaskListAll();//(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, move_y);
+	MaskListIterator mask_iter = this->getMaskListMove(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, move_y);
 	
 	int offset_x, offset_y;
 	while (Mask* this_mask = mask_iter.get_next(&offset_x, &offset_y)){
@@ -157,7 +157,7 @@ bool MaskList::getCollide(PointMask& point, int move_x, int move_y, int* out_x, 
 	int current_x = point.getX() + move_x;
 	int current_y = point.getY() + move_y;
 	
-	MaskListIterator mask_iter = this->getMaskListAll();//(new_box.getLeft(), new_box.getTop(), new_box.getRight(), new_box.getBottom(), move_x, move_y);
+	MaskListIterator mask_iter = this->getMaskListMove(new_point.getLeft(), new_point.getTop(), new_point.getRight(), new_point.getBottom(), move_x, move_y);
 	
 	int offset_x, offset_y;
 	while (Mask* this_mask = mask_iter.get_next(&offset_x, &offset_y)){
@@ -221,7 +221,7 @@ MaskListIterator MaskList::getMaskList(int left, int top, int right, int bottom)
 
 MaskListIterator MaskList::getMaskListMove(int left, int top, int right, int bottom, int move_x, int move_y){
 	return this->getMaskList(
-		left   + std::min(0, move_x), 
+		left   + std::min(0, move_x),
 		top    + std::min(0, move_y),
 		right  + std::max(0, move_x),
 		bottom + std::max(0, move_y)
@@ -243,22 +243,25 @@ void MaskList::draw(int x, int y){
 }
 
 void MaskList::updateGetters(){
-	std::vector<Mask*> vec_list;// = this->getMaskListAll();
+	MaskListIterator vec_list = this->getMaskListAll();
 	bool first = true;
 	
-	for (auto mask : vec_list){
+	int offset_x, offset_y;
+	while (Mask* current_mask = vec_list.get_next(&offset_x, &offset_y)){
+		current_mask->moveBy(offset_x, offset_y);
 		if (first){
 			first = false;
-			this->get_left  = mask->getLeft();
-			this->get_right = mask->getRight();
-			this->get_top   = mask->getTop();
-			this->get_bottom= mask->getBottom();
+			this->get_left  = current_mask->getLeft();
+			this->get_right = current_mask->getRight();
+			this->get_top   = current_mask->getTop();
+			this->get_bottom= current_mask->getBottom();
 		} else {
-			this->get_left  = std::min(mask->getLeft(),  this->get_left);
-			this->get_right = std::max(mask->getRight(), this->get_right);
-			this->get_top   = std::min(mask->getTop(),   this->get_top);
-			this->get_bottom= std::max(mask->getBottom(),this->get_bottom);
+			this->get_left  = std::min(current_mask->getLeft(),  this->get_left);
+			this->get_right = std::max(current_mask->getRight(), this->get_right);
+			this->get_top   = std::min(current_mask->getTop(),   this->get_top);
+			this->get_bottom= std::max(current_mask->getBottom(),this->get_bottom);
 		}
+		current_mask->moveBy(-offset_x, -offset_y);
 	}
 }
 

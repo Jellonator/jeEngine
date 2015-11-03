@@ -96,12 +96,7 @@ int Multimask::getBottom() const{
 	return value;
 }
 
-bool isPointOnLine(float point_x, float point_y, float line_x1, float line_y1, float line_x2, float line_y2){
-	float crossproduct = (line_y2 - point_y) * (line_x1 - point_x) - (line_x2 - point_x) * (line_y1 - point_y);
-	return (std::abs(crossproduct) < 5.5f);
-}
-
-void Multimask::generateFromPoints(std::vector<std::pair<int,int>> points){
+void Multimask::generateFromPoints(const std::vector<std::pair<int,int>>& points){
 	if (points.size() == 0) return;
 	if (points.size() == 1){
 		this->addMask<PointMask>(points.front().first, points.front().second);
@@ -112,7 +107,7 @@ void Multimask::generateFromPoints(std::vector<std::pair<int,int>> points){
 	int current_x = previous->first;
 	int current_y = previous->second;
 	
-	for (std::vector<std::pair<int,int>>::iterator next = points.begin(); next != points.end(); ++next){
+	for (std::vector<std::pair<int,int>>::const_iterator next = points.begin(); next != points.end(); ++next){
 		int diff_x = std::abs(previous->first - next->first);
 		int diff_y = std::abs(previous->second - next->second);
 		int new_x = next->first;

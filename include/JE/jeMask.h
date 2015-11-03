@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 namespace JE{ namespace MASK{
 
@@ -20,6 +21,7 @@ public:
 	virtual bool callCollide(Hitbox& box, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool callCollide(PointMask& point, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool callCollide(MaskList& mask_list, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
+	bool callCollideGroup(const std::vector<Mask*>& mask_vec, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	
 	//virtual bool raytrace(int start_x, int start_y, int dir_x, int dir_y, int* out_x = nullptr, int* out_y = nullptr);
 	void moveBy(int x, int y);

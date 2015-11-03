@@ -20,17 +20,71 @@ std::shared_ptr<JE::EVENT::Keyboard> ev_right;
 class MyPlayer : public JE::Entity{
 public:
 	MyPlayer(int x, int y) : JE::Entity(){
-		JE::MASK::Hitbox& hitbox = this->setMask<JE::MASK::Hitbox>(0,0,63,63);
-		hitbox.moveTo(x, y);
+		JE::MASK::Grid& hitbox = this->setMask<JE::MASK::Grid>(0,0, 100,100, 4,4);
+		hitbox.addNewType<JE::MASK::Hitbox>("solid", 0, 0, 3, 3);
+		hitbox.generateFromPoints("solid", {{0,-10}, {2,-2}, {10,0}, {2,2}, {0,10}, {-2,2}, {-10,0}, {-2,-2}}, 10, 10);
+		hitbox.updateGetters();
 	}
 	void OnUpdate(JE::Group& group, float dt){
-		if (ev_left->down ) this->getMask().moveBy(-5, 0);
-		if (ev_up->down   ) this->getMask().moveBy( 0,-5);
-		if (ev_right->down) this->getMask().moveBy( 5, 0);
-		if (ev_down->down ) this->getMask().moveBy( 0, 5);
+		int speed = 5;
+		int move_x = 0;
+		int move_y = 0;
+		if (ev_left->down ) move_x = -speed;
+		if (ev_up->down   ) move_y = -speed;
+		if (ev_right->down) move_x =  speed;
+		if (ev_down->down ) move_y =  speed;
+		
+		group.getCollideEntityGroup(*this, move_x, move_y, this->getMask()->ptrX(), this->getMask()->ptrY(), "solid");
 	}
 	void OnDraw(){
-		this->getMask().draw(this->getX(), this->getY());
+		JE::GRAPHICS::setColor(0,255,0);
+		this->getMask()->draw(0, 0);
+	}
+};
+
+class MySolid : public JE::Entity {
+public:
+	MySolid(int x, int y, int w, int h) : JE::Entity(){
+		this->setMask<JE::MASK::Hitbox>(x, y, x+w-1, y+h-1);
+	}
+	void OnAdd(JE::Group& group){
+		group.addToGroup("solid", *this);
+	}
+	void OnDraw(){
+		JE::GRAPHICS::setColor(255,0,0);
+		this->getMask()->draw(0, 0);
+	}
+};
+
+class MyNonSolid : public JE::Entity {
+public:
+	MyNonSolid(int x, int y, int w, int h) : JE::Entity(){
+		this->setMask<JE::MASK::Hitbox>(x, y, x+w-1, y+h-1);
+		this->setLayer(-10);
+	}
+	void OnDraw(){
+		JE::GRAPHICS::setColor(50,50,50);
+		this->getMask()->draw(0, 0);
+	}
+};
+
+class MyGrid : public JE::Entity {
+public:
+	MyGrid() : JE::Entity(){
+		JE::MASK::Grid& grid = this->setMask<JE::MASK::Grid>(0,0, 25, 19, 32,32);
+		grid.addNewType<JE::MASK::Hitbox>("solid", 0,0, 31,31);
+		//25 x 19
+		grid.setRect("solid", 0,16, 24,18);
+		grid.setRect("solid", 4,10, 20,11);
+		grid.emptyRect(2,16, 22,17);
+		grid.emptyRect(6,10, 18,10);
+	}
+	void OnAdd(JE::Group& group){
+		group.addToGroup("solid", *this);
+	}
+	void OnDraw(){
+		JE::GRAPHICS::setColor(200, 0, 0);
+		this->getMask()->draw(0, 0);
 	}
 };
 
@@ -50,22 +104,14 @@ int main(int argc, char** argv){
 	ev_cont.addEvent(ev_down);
 	ev_cont.addEvent(ev_right);
 	
-	//float time = 0;
-	JE::MASK::Grid tile(0,0, 12,9, 8,8);
-	tile.addNewType<JE::MASK::Hitbox>("full",       0,0, 7,7);
-	tile.addNewType<JE::MASK::Hitbox>("half-top",   0,0, 7,3);
-	tile.addNewType<JE::MASK::Hitbox>("half-bottom",0,4, 7,7);
-	tile.addNewType<JE::MASK::Hitbox>("half-left",  0,0, 3,7);
-	tile.addNewType<JE::MASK::Hitbox>("half-right", 4,0, 7,7);
-	
-	JE::MASK::Multimask& slope_bottom_left = tile.addNewType<JE::MASK::Multimask>("slope-bottom-left");
-	JE::MASK::Multimask& slope_bottom_right = tile.addNewType<JE::MASK::Multimask>("slope-bottom-right");
-	slope_bottom_left.generateFromPoints({{0,0}, {0,7}, {7,6}});
-	slope_bottom_right.generateFromPoints({{7,0}, {0,7}, {7,7}});
-	
 	JE::Group world;
 	
 	MyPlayer& player = world.add<MyPlayer>(30,0);
+	world.add<MySolid>(100,100, 200,100);
+	world.add<MySolid>(500,300, 100,200);
+	world.add<MyNonSolid>(100,100, 200,200);
+	world.add<MyNonSolid>(400,300, 200,200);
+	world.add<MyGrid>();
 	
 	float time = 0;
 	float inv_fps = 1.0f/60.0f;
