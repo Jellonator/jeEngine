@@ -8,12 +8,13 @@ public:
 	Hitbox(int x1, int y1, int x2, int y2);
 	virtual ~Hitbox();
 	
-	bool getCollide(PointMask& point, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
-	bool getCollide(Hitbox& box, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
+	virtual bool getCollide(PointMask& point, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
+	virtual bool getCollide(Hitbox& box, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
+	virtual bool getCollide(MaskList& mask_list, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	
 	virtual bool callCollide(Hitbox& box, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool callCollide(PointMask& point, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
-	virtual bool callCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
+	virtual bool callCollide(MaskList& mask_list, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	
 	int getWidth() const;
 	int getHeight() const;

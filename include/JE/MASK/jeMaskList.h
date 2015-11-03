@@ -1,47 +1,51 @@
 #pragma once
+#include "../jeMask.h"
 #include <vector>
+#include <tuple>
 
 namespace JE{ namespace MASK{
-
-class Mask;
-class Hitbox;
-class MaskList;
-typedef Mask PointMask;
-
-class Mask{
+	
+class MaskListIterator{
 public:
-	Mask(int x = 0, int y = 0);
-	virtual ~Mask();
+	MaskListIterator();
+	Mask* get_next(int* get_x, int* get_y);
+	void addMask(Mask*, int x, int y);
+	void reset();
+private:
+	std::vector<std::tuple<Mask*, int, int>> mask_vec;
+	std::vector<std::tuple<Mask*, int, int>>::size_type mask_position;
+};
+
+class MaskList : public Mask{
+public:
+	MaskList(int x = 0, int y = 0);
+	virtual ~MaskList();
+	
+	virtual MaskListIterator getMaskList(int left, int top, int right, int bottom);
+	virtual MaskListIterator getMaskListAll();
+	MaskListIterator getMaskListMove(int left, int top, int right, int bottom, int move_x, int move_y);
 	
 	virtual bool getCollide(Hitbox& box, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool getCollide(PointMask& point, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool getCollide(MaskList& mask_list, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	
-	//Call collide is used specifically for 
 	virtual bool callCollide(Hitbox& box, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool callCollide(PointMask& point, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
 	virtual bool callCollide(MaskList& mask_list, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
-	bool callCollideGroup(const std::vector<Mask*>& mask_vec, int move_x, int move_y, int* out_x = nullptr, int* out_y = nullptr);
-	
-	//virtual bool raytrace(int start_x, int start_y, int dir_x, int dir_y, int* out_x = nullptr, int* out_y = nullptr);
-	void moveBy(int x, int y);
-	void moveTo(int x, int y);
-	void setX(int value);
-	void setY(int value);
-	int getX() const;
-	int getY() const;
-	int* ptrX();
-	int* ptrY();
 	
 	virtual int getLeft() const;
 	virtual int getRight() const;
 	virtual int getTop() const;
 	virtual int getBottom() const;
 	
+	void updateGetters();
 	virtual void draw(int x, int y);
+	
 private:
-	int x;
-	int y;
+	int get_left;
+	int get_right;
+	int get_top;
+	int get_bottom;
 };
 
 }}

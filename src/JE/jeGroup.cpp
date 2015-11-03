@@ -42,7 +42,7 @@ void Group::remove(entity_vec_iter index){
 }
 
 bool sortEntity(const entity_def& a, const entity_def& b) { 
-	return a->layer < b->layer; 
+	return a->getLayer() < b->getLayer(); 
 }
 
 void Group::updateEntities(){
@@ -150,6 +150,65 @@ entity_vec::iterator Group::getGroupEnd(const std::string& group){
 
 entity_vec::size_type Group::getGroupSize(const std::string& group){
 	return this->entity_groups[group].size();
+}
+
+bool Group::getCollideEntity(JE::Entity& entity, int move_x, int move_y, int* get_x, int* get_y){
+	JE::MASK::Mask* mask = entity.getMask();
+	if (mask == nullptr) return false;
+	return this->getCollideMask(*mask, move_x, move_y, get_x, get_y);
+}
+
+bool Group::getCollideMask(JE::MASK::Mask& mask, int move_x, int move_y, int* get_x, int* get_y){
+	std::vector<JE::MASK::Mask*> mask_vec;
+	
+	for (JE::Entity* entity : this->entities){
+		JE::MASK::Mask* other_mask = entity->getMask();
+		if (other_mask == nullptr || other_mask == &mask) continue;
+		
+		mask_vec.push_back(other_mask);
+	}
+	
+	return mask.callCollideGroup(mask_vec, move_x, move_y, get_x, get_y);
+}
+
+bool Group::getCollideEntityGroup(JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y, const std::string& group){
+	JE::MASK::Mask* mask = entity.getMask();
+	if (mask == nullptr) return false;
+	return this->getCollideMaskGroup(*mask, move_x, move_y, get_x, get_y, group);
+}
+
+bool Group::getCollideMaskGroup(JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y, const std::string& group){
+	std::vector<JE::MASK::Mask*> mask_vec;
+	
+	for (JE::Entity* entity : this->entity_groups[group]){
+		JE::MASK::Mask* other_mask = entity->getMask();
+		if (other_mask == nullptr || other_mask == &mask) continue;
+		
+		mask_vec.push_back(other_mask);
+	}
+	
+	return mask.callCollideGroup(mask_vec, move_x, move_y, get_x, get_y);
+}
+
+bool Group::getCollideEntityGroups(JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y, const std::vector<std::string>& groups){
+	JE::MASK::Mask* mask = entity.getMask();
+	if (mask == nullptr) return false;
+	return this->getCollideMaskGroups(*mask, move_x, move_y, get_x, get_y, groups);
+}
+
+bool Group::getCollideMaskGroups(JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y, const std::vector<std::string>& groups){
+	std::vector<JE::MASK::Mask*> mask_vec;
+	
+	for (const std::string& group_name : groups){
+		for (JE::Entity* entity : this->entity_groups[group_name]){
+			JE::MASK::Mask* other_mask = entity->getMask();
+			if (other_mask == nullptr || other_mask == &mask) continue;
+			
+			mask_vec.push_back(other_mask);
+		}
+	}
+	
+	return mask.callCollideGroup(mask_vec, move_x, move_y, get_x, get_y);
 }
 
 }

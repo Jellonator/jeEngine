@@ -79,7 +79,16 @@ namespace MATH{
    * \return float the new position
    */
 	float smoothTween(float pos, float to, float speed, float minSpeed = 5);
-	float linearTween(float pos, float to, float speed);
+	
+	template<typename Type>
+	Type linearTween(Type pos, Type to, Type speed){
+		bool is_left = (pos < to);
+		if (pos < to) pos += speed;
+		else if (pos > to) pos -= speed;
+		if (!is_left != !(pos < to)) pos = to;
+		return pos;
+	}
+	
 	template<typename Type>
 	Type clamp(Type value, Type min, Type max){
 		if (min > max) {std::swap(min, max);}

@@ -1,6 +1,6 @@
 #include "JE/jeMask.h"
 #include "JE/MASK/jeHitbox.h"
-#include "JE/MASK/jeMaskiterator.h"
+#include "JE/MASK/jeMaskList.h"
 #include "JE/GRAPHIC/jeGraphic.h"
 
 namespace JE{ namespace MASK{
@@ -22,37 +22,57 @@ bool Mask::callCollide(PointMask& point, int move_x, int move_y, int* out_x, int
 	return point.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
-bool Mask::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+bool Mask::callCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
 	return mask_list.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
-bool Mask::getCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
-	std::vector<Mask*> mask_vec = mask_list.getMaskListMove(this->getLeft(), this->getRight(), this->getRight(), this->getBottom(), -move_x, -move_y);
-	int current_x = this->getX();
-	int current_y = this->getY();
+bool Mask::getCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+	int output_x = mask_list.getX() + move_x;
+	int output_y = mask_list.getY() + move_y;
+	int current_x = mask_list.getX();
+	int current_y = mask_list.getY();
 	bool ret = false;
+
+	MaskListIterator mask_iter = mask_list.getMaskListMove(this->getLeft(), this->getTop(), this->getRight(), this->getBottom(), -move_x, -move_y);
 	
-	for (auto mask : mask_vec){
-		int temp_x, temp_y;
+	int offset_x, offset_y;
+	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += current_x;
+		offset_y += current_y;
 		
-		//translate mask based on its parent
-		mask->moveBy(mask_list.getX(), mask_list.getY());
-		bool did_collide = (mask->callCollide(*this, move_x, move_y, &temp_x, &temp_y));
-		mask->moveBy(-mask_list.getX(), -mask_list.getY());
+		int temp_x;
 		
+		current_mask->moveBy(offset_x, offset_y);
+		bool did_collide = current_mask->callCollide(*this, move_x, 0, &temp_x, nullptr);
 		if (did_collide){
 			ret = true;
-			*out_x = temp_x;
-			*out_y = temp_y;
-			move_x = temp_x - mask->getX();
-			move_y = temp_y - mask->getY();
+			move_x = temp_x - current_mask->getX();
+			output_x = mask_list.getX() + move_x;
 		}
+		
+		current_mask->moveBy(-offset_x, -offset_y);
+	}
+	current_x = output_x;
+	
+	mask_iter.reset();
+	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += current_x;
+		offset_y += current_y;
+		
+		int temp_y;
+		
+		current_mask->moveBy(offset_x, offset_y);
+		bool did_collide = current_mask->callCollide(*this, 0, move_y, nullptr, &temp_y);
+		if (did_collide){
+			ret = true;
+			move_y = temp_y - current_mask->getY();
+			output_y = mask_list.getY() + move_y;
+		}
+		current_mask->moveBy(-offset_x, -offset_y);
 	}
 	
-	if (!ret){
-		*out_x = mask_list.getX() + move_x;
-		*out_y = mask_list.getY() + move_y;
-	}
+	if (out_x) *out_x = output_x;
+	if (out_y) *out_y = output_y;
 	
 	return ret;
 }
@@ -124,6 +144,42 @@ bool Mask::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* out_
 	
 	if (out_x) *out_x = duplicate.getX();
 	if (out_y) *out_y = duplicate.getY();
+	
+	return ret;
+}
+
+bool Mask::callCollideGroup(const std::vector<Mask*>& mask_vec, int move_x, int move_y, int* out_x, int* out_y){
+	int output_x = this->getX() + move_x;
+	int output_y = this->getY() + move_y;
+	bool ret = false;
+	
+	for (auto other_mask : mask_vec){
+		int temp_x;
+		if (this->callCollide(*other_mask, move_x, 0, &temp_x, nullptr)){
+			ret = true;
+			if (std::abs(temp_x - this->getX()) < std::abs(output_x - this->getX())){
+				output_x = temp_x;
+			}
+		}
+	}
+	
+	int original_x = this->getX();
+	this->setX(output_x);
+	
+	for (auto other_mask : mask_vec){
+		int temp_y;
+		if (this->callCollide(*other_mask, 0, move_y, nullptr, &temp_y)){
+			ret = true;
+			if (std::abs(temp_y - this->getY()) < std::abs(output_y - this->getY())){
+				output_y = temp_y;
+			}
+		}
+	}
+	
+	this->setX(original_x);
+	
+	if (out_x) *out_x = output_x;
+	if (out_y) *out_y = output_y;
 	
 	return ret;
 }

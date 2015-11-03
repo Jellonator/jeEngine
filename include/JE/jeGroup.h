@@ -1,12 +1,15 @@
 #pragma once
 #include "jeMain.h"
 #include "jeUtil.h"
+#include "jeMask.h"
+#include "jeEntity.h"
 #include <vector>
 #include <memory>
 #include <string>
 #include <map>
 
 namespace JE{
+
 class World;
 class Entity;
 
@@ -18,6 +21,7 @@ typedef std::map<std::string, entity_vec> group_map;
 
 class Group
 {
+friend Entity;
 public:
 	Group();
 	virtual ~Group();
@@ -29,6 +33,9 @@ public:
 	EntityType& add(ArgType... args){
 		EntityType* e = new EntityType(args...);
 		this->entities_add.push_back(e);
+		this->needUpdateEntityLayering = true;
+		e->OnAdd(*this);
+		e->_group = this;
 		return *e;
 	}
 	void remove(const Entity& entity);
@@ -52,6 +59,13 @@ public:
 	entity_vec::iterator getGroupBegin(const std::string& group);
 	entity_vec::iterator getGroupEnd(const std::string& group);
 	entity_vec::size_type getGroupSize(const std::string& group);
+	
+	bool getCollideEntity(      JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y);
+	bool getCollideMask(        JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y);
+	bool getCollideEntityGroup( JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y, const std::string& group);
+	bool getCollideMaskGroup(   JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y, const std::string& group);
+	bool getCollideEntityGroups(JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y, const std::vector<std::string>& groups);
+	bool getCollideMaskGroups(  JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y, const std::vector<std::string>& groups);
 	
 	//entity getters
 	Entity& getEntity(entity_vec_size value);

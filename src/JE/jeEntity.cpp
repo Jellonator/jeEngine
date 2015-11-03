@@ -4,8 +4,8 @@
 
 namespace JE{
 
-Entity::Entity(float x, float y) : JE::Point(x, y){
-	this->layer = 0;
+Entity::Entity(){
+	this->_layer = 0;
 	this->OnCreate();
 }
 
@@ -25,14 +25,13 @@ void Entity::OnDraw(){}
 
 void Entity::OnRemove(Group& group){}
 
-void Entity::moveBy(float move_x, float move_y){
-	this->x += move_x;
-	this->y += move_y;
+JE::MASK::Mask* Entity::getMask(){
+	return this->_mask_ptr.get();
 }
 
-void Entity::moveTo(float move_x, float move_y, bool force){
-	this->x = move_x;
-	this->y = move_y;
+void Entity::setLayer(int value){
+	this->_layer = value;
+	if (this->_group) this->_group->needUpdateEntityLayering = true;
 }
 
 };

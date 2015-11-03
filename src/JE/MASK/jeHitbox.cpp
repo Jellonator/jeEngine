@@ -1,5 +1,5 @@
 #include "JE/MASK/jeHitbox.h"
-#include "JE/MASK/jeMaskiterator.h"
+#include "JE/MASK/jeMaskList.h"
 #include "JE/GRAPHIC/jeGraphic.h"
 #include <algorithm>
 
@@ -24,8 +24,65 @@ bool Hitbox::callCollide(PointMask& point, int move_x, int move_y, int* out_x, i
 	return point.getCollide(*this, move_x, move_y, out_x, out_y);
 }
 
-bool Hitbox::callCollide(Maskiterator& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+bool Hitbox::callCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
 	return mask_list.getCollide(*this, move_x, move_y, out_x, out_y);
+}
+
+/*
+ * There is a *slight* difference between this function and the function declared in jeMask.
+ * Using '*this' here will allow the object to call a function based on what 'this' is.
+ * In this case, 'this' refers to a Hitbox. If this function were to not be declared,
+ * then the other object would think this was a Mask.
+ */
+bool Hitbox::getCollide(MaskList& mask_list, int move_x, int move_y, int* out_x, int* out_y){
+	int output_x = mask_list.getX() + move_x;
+	int output_y = mask_list.getY() + move_y;
+	int current_x = mask_list.getX();
+	int current_y = mask_list.getY();
+	bool ret = false;
+
+	MaskListIterator mask_iter = mask_list.getMaskListMove(this->getLeft(), this->getTop(), this->getRight(), this->getBottom(), -move_x, -move_y);
+	
+	int offset_x, offset_y;
+	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += current_x;
+		offset_y += current_y;
+		
+		int temp_x;
+		
+		current_mask->moveBy(offset_x, offset_y);
+		bool did_collide = current_mask->callCollide(*this, move_x, 0, &temp_x, nullptr);
+		if (did_collide){
+			ret = true;
+			move_x = temp_x - current_mask->getX();
+			output_x = mask_list.getX() + move_x;
+		}
+		
+		current_mask->moveBy(-offset_x, -offset_y);
+	}
+	current_x = output_x;
+	
+	mask_iter.reset();
+	while (Mask* current_mask = mask_iter.get_next(&offset_x, &offset_y)){
+		offset_x += current_x;
+		offset_y += current_y;
+		
+		int temp_y;
+		
+		current_mask->moveBy(offset_x, offset_y);
+		bool did_collide = current_mask->callCollide(*this, 0, move_y, nullptr, &temp_y);
+		if (did_collide){
+			ret = true;
+			move_y = temp_y - current_mask->getY();
+			output_y = mask_list.getY() + move_y;
+		}
+		current_mask->moveBy(-offset_x, -offset_y);
+	}
+	
+	if (out_x) *out_x = output_x;
+	if (out_y) *out_y = output_y;
+	
+	return ret;
 }
 
 bool Hitbox::getCollide(PointMask& point, int move_x, int move_y, int* out_x, int* out_y){
