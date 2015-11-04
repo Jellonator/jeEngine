@@ -19,20 +19,54 @@ std::shared_ptr<JE::EVENT::Keyboard> ev_right;
 
 class MyPlayer : public JE::Entity{
 public:
+	int velocity_x;
+	int velocity_y;
 	MyPlayer(int x, int y) : JE::Entity(){
-		JE::MASK::Grid& hitbox = this->setMask<JE::MASK::Grid>(0,0, 100,100, 4,4);
-		hitbox.addNewType<JE::MASK::Hitbox>("solid", 0, 0, 3, 3);
-		hitbox.generateFromPoints("solid", {{0,-10}, {2,-2}, {10,0}, {2,2}, {0,10}, {-2,2}, {-10,0}, {-2,-2}}, 10, 10);
-		hitbox.updateGetters();
+		JE::MASK::Hitbox& hitbox = this->setMask<JE::MASK::Hitbox>(0,0,63,63);
+		//hitbox.addNewType<JE::MASK::Hitbox>("solid", 0, 0, 3, 3);
+		//hitbox.generateFromPoints("solid", {{0,-10}, {2,-2}, {10,0}, {2,2}, {0,10}, {-2,2}, {-10,0}, {-2,-2}}, 10, 10);
+		//hitbox.updateGetters();
+		this->velocity_x = 0;
+		this->velocity_y = 0;
 	}
 	void OnUpdate(JE::Group& group, float dt){
-		int speed = 5;
-		int move_x = 0;
-		int move_y = 0;
-		if (ev_left->down ) move_x = -speed;
-		if (ev_up->down   ) move_y = -speed;
-		if (ev_right->down) move_x =  speed;
-		if (ev_down->down ) move_y =  speed;
+		
+		this->velocity_y += 1;
+		if (this->velocity_y > 15) this->velocity_y = 15;
+		if (ev_left->down) {
+			this->velocity_x -= 1;
+			
+		} else if (ev_right->down) {
+			this->velocity_x += 1;
+			
+		} else {
+			this->velocity_x = JE::MATH::linearTween(this->velocity_x, 0, 1); 
+		}
+		this->velocity_x = JE::MATH::clamp(this->velocity_x, -10, +10);
+		
+		if (ev_up->pressed) {
+			this->velocity_y = -20;
+		
+		}else if(ev_up->released && this->velocity_y < 0){
+			//this->velocity_y = 0;
+		}
+		
+		int move_x = this->velocity_x;
+		int move_y = this->velocity_y;
+		
+		if (this->velocity_x > 0 && group.getCollideEntityGroup(*this, 1, 0, nullptr, nullptr, "solid")){
+			this->velocity_x = 0;
+		}
+		if (this->velocity_x < 0 && group.getCollideEntityGroup(*this,-1, 0, nullptr, nullptr, "solid")){
+			this->velocity_x = 0;
+		}
+		
+		if (this->velocity_y > 0 && group.getCollideEntityGroup(*this, 0, 1, nullptr, nullptr, "solid")){
+			this->velocity_y = 0;
+		}
+		if (this->velocity_y < 0 && group.getCollideEntityGroup(*this, 0,-1, nullptr, nullptr, "solid")){
+			this->velocity_y = 0;
+		}
 		
 		group.getCollideEntityGroup(*this, move_x, move_y, this->getMask()->ptrX(), this->getMask()->ptrY(), "solid");
 	}
