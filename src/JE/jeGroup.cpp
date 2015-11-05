@@ -199,6 +199,28 @@ bool Group::getCollideEntityGroups(JE::Entity& entity,  int move_x, int move_y, 
 bool Group::getCollideMaskGroups(JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y, const std::vector<std::string>& groups){
 	std::vector<JE::MASK::Mask*> mask_vec;
 	
+	for (JE::Entity* entity : this->entities){
+		JE::MASK::Mask* other_mask = entity->getMask();
+		if (other_mask == nullptr || other_mask == &mask) continue;
+		
+		bool do_add = false;
+		for (const std::string& entity_group_name : entity->_groups_v){
+			for (const std::string& group_name : groups){
+				if (entity_group_name == group_name){
+					do_add = true;
+				}
+			}
+		}
+		
+		if (!do_add) continue;
+		
+		mask_vec.push_back(other_mask);
+	}
+	
+	/* Previous method, might be slower. Or it might be faster. I don't really know for sure.
+	 * I guess it depends on how it is used.
+	 */
+	/*
 	for (const std::string& group_name : groups){
 		for (JE::Entity* entity : this->entity_groups[group_name]){
 			JE::MASK::Mask* other_mask = entity->getMask();
@@ -207,7 +229,7 @@ bool Group::getCollideMaskGroups(JE::MASK::Mask& mask,int move_x, int move_y, in
 			mask_vec.push_back(other_mask);
 		}
 	}
-	
+	*/
 	return mask.callCollideGroup(mask_vec, move_x, move_y, get_x, get_y);
 }
 

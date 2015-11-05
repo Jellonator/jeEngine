@@ -31,7 +31,7 @@ namespace TIME{
 		//If a second has passed, then reset seconds and frames to 0.
 		if (seconds > 1){
 			fps = (double(frames)/double(seconds));
-			if (printFPS) std::cout << "JE-FPS: " << fps << "\n";
+			if (printFPS) std::cout << "JE-FPS: " << fps << std::endl;
 			seconds = 0;
 			frames = 0;
 		}
