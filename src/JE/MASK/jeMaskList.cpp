@@ -170,12 +170,12 @@ bool MaskList::getCollide(PointMask& point, int move_x, int move_y, int* out_x, 
 		if (this_mask->getCollide(new_point, move_x, 0, &temp_x, nullptr)){
 			ret = true;
 			if (std::abs(temp_x - new_point.getX()) < std::abs(current_x - new_point.getX())){
-				new_point.setX(temp_x);
 				current_x = temp_x;
 			}
 		}
 		this_mask->moveBy(-offset_x, -offset_y);
 	}
+	new_point.setX(current_x);
 	
 	mask_iter.reset();
 	while (Mask* this_mask = mask_iter.get_next(&offset_x, &offset_y)){
@@ -189,11 +189,11 @@ bool MaskList::getCollide(PointMask& point, int move_x, int move_y, int* out_x, 
 			ret = true;
 			if (std::abs(temp_y - new_point.getY()) < std::abs(current_y - new_point.getY())){
 				current_y = temp_y;
-				new_point.setY(temp_y);
 			}
 		}
 		this_mask->moveBy(-offset_x, -offset_y);
 	}
+	new_point.setY(temp_y);
 	
 	if (out_x) *out_x = current_x;
 	if (out_y) *out_y = current_y;
