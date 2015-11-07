@@ -41,8 +41,12 @@ Mask* Grid::getMask(int x, int y){
 }
 
 void Grid::setTile(const std::string& name, int x, int y){
+	this->setTile(this->mask_type_map[name], x, y);
+}
+
+void Grid::setTile(const std::shared_ptr<Mask>& mask, int x, int y){
 	if (this->isInBounds(x, y)) {
-		this->mask_grid_vec[x][y] = this->mask_type_map[name];
+		this->mask_grid_vec[x][y] = mask;
 	}
 }
 
@@ -53,10 +57,14 @@ void Grid::emptyTile(int x, int y){
 }
 
 void Grid::setRect(const std::string& name, int x1, int y1, int x2, int y2){
+	this->setRect(this->mask_type_map[name], x1, y1, x2, y2);
+}
+
+void Grid::setRect(const std::shared_ptr<Mask>& mask, int x1, int y1, int x2, int y2){
 	this->limitToBounds(x1, y1, x2, y2);
 	for (int ix = x1; ix <= x2; ++ix){
 		for (int iy = y1; iy <= y2; ++iy){
-			this->setTile(name, ix, iy);
+			this->setTile(mask, ix, iy);
 		}
 	}
 }
@@ -139,9 +147,13 @@ MaskListIterator Grid::getMaskListAll(){
 }
 
 void Grid::generateFromPoints(const std::string& name, const std::vector<std::pair<int,int>>& points, int offset_x, int offset_y){
+	this->generateFromPoints(this->mask_type_map[name], points, offset_x, offset_y);
+}
+
+void Grid::generateFromPoints(const std::shared_ptr<Mask>& mask, const std::vector<std::pair<int,int>>& points, int offset_x, int offset_y){
 	if (points.size() == 0) return;
 	if (points.size() == 1){
-		this->setTile(name, points.front().first + offset_x, points.front().second + offset_y);
+		this->setTile(mask, points.front().first + offset_x, points.front().second + offset_y);
 		return;
 	}
 	
@@ -176,7 +188,7 @@ void Grid::generateFromPoints(const std::string& name, const std::vector<std::pa
 					current_y = JE::MATH::linearTween(current_y, new_y, 1);
 				} 
 			}
-			this->setTile(name, current_x + offset_x, current_y + offset_y);
+			this->setTile(mask, current_x + offset_x, current_y + offset_y);
 		}
 		
 		previous = &*next;

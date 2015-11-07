@@ -193,7 +193,7 @@ bool MaskList::getCollide(PointMask& point, int move_x, int move_y, int* out_x, 
 		}
 		this_mask->moveBy(-offset_x, -offset_y);
 	}
-	new_point.setY(temp_y);
+	new_point.setY(current_y);
 	
 	if (out_x) *out_x = current_x;
 	if (out_y) *out_y = current_y;

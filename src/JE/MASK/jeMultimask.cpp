@@ -43,7 +43,7 @@ int Multimask::getLeft() const{
 	int value = (*mask_iter)->getLeft();
 	++mask_iter;
 	
-	for (mask_iter; mask_iter != this->mask_vec.end(); ++ mask_iter){
+	for (; mask_iter != this->mask_vec.end(); ++ mask_iter){
 		int new_value = (*mask_iter)->getLeft();
 		if (mask_iter == this->mask_vec.begin() || new_value < value) value = new_value;
 	}
@@ -58,7 +58,7 @@ int Multimask::getRight() const{
 	int value = (*mask_iter)->getRight();
 	++mask_iter;
 	
-	for (mask_iter; mask_iter != this->mask_vec.end(); ++ mask_iter){
+	for (; mask_iter != this->mask_vec.end(); ++ mask_iter){
 		int new_value = (*mask_iter)->getLeft();
 		if (mask_iter == this->mask_vec.begin() || new_value > value) value = new_value;
 	}
@@ -73,7 +73,7 @@ int Multimask::getTop() const{
 	int value = (*mask_iter)->getTop();
 	++mask_iter;
 	
-	for (mask_iter; mask_iter != this->mask_vec.end(); ++ mask_iter){
+	for (; mask_iter != this->mask_vec.end(); ++ mask_iter){
 		int new_value = (*mask_iter)->getTop();
 		if (mask_iter == this->mask_vec.begin() || new_value < value) value = new_value;
 	}
@@ -88,7 +88,7 @@ int Multimask::getBottom() const{
 	int value = (*mask_iter)->getBottom();
 	++mask_iter;
 	
-	for (mask_iter; mask_iter != this->mask_vec.end(); ++ mask_iter){
+	for (; mask_iter != this->mask_vec.end(); ++ mask_iter){
 		int new_value = (*mask_iter)->getBottom();
 		if (mask_iter == this->mask_vec.begin() || new_value < value) value = new_value;
 	}
