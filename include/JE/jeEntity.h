@@ -26,7 +26,9 @@ friend Group;
 	
 	template <class MType, class... MArgs>
 	MType& setMask(MArgs... arguments);
+	
 	JE::MASK::Mask* getMask();
+	const JE::MASK::Mask* getMask() const;
 	
 	void setLayer(int value);
 	

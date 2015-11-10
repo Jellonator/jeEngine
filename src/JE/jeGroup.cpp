@@ -132,19 +132,21 @@ void Group::addToGroup(const std::string& group, Entity& entity){
 }
 
 void Group::removeFromGroup(const std::string& group, Entity& entity){
-	for (std::vector<Entity*>::iterator iter = this->entity_groups[group].begin(); iter != this->entity_groups[group].end(); ++iter){
-		if (*iter == &entity){
-			iter = this->entity_groups[group].erase(iter);
+	std::vector<Entity*>::iterator entity_iter = this->entity_groups[group].begin();
+	while (entity_iter != this->entity_groups[group].end()){
+		if (*entity_iter == &entity){
+			entity_iter = this->entity_groups[group].erase(entity_iter);
 		} else {
-			++iter;
+			++entity_iter;
 		}
 	}
 	
-	for (std::vector<std::string>::iterator iter = entity._groups_v.begin(); iter != entity._groups_v.end(); ++iter){
-		if (*iter == group){
-			iter = entity._groups_v.erase(iter);
+	std::vector<std::string>::iterator group_iter = entity._groups_v.begin();
+	while (group_iter != entity._groups_v.end()){
+		if (*group_iter == group){
+			group_iter = entity._groups_v.erase(group_iter);
 		} else {
-			++iter;
+			++group_iter;
 		}
 	}
 }

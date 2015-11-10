@@ -25,6 +25,10 @@ void Entity::OnDraw(){}
 
 void Entity::OnRemove(Group& group){}
 
+const JE::MASK::Mask* Entity::getMask() const{
+	return this->_mask_ptr.get();
+}
+
 JE::MASK::Mask* Entity::getMask(){
 	return this->_mask_ptr.get();
 }
