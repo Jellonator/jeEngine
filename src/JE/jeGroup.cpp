@@ -19,6 +19,7 @@ void Group::update(float dt){
 	for (auto& entity : this->entities){
 		entity->OnUpdate(*this, dt);
 	}
+	this->updateEntities();
 }
 
 void Group::draw(){
@@ -26,19 +27,17 @@ void Group::draw(){
 	for (auto& entity : this->entities){
 		entity->OnDraw();
 	}
+	this->updateEntities();
 }
 
-void Group::remove(const Entity& entity){
-	entity_vec_iter iter = this->entities.begin();
+void Group::remove(Entity& entity){
+	/*entity_vec_iter iter = this->entities.begin();
 	while (iter != this->entities.end()){
 		//dereference iterator -> dereference unique_ptr -> pointer
 		if (iter->get() == &entity) this->remove(iter);
 		++iter;
-	}
-}
-
-void Group::remove(entity_vec_iter index){
-	this->entities_remove.push_back(index);
+	}*/
+	this->entities_remove.push_back(&entity);
 }
 
 struct sort_entity_by_layer
@@ -50,23 +49,35 @@ struct sort_entity_by_layer
 };
 
 void Group::updateEntities(){
-	for (entity_vec_iter iter = this->entities_add.begin(); iter != this->entities_add.end(); ++iter){
-		this->entities.push_back(nullptr);
-		std::unique_ptr<Entity>& ptr = this->entities.back();
-		ptr.swap(*iter);
-	}
-	this->entities_add.clear();
-	
-	for (entity_vec::size_type i = 0; i != this->entities_remove.size(); ++i){
-		std::unique_ptr<Entity>& entity = this->entities.at(i);
-		for (std::vector<std::string>::iterator iter = entity->_groups_v.begin(); iter != entity->_groups_v.end(); ++iter){
-			this->removeFromGroup(*iter, *entity);
+	//Remove entities that are marked as removed
+	if (this->entities_remove.size() > 0) std::cout << "Removing " << this->entities_remove.size() << " entities" << std::endl;
+	for (std::vector<Entity*>::iterator rm_iter = this->entities_remove.begin(); rm_iter != this->entities_remove.end(); ++rm_iter){
+		Entity* entity = *rm_iter;
+		//Remove entity from groups
+		while (entity->_groups_v.size() > 0){
+			this->removeFromGroup(*entity->_groups_v.begin(), *entity);
 		}
-		//delete entity;
-		this->entities.erase(this->entities_remove.at(i));
+		
+		//Actually remove entity
+		entity_vec_iter entity_iter = this->entities.begin();
+		while (entity_iter != this->entities.end()){
+			if (entity_iter->get() == entity){
+				entity_iter = this->entities.erase(entity_iter);
+			} else {
+				++entity_iter;
+			}
+		}
+		
 	}
 	this->entities_remove.clear();
 	
+	//Add entities to entity list
+	for (entity_vec_iter iter = this->entities_add.begin(); iter != this->entities_add.end(); ++iter){
+		this->entities.push_back(std::move(*iter));
+	}
+	this->entities_add.clear();
+	
+	//Sort entities if need sorting
 	if (this->needUpdateEntityLayering && this->do_sort){
 		std::sort(this->entities.begin(), this->entities.end(),  [ ]( const std::unique_ptr<Entity>& lhs, const std::unique_ptr<Entity>& rhs )
 		{

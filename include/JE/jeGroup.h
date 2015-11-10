@@ -40,8 +40,7 @@ public:
 		entity_ref._group = this;
 		return entity_ref;
 	}
-	void remove(const Entity& entity);
-	void remove(entity_vec_iter index);
+	void remove(Entity& entity);
 	void updateEntities();
 	
 	void clear();
@@ -77,7 +76,7 @@ public:
 private:
 	entity_vec entities;
 	entity_vec entities_add;
-	std::vector<entity_vec_iter> entities_remove;
+	std::vector<Entity*> entities_remove;
 	group_map entity_groups;
 	
 	bool needUpdateEntityLayering;
