@@ -3,6 +3,8 @@
 #include "../jeMain.h"
 #include "../jeUtil.h"
 #include <memory>
+#include <map>
+#include <vector>
 namespace JE{namespace GRAPHICS{
 class Tileset;
 class Tilemap;

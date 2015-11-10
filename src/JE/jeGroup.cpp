@@ -16,14 +16,14 @@ Group::~Group(){
 
 void Group::update(float dt){
 	this->updateEntities();
-	for (entity_def& entity : this->entities){
+	for (auto& entity : this->entities){
 		entity->OnUpdate(*this, dt);
 	}
 }
 
 void Group::draw(){
 	this->updateEntities();
-	for (entity_def& entity : this->entities){
+	for (auto& entity : this->entities){
 		entity->OnDraw();
 	}
 }
@@ -32,7 +32,7 @@ void Group::remove(const Entity& entity){
 	entity_vec_iter iter = this->entities.begin();
 	while (iter != this->entities.end()){
 		//dereference iterator -> dereference unique_ptr -> pointer
-		if (*iter == &entity) this->remove(iter);
+		if (iter->get() == &entity) this->remove(iter);
 		++iter;
 	}
 }
@@ -41,28 +41,37 @@ void Group::remove(entity_vec_iter index){
 	this->entities_remove.push_back(index);
 }
 
-bool sortEntity(const entity_def& a, const entity_def& b) { 
-	return a->getLayer() < b->getLayer(); 
-}
+struct sort_entity_by_layer
+{
+    inline bool operator() (const Entity& entity_a, const Entity& entity_b)
+    {
+        return (entity_a.getLayer() < entity_b.getLayer());
+    }
+};
 
 void Group::updateEntities(){
 	for (entity_vec_iter iter = this->entities_add.begin(); iter != this->entities_add.end(); ++iter){
-		this->entities.push_back(*iter);
+		this->entities.push_back(nullptr);
+		std::unique_ptr<Entity>& ptr = this->entities.back();
+		ptr.swap(*iter);
 	}
 	this->entities_add.clear();
 	
 	for (entity_vec::size_type i = 0; i != this->entities_remove.size(); ++i){
-		Entity* entity = this->entities.at(i);
+		std::unique_ptr<Entity>& entity = this->entities.at(i);
 		for (std::vector<std::string>::iterator iter = entity->_groups_v.begin(); iter != entity->_groups_v.end(); ++iter){
 			this->removeFromGroup(*iter, *entity);
 		}
-		delete entity;
+		//delete entity;
 		this->entities.erase(this->entities_remove.at(i));
 	}
 	this->entities_remove.clear();
 	
 	if (this->needUpdateEntityLayering && this->do_sort){
-		std::sort(this->entities.begin(), this->entities.end(), sortEntity);
+		std::sort(this->entities.begin(), this->entities.end(),  [ ]( const std::unique_ptr<Entity>& lhs, const std::unique_ptr<Entity>& rhs )
+		{
+		   return lhs->getLayer() < rhs->getLayer();
+		});
 		this->needUpdateEntityLayering = false;
 	}
 }
@@ -123,7 +132,7 @@ void Group::addToGroup(const std::string& group, Entity& entity){
 }
 
 void Group::removeFromGroup(const std::string& group, Entity& entity){
-	for (entity_vec::iterator iter = this->entity_groups[group].begin(); iter != this->entity_groups[group].end(); ++iter){
+	for (std::vector<Entity*>::iterator iter = this->entity_groups[group].begin(); iter != this->entity_groups[group].end(); ++iter){
 		if (*iter == &entity){
 			iter = this->entity_groups[group].erase(iter);
 		} else {
@@ -140,11 +149,11 @@ void Group::removeFromGroup(const std::string& group, Entity& entity){
 	}
 }
 
-entity_vec::iterator Group::getGroupBegin(const std::string& group){
+std::vector<Entity*>::iterator Group::getGroupBegin(const std::string& group){
 	return this->entity_groups[group].begin();
 }
 
-entity_vec::iterator Group::getGroupEnd(const std::string& group){
+std::vector<Entity*>::iterator Group::getGroupEnd(const std::string& group){
 	return this->entity_groups[group].end();
 }
 
@@ -161,7 +170,7 @@ bool Group::getCollideEntity(JE::Entity& entity, int move_x, int move_y, int* ge
 bool Group::getCollideMask(JE::MASK::Mask& mask, int move_x, int move_y, int* get_x, int* get_y){
 	std::vector<JE::MASK::Mask*> mask_vec;
 	
-	for (JE::Entity* entity : this->entities){
+	for (auto& entity : this->entities){
 		JE::MASK::Mask* other_mask = entity->getMask();
 		if (other_mask == nullptr || other_mask == &mask) continue;
 		
@@ -199,7 +208,7 @@ bool Group::getCollideEntityGroups(JE::Entity& entity,  int move_x, int move_y, 
 bool Group::getCollideMaskGroups(JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y, const std::vector<std::string>& groups){
 	std::vector<JE::MASK::Mask*> mask_vec;
 	
-	for (JE::Entity* entity : this->entities){
+	for (auto& entity : this->entities){
 		JE::MASK::Mask* other_mask = entity->getMask();
 		if (other_mask == nullptr || other_mask == &mask) continue;
 		

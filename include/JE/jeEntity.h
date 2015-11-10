@@ -8,7 +8,6 @@
 namespace JE{
 
 class Group;
-class World;
 class Entity
 {
 public:

@@ -103,10 +103,10 @@ MaskListIterator Grid::getMaskList(int left, int top, int right, int bottom){
 	top -= this->getY();
 	bottom -= this->getY();
 	
-	left = std::floor(float(left) / float(this->tileWidth));
-	right = std::ceil(float(right) / float(this->tileWidth));
-	top = std::floor(float(top) / float(this->tileHeight));
-	bottom = std::ceil(float(bottom) / float(this->tileHeight));
+	left   = left   / this->tileWidth  - 1;
+	right  = right  / this->tileWidth  + 1;
+	top    = top    / this->tileHeight - 1;
+	bottom = bottom / this->tileHeight + 1;
 	
 	this->limitToBounds(left, top, right, bottom);
 	

@@ -10,14 +10,12 @@
 
 namespace JE{
 
-class World;
 class Entity;
 
-typedef Entity* entity_def;
-typedef std::vector<entity_def> entity_vec;
-typedef std::vector<entity_def>::size_type entity_vec_size;
-typedef std::vector<entity_def>::iterator entity_vec_iter;
-typedef std::map<std::string, entity_vec> group_map;
+typedef std::vector<std::unique_ptr<Entity>> entity_vec;
+typedef std::vector<std::unique_ptr<Entity>>::size_type entity_vec_size;
+typedef std::vector<std::unique_ptr<Entity>>::iterator entity_vec_iter;
+typedef std::map<std::string, std::vector<Entity*>> group_map;
 
 class Group
 {
@@ -31,12 +29,16 @@ public:
 	
 	template <class EntityType, class... ArgType>
 	EntityType& add(ArgType... args){
-		EntityType* e = new EntityType(args...);
-		this->entities_add.push_back(e);
+		EntityType* entity_ptr = new EntityType(args...);
+		std::unique_ptr<Entity> entity_unique(entity_ptr);
+		this->entities_add.emplace_back(std::move(entity_unique));
+		
+		EntityType& entity_ref = *entity_ptr;
+		
 		this->needUpdateEntityLayering = true;
-		e->OnAdd(*this);
-		e->_group = this;
-		return *e;
+		entity_ref.OnAdd(*this);
+		entity_ref._group = this;
+		return entity_ref;
 	}
 	void remove(const Entity& entity);
 	void remove(entity_vec_iter index);
@@ -56,8 +58,8 @@ public:
 	//group functions
 	void addToGroup(const std::string& group, Entity& entity);
 	void removeFromGroup(const std::string& group, Entity& entity);
-	entity_vec::iterator getGroupBegin(const std::string& group);
-	entity_vec::iterator getGroupEnd(const std::string& group);
+	std::vector<Entity*>::iterator getGroupBegin(const std::string& group);
+	std::vector<Entity*>::iterator getGroupEnd(const std::string& group);
 	entity_vec::size_type getGroupSize(const std::string& group);
 	
 	bool getCollideEntity(      JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y);

@@ -234,6 +234,14 @@ void Mask::setY(int value){
 	this->y = value;
 }
 
+int Mask::getCenterX() const {
+	return (this->getLeft() + this->getRight()) / 2;
+}
+
+int Mask::getCenterY() const {
+	return (this->getTop() + this->getBottom()) / 2;
+}
+
 void Mask::draw(int x, int y){
 	JE::GRAPHICS::drawRect(this->getX() + x, this->getY() + y, 1, 1, true);
 }
