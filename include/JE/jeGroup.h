@@ -73,6 +73,11 @@ public:
 	Entity& operator[](entity_vec_size value);
 	const Entity& getEntity(entity_vec_size value) const;
 	const Entity& operator[](entity_vec_size value) const;
+	
+	//Component Callers
+	void callComponents(const std::string& name);
+	void callComponentsGroup(const std::string& group, const std::string& component);
+	
 private:
 	entity_vec entities;
 	entity_vec entities_add;

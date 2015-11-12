@@ -260,13 +260,13 @@ void Camera::getTransforms(float* x, float* y, float* width, float* height, floa
 		*x -= this->x;
 		*x += this->offX;
 		*x *= this->sx * sw;
-		if (this->use_clip) *x += this->clip.x;
+		//if (this->use_clip) *x += this->clip.x;
 	}
 	if (y){
 		*y -= this->y;
 		*y += this->offY;
 		*y *= this->sy * sh;
-		if (this->use_clip) *y += this->clip.y;
+		//if (this->use_clip) *y += this->clip.y;
 	}
 	if (width){
 		*width *= this->sx * sw;

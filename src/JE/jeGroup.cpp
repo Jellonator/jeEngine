@@ -239,20 +239,19 @@ bool Group::getCollideMaskGroups(JE::MASK::Mask& mask,int move_x, int move_y, in
 		mask_vec.push_back(other_mask);
 	}
 	
-	/* Previous method, might be slower. Or it might be faster. I don't really know for sure.
-	 * I guess it depends on how it is used.
-	 */
-	/*
-	for (const std::string& group_name : groups){
-		for (JE::Entity* entity : this->entity_groups[group_name]){
-			JE::MASK::Mask* other_mask = entity->getMask();
-			if (other_mask == nullptr || other_mask == &mask) continue;
-			
-			mask_vec.push_back(other_mask);
-		}
-	}
-	*/
 	return mask.callCollideGroup(mask_vec, move_x, move_y, get_x, get_y);
+}
+
+void Group::callComponents(const std::string& name){
+	for (auto& entity : this->entities){
+		entity->callComponent(name);
+	}
+}
+
+void Group::callComponentsGroup(const std::string& group, const std::string& component){
+	for (auto entity : this->entity_groups[group]){
+		entity->callComponent(component);
+	}
 }
 
 }

@@ -1,6 +1,7 @@
 #include "JE/jeEntity.h"
 #include "JE/jeGroup.h"
 #include "JE/UTIL/jeMath.h"
+#include "JE/jeComponent.h"
 
 namespace JE{
 
@@ -37,6 +38,45 @@ JE::MASK::Mask* Entity::getMask(){
 void Entity::setLayer(int value){
 	this->_layer = value;
 	if (this->_group) this->_group->needUpdateEntityLayering = true;
+}
+
+JE::Component* Entity::getComponent(const std::string& name){
+	if (this->_component_map.count(name) == 0) return nullptr;
+	return this->_component_map[name].get();
+}
+
+void Entity::callComponent(const std::string& name){
+	if (this->hasComponent(name)){
+		this->_component_map[name]->call(*this);
+	}
+}
+
+bool Entity::hasComponent(const std::string& name) const{
+	return (this->_component_map.count(name) > 0);
+}
+
+int Entity::getX() const{
+	if (this->hasMask()) return this->getMask()->getX();
+	else return 0;
+}
+
+int Entity::getY() const{
+	if (this->hasMask()) return this->getMask()->getY();
+	else return 0;
+}
+
+int Entity::getCenterX() const{
+	if (this->hasMask()) return this->getMask()->getCenterX();
+	else return 0;
+}
+
+int Entity::getCenterY() const{
+	if (this->hasMask()) return this->getMask()->getCenterY();
+	else return 0;
+}
+
+bool Entity::hasMask() const{
+	return (this->_mask_ptr != nullptr);
 }
 
 };
