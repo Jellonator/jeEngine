@@ -1,13 +1,14 @@
 jeEngine
 ========
 jeEngine, or Jello's Engine, is a cross-platform game engine written in C++, currently supporting whatever SDL supports.
-Note that this engine is mostly just a wrapper for SDL2. SDL2 may be replaced with OpenGL for graphics at somepoint to make this engine more dynamic, but currently that is not a priority.
+Note that this engine is mostly just a wrapper for SDL2 and OpenGL. Currently uses the heavily outdated OpenGL 1.2 standard.
+There are plans to impliment OpenGL 3.2 in the future.
 
 ######Libraries/dependancies:######
 - SDL2
 - SDL2_image
 
-Current Version: 0.8.0
+Current Version: 0.9.0
 
 Features
 --------
@@ -44,9 +45,20 @@ More examples coming soon.
 
 Todo
 --------
+- Impliment OpenGL 3.2
 
 Update log
 --------
+### Version 0.9 ###
+- Revised a lot of things to be more modern and flexible and a few other buzzwords
+- Added components to the entity system.
+- Reimplimented a new collision system.
+- Current types of Mask are PointMask(single point), Hitbox(AABB rectangle), Multimask(Combination of masks), and Grid(optimized Multimask).
+- Particle systems are a lot more optimized, including an option to have a custom Particle system renderer.
+- A lot of systems now use string IDs instead of integer IDs.
+- Entity system is a lot different now. No more groups embedded in groups, there is no World class or global world object anymore.
+- Added and revised a couple math functions
+
 ### Version 0.8 ###
 - Added JE::MATH::toInt(string) and JE::MATH::toString(int)
 - Added JE::TIME::setDeltaTimeLimit to make things not jittery when doing intensive processes
