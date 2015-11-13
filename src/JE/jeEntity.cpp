@@ -12,9 +12,7 @@ Entity::Entity(){
 }
 
 Entity::~Entity(){
-	//std::cout << "Entity delete" << std::endl;
-	//if(this->mask != NULL) {delete this->mask;this->mask = NULL;}
-	//std::cout << "Entity delete" << std::endl;
+	
 }
 
 void Entity::OnCreate(){}
