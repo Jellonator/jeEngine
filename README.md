@@ -46,6 +46,7 @@ Todo
 --------
 - Impliment OpenGL 3.2
 - Make JE::GRAPHICS::Camera less weird and awkward.
+- Actual documentation.
 
 Update log
 --------
