@@ -21,9 +21,17 @@ void Entity::OnCreate(){}
 
 void Entity::OnAdd(Group& group){}
 
-void Entity::OnUpdate(Group& group, float dt){}
+void Entity::OnUpdate(Group& group, float dt){
+	for (auto& component : this->_component_update_list){
+		this->_component_map[component]->update(*this, group, dt);
+	}
+}
 
-void Entity::OnDraw(){}
+void Entity::OnDraw(){
+	for (auto& component : this->_component_update_list){
+		this->_component_map[component]->draw(*this);
+	}
+}
 
 void Entity::OnRemove(Group& group){}
 
@@ -77,6 +85,44 @@ int Entity::getCenterY() const{
 
 bool Entity::hasMask() const{
 	return (this->_mask_ptr != nullptr);
+}
+
+void Entity::addUpdateComponent(const std::string& name){
+	this->_component_update_list.push_back(name);
+}
+
+void Entity::addDrawComponent(const std::string& name){
+	this->_component_draw_list.push_back(name);
+}
+
+void Entity::removeUpdateComponent(const std::string& name){
+	this->_component_update_list.remove(name);
+}
+
+void Entity::removeDrawComponent(const std::string& name){
+	this->_component_draw_list.remove(name);
+}
+
+void Entity::removeComponent(const std::string& name){
+	std::map<std::string, std::shared_ptr<Component>>::iterator component_position = this->_component_map.find(name);
+	if (component_position != this->_component_map.end()){
+		this->_component_map.erase(component_position);
+	}
+}
+
+bool Entity::isComponentEnabled(const std::string& name) const{
+	if (!this->hasComponent(name)) return false;
+	return this->_component_map.at(name)->isEnabled();
+}
+
+void Entity::enableComponent(const std::string& name){
+	if (!this->hasComponent(name)) return;
+	this->_component_map[name]->enable();
+}
+
+void Entity::disableComponent(const std::string& name){
+	if (!this->hasComponent(name)) return;
+	this->_component_map[name]->disable();
 }
 
 };

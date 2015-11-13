@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <list>
 
 namespace JE{
 
@@ -40,9 +41,17 @@ friend Group;
 	CType* getComponent(const std::string& name);
 	
 	JE::Component* getComponent(const std::string& name);
-	
-	void callComponent(const std::string& name);
 	bool hasComponent(const std::string& name) const;
+	bool isComponentEnabled(const std::string& name) const;
+	void callComponent(const std::string& name);
+	void removeComponent(const std::string& name);
+	void enableComponent(const std::string& name);
+	void disableComponent(const std::string& name);
+	
+	void addUpdateComponent(const std::string& name);
+	void addDrawComponent(const std::string& name);
+	void removeUpdateComponent(const std::string& name);
+	void removeDrawComponent(const std::string& name);
 	
 	//Position getters
 	int getX() const;
@@ -62,7 +71,9 @@ private:
 	std::unique_ptr<JE::MASK::Mask> _mask_ptr;
 	JE::Group* _group = nullptr;
 	int _layer;
-	std::map<std::string, std::unique_ptr<Component>> _component_map;
+	std::map<std::string, std::shared_ptr<Component>> _component_map;
+	std::list<std::string> _component_update_list;
+	std::list<std::string> _component_draw_list;
 };
 
 template <class MType, class... MArgs>
