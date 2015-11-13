@@ -104,7 +104,7 @@ void Entity::removeDrawComponent(const std::string& name){
 }
 
 void Entity::removeComponent(const std::string& name){
-	std::map<std::string, std::shared_ptr<Component>>::iterator component_position = this->_component_map.find(name);
+	std::map<std::string, std::unique_ptr<Component>>::iterator component_position = this->_component_map.find(name);
 	if (component_position != this->_component_map.end()){
 		this->_component_map.erase(component_position);
 	}

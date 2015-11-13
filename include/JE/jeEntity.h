@@ -71,7 +71,7 @@ private:
 	std::unique_ptr<JE::MASK::Mask> _mask_ptr;
 	JE::Group* _group = nullptr;
 	int _layer;
-	std::map<std::string, std::shared_ptr<Component>> _component_map;
+	std::map<std::string, std::unique_ptr<Component>> _component_map;
 	std::list<std::string> _component_update_list;
 	std::list<std::string> _component_draw_list;
 };
