@@ -12,7 +12,6 @@ Current Version: 0.9.0
 
 Features
 --------
-- Worlds
 - Entities
 - Groups
 - Collision
@@ -49,10 +48,10 @@ Todo
 
 Update log
 --------
-### Version 0.9 ###
-- Revised a lot of things to be more modern and flexible and a few other buzzwords
+### Version 0.9.0 ###
+- Revised a lot of things to be more modern and flexible and a few other buzzwords.
 - Added components to the entity system.
-- Reimplimented a new collision system.
+- Reimplimented a new collision system, this time using integer positions.
 - Current types of Mask are PointMask(single point), Hitbox(AABB rectangle), Multimask(Combination of masks), and Grid(optimized Multimask).
 - Particle systems are a lot more optimized, including an option to have a custom Particle system renderer.
 - A lot of systems now use string IDs instead of integer IDs.
