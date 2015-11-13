@@ -57,7 +57,6 @@ void Tileset::drawTile(int tilex, int tiley, int x, int y, int parentTileWidth, 
 	rect.y = tiley*this->tileHeight + this->tileOffsetY + tiley*this->tileSpaceY;
 	rect.w = this->tileWidth;
 	rect.h = this->tileHeight;
-	//std::cout << parentTileWidth << ";" << parentTileHeight << std::endl;
 	this->image.clip = rect;
 	this->image.use_clip = true;
 	int tox, toy;
@@ -70,7 +69,6 @@ void Tileset::drawTile(int tilex, int tiley, int x, int y, int parentTileWidth, 
 		tox = x * this->tileWidth;
 		toy = y * this->tileHeight;
 	}
-	//this->image.setScale(1, 1);
 	this->image.draw(tox, toy, 0);
 }
 
