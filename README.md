@@ -22,16 +22,18 @@ Examples
 ```C++
 //Hello world
 #include "JE/JE.h"
+#include <iostream>
+
 class MyEntity : public JE::Entity{
 	public:
 	MyEntity();
-	void OnUpdate();
+	void OnUpdate(JE::Group& group, float dt);
 };
 MyEntity::MyEntity() : JE::Entity(){
 
 }
 void MyEntity::OnUpdate(JE::Group& group, float dt){
-	JE::print("Hello World!");
+	std::cout << "Hello World!" << std::endl;
 }
 int main(){
 	JE::init();
