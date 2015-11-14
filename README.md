@@ -21,7 +21,7 @@ Examples
 --------
 ```C++
 //Hello world
-#include "JE.h"
+#include "JE/JE.h"
 class MyEntity : public JE::Entity{
 	public:
 	MyEntity();
@@ -30,13 +30,17 @@ class MyEntity : public JE::Entity{
 MyEntity::MyEntity() : JE::Entity(){
 
 }
-void MyEntity::OnUpdate(){
+void MyEntity::OnUpdate(JE::Group& group, float dt){
 	JE::print("Hello World!");
 }
 int main(){
 	JE::init();
-	JE::world->add(new MyEntity());
+	
+	JE::Group world;
+	world.add<MyEntity>();
 	JE::update();
+	world.update(0);
+	
 	return 0;
 }
 ```
