@@ -11,6 +11,7 @@
 namespace JE{
 
 class Entity;
+class Group;
 
 typedef std::vector<std::unique_ptr<Entity>> entity_vec;
 typedef std::vector<std::unique_ptr<Entity>>::size_type entity_vec_size;
@@ -28,18 +29,8 @@ public:
 	void draw();
 	
 	template <class EntityType, class... ArgType>
-	EntityType& add(ArgType... args){
-		EntityType* entity_ptr = new EntityType(args...);
-		std::unique_ptr<Entity> entity_unique(entity_ptr);
-		this->entities_add.emplace_back(std::move(entity_unique));
-		
-		EntityType& entity_ref = *entity_ptr;
-		
-		this->needUpdateEntityLayering = true;
-		entity_ref.OnAdd(*this);
-		entity_ref._group = this;
-		return entity_ref;
-	}
+	EntityType& add(ArgType... args);
+	
 	void remove(Entity& entity);
 	void updateEntities();
 	
@@ -88,5 +79,20 @@ private:
 	bool do_sort;
 	bool correct_remove;
 };
+
+template <class EntityType, class... ArgType>
+EntityType& Group::add(ArgType... args){
+	EntityType* entity_ptr = new EntityType(args...);
+	EntityType& entity_ref = *entity_ptr;
+	
+	this->entities_add.push_back(std::unique_ptr<Entity>(entity_ptr));
+	
+	this->needUpdateEntityLayering = true;
+	
+	entity_ref._group = this;
+	entity_ref.OnAdd(*this);
+	
+	return entity_ref;
+}
 
 }

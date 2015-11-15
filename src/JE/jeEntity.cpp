@@ -123,4 +123,8 @@ void Entity::disableComponent(const std::string& name){
 	this->_component_map[name]->disable();
 }
 
+JE::Group* Entity::getGroup(){
+	return this->_group;
+}
+
 };

@@ -1,7 +1,6 @@
 #include "JE/jeGroup.h"
 #include "JE/jeEntity.h"
 #include <algorithm>
-#include <iostream>
 namespace JE{
 
 Group::Group(){
@@ -11,7 +10,7 @@ Group::Group(){
 }
 
 Group::~Group(){
-	//this->deleteAll();
+	
 }
 
 void Group::update(float dt){
@@ -31,12 +30,6 @@ void Group::draw(){
 }
 
 void Group::remove(Entity& entity){
-	/*entity_vec_iter iter = this->entities.begin();
-	while (iter != this->entities.end()){
-		//dereference iterator -> dereference unique_ptr -> pointer
-		if (iter->get() == &entity) this->remove(iter);
-		++iter;
-	}*/
 	this->entities_remove.push_back(&entity);
 }
 
@@ -50,7 +43,6 @@ struct sort_entity_by_layer
 
 void Group::updateEntities(){
 	//Remove entities that are marked as removed
-	if (this->entities_remove.size() > 0) std::cout << "Removing " << this->entities_remove.size() << " entities" << std::endl;
 	for (std::vector<Entity*>::iterator rm_iter = this->entities_remove.begin(); rm_iter != this->entities_remove.end(); ++rm_iter){
 		Entity* entity = *rm_iter;
 		//Remove entity from groups

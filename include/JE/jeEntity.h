@@ -66,11 +66,16 @@ friend Group;
 		return this->_layer;
 	}
 	
+	//World
+	JE::Group* getGroup();
+	
 private:
-	std::vector<std::string> _groups_v;
-	std::unique_ptr<JE::MASK::Mask> _mask_ptr;
 	JE::Group* _group = nullptr;
+	std::vector<std::string> _groups_v;
+	
+	std::unique_ptr<JE::MASK::Mask> _mask_ptr;
 	int _layer;
+	
 	std::map<std::string, std::unique_ptr<Component>> _component_map;
 	std::list<std::string> _component_update_list;
 	std::list<std::string> _component_draw_list;
