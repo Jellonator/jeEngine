@@ -7,7 +7,6 @@ class Point
 		Point(float x = 0, float y = 0);
 		Point(const JE::Point& point);
 		
-		virtual ~Point();
 		float x;/**< \brief float x, the x position of the point. */
 		float y;/**< \brief float y, the y position of the point. */
 		bool moveToSmooth(float x, float y, float speed = 20, float dt = dt, float snap = 1, float dead = 0);
@@ -37,6 +36,10 @@ class Point
 		friend bool operator ==(const JE::Point& a, const JE::Point& b);
 		
 		//math operations with numbers
+		friend JE::Point operator *(const JE::Point& a, float b);
+		friend JE::Point operator /(const JE::Point& a, float b);
+		friend JE::Point operator *(float a, const JE::Point& b);
+		friend JE::Point operator /(float a, const JE::Point& b);
 		void operator *=(float value);
 		void operator /=(float value);
 		void modulate(float value);

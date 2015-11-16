@@ -12,10 +12,6 @@ Point::Point(float x, float y){
 	this->y = y;
 }
 
-Point::~Point(){
-	//dtor
-}
-
 void Point::setX(float value){
 	this->x = value;
 }
@@ -141,20 +137,36 @@ JE::Point operator !(const JE::Point& a){
 	return JE::Point(-a.x, -a.y);
 }
 
+JE::Point operator *(const JE::Point& a, float b){
+	return JE::Point(a.x * b, a.y * b);
+}
+
+JE::Point operator /(const JE::Point& a, float b){
+	return JE::Point(a.x / b, a.y / b);
+}
+
+JE::Point operator *(float a, const JE::Point& b){
+	return JE::Point(b.x * a, b.y * a);
+}
+
+JE::Point operator /(float a, const JE::Point& b){
+	return JE::Point(b.x / a, b.y / a);
+}
+
 void Point::modulate(float value){
 	this->x = std::fmod(this->x, value);
 	this->y = std::fmod(this->y, value);
 }
 
-float getDistance(){
+float Point::getDistance(){
 	return this->getDistance(0, 0);
 }
 
-float getDistance(float x, float y){
+float Point::getDistance(float x, float y){
 	return JE::MATH::distance(this->x, this->y, x, y);
 }
 
-float getDistance(JE::Point& p){
+float Point::getDistance(JE::Point& p){
 	return this->getDistance(p.x, p.y);
 }
 

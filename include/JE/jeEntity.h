@@ -1,5 +1,4 @@
 #pragma once
-#include "jePoint.h"
 #include "jeMask.h"
 #include <vector>
 #include <string>
