@@ -103,12 +103,32 @@ void Point::operator  =(const JE::Point& point){
 	this->y = point.getY();
 }
 
-bool Point::operator ==(const JE::Point& point){
-	return (JE::MATH::isClose(this->x, point.getX()) && JE::MATH::isClose(this->y, point.getY()));
+bool operator ==(const JE::Point& a, const JE::Point& b){
+	return (JE::MATH::isClose(a.x, b.x) && JE::MATH::isClose(a.y, b.y));
 }
 
-bool Point::operator !=(const JE::Point& point){
-	return !(this->operator ==(point));
+bool operator !=(const JE::Point& a, const JE::Point& b){
+	return !(JE::MATH::isClose(a.x, b.x) && JE::MATH::isClose(a.y, b.y));
+}
+
+JE::Point operator +(const JE::Point& a, const JE::Point& b){
+	return JE::Point(a.x + b.x, a.y + b.y);
+}
+
+JE::Point operator -(const JE::Point& a, const JE::Point& b){
+	return JE::Point(a.x - b.x, a.y - b.y);
+}
+
+JE::Point operator *(const JE::Point& a, const JE::Point& b){
+	return JE::Point(a.x * b.x, a.y * b.y);
+}
+
+JE::Point operator /(const JE::Point& a, const JE::Point& b){
+	return JE::Point(a.x / b.x, a.y / b.y);
+}
+
+JE::Point operator !(const JE::Point& a){
+	return JE::Point(-a.x, -a.y);
 }
 
 void Point::modulate(float value){

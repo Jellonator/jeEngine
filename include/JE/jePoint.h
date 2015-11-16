@@ -28,10 +28,15 @@ class Point
 		void operator /=(const JE::Point& point);
 		void operator  =(const JE::Point& point);
 		
-		void modulate(float value);
+		friend JE::Point operator +(const JE::Point& a, const JE::Point& b);
+		friend JE::Point operator -(const JE::Point& a, const JE::Point& b);
+		friend JE::Point operator *(const JE::Point& a, const JE::Point& b);
+		friend JE::Point operator /(const JE::Point& a, const JE::Point& b);
+		friend JE::Point operator !(const JE::Point& a);
+		friend bool operator !=(const JE::Point& a, const JE::Point& b);
+		friend bool operator ==(const JE::Point& a, const JE::Point& b);
 		
-		bool operator ==(const JE::Point& point);
-		bool operator !=(const JE::Point& point);
+		void modulate(float value);
 	protected:
 	private:
 };
