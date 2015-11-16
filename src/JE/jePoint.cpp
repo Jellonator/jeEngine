@@ -98,6 +98,16 @@ void Point::operator /=(const JE::Point& point){
 	this->y /= point.getY();
 }
 
+void Point::operator *=(float value){
+	this->x *= value;
+	this->y *= value;
+}
+
+void Point::operator /=(float value){
+	this->x /= value;
+	this->y /= value;
+}
+
 void Point::operator  =(const JE::Point& point){
 	this->x = point.getX();
 	this->y = point.getY();
@@ -134,6 +144,18 @@ JE::Point operator !(const JE::Point& a){
 void Point::modulate(float value){
 	this->x = std::fmod(this->x, value);
 	this->y = std::fmod(this->y, value);
+}
+
+float getDistance(){
+	return this->getDistance(0, 0);
+}
+
+float getDistance(float x, float y){
+	return JE::MATH::distance(this->x, this->y, x, y);
+}
+
+float getDistance(JE::Point& p){
+	return this->getDistance(p.x, p.y);
 }
 
 void Point::getAsInt(int* x, int* y) const{

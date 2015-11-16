@@ -21,7 +21,7 @@ class Point
 		float getY() const;
 		void getAsInt(int* x, int* y) const;
 		
-		//math operations
+		//math operations with other point
 		void operator +=(const JE::Point& point);
 		void operator -=(const JE::Point& point);
 		void operator *=(const JE::Point& point);
@@ -36,7 +36,16 @@ class Point
 		friend bool operator !=(const JE::Point& a, const JE::Point& b);
 		friend bool operator ==(const JE::Point& a, const JE::Point& b);
 		
+		//math operations with numbers
+		void operator *=(float value);
+		void operator /=(float value);
 		void modulate(float value);
+		
+		//distance
+		float getDistance();
+		float getDistance(float x, float y);
+		float getDistance(JE::Point& p);
+		
 	protected:
 	private:
 };
