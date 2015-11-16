@@ -1,23 +1,27 @@
 #include "JE/jePoint.h"
+#include "JE/UTIL/jeMath.h"
 #include <cmath>
 namespace JE{
-Point::Point(float x, float y)
-{
-	this->x = x;
-	this->y = y;
-	/*speed = 1;
-	direction = 1;
-	startX = x;
-	startY = y;
-	endX = x;
-	endY = y;
-	time = 1;
-	startSpeed = 0;*/
+
+Point::Point(const JE::Point& point){
+	this->set(point.getX(), point.getY());
 }
 
-Point::~Point()
-{
+Point::Point(float x, float y){
+	this->x = x;
+	this->y = y;
+}
+
+Point::~Point(){
 	//dtor
+}
+
+void Point::setX(float value){
+	this->x = value;
+}
+
+void Point::setY(float value){
+	this->y = value;
 }
 
 void Point::set(float x, float y){
@@ -74,8 +78,47 @@ bool Point::moveToLinear(float x, float y, float dt, float speed, float snap, fl
 	return false;
 }
 
-/*void Point::moveTo(float x, float y){
-	this->x = x;
-	this->y = y;
-}*/
+void Point::operator+=(const JE::Point& point){
+	this->x += point.getX();
+	this->y += point.getY();
+}
+
+void Point::operator -=(const JE::Point& point){
+	this->x -= point.getX();
+	this->y -= point.getY();
+}
+
+void Point::operator *=(const JE::Point& point){
+	this->x *= point.getX();
+	this->y *= point.getY();
+}
+
+void Point::operator /=(const JE::Point& point){
+	this->x /= point.getX();
+	this->y /= point.getY();
+}
+
+void Point::operator  =(const JE::Point& point){
+	this->x = point.getX();
+	this->y = point.getY();
+}
+
+bool Point::operator ==(const JE::Point& point){
+	return (JE::MATH::isClose(this->x, point.getX()) && JE::MATH::isClose(this->y, point.getY()));
+}
+
+bool Point::operator !=(const JE::Point& point){
+	return !(this->operator ==(point));
+}
+
+void Point::modulate(float value){
+	this->x = std::fmod(this->x, value);
+	this->y = std::fmod(this->y, value);
+}
+
+void Point::getAsInt(int* x, int* y) const{
+	if (x) *x = int(this->x);
+	if (y) *y = int(this->y);
+}
+
 };

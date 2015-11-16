@@ -2,7 +2,7 @@
 #include "JE/UTIL/jeManager.h"
 //include the state machine anyways to make sure that it compiles
 
-/*  You can't put typedefs in .cpp files without having some weird linkage crap, so yeah.
+/*  You can't put templates in .cpp files without having some weird linkage crap, so yeah.
  *  I could delete this file, but I won't. Don't ask why.
  *
  *  I could probably write some joke code if I wanted to though.
@@ -29,9 +29,11 @@ void ofContract(){
 	uint to=that?               0:1;
 
 	int oYourButt_C=3;
+	
+	int i_love_you = long(time);
 }
 */
-//the following jooke only makes sense if you have colored comments
+//the following jooke only makes sense if you have doxygen comments
 /***//* *//***//* *//***//***//***//* *//***/
 /***//* *//***//* *//* *//***//* *//* *//***/
 /***//***//***//* *//* *//***//* *//* *//***/
