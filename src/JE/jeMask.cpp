@@ -226,6 +226,14 @@ int Mask::getBottom() const {
 	return this->y;
 }
 
+int Mask::getWidth() const{
+	return this->getRight() - this->getLeft() + 1;
+}
+
+int Mask::getHeight() const{
+	return this->getBottom() - this->getTop() + 1;
+}
+
 void Mask::setX(int value){
 	this->x = value;
 }

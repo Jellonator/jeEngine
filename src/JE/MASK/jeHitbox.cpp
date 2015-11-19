@@ -12,6 +12,13 @@ Hitbox::Hitbox(int x1, int y1, int x2, int y2) : Mask(0, 0){
 	this->y2 = y2;
 }
 
+Hitbox::Hitbox(int x, int y, int x1, int y1, int x2, int y2) : Mask(x, y){
+	this->x1 = x1;
+	this->x2 = x2;
+	this->y1 = y1;
+	this->y2 = y2;
+}
+
 Hitbox::~Hitbox(){
 	
 }
@@ -155,14 +162,6 @@ bool Hitbox::getCollide(Hitbox& box, int move_x, int move_y, int* out_x, int* ou
 	if (out_y) *out_y = duplicate.getY();
 	
 	return ret;
-}
-
-int Hitbox::getWidth() const{
-	return this->x2 - this->x1 + 1;
-}
-
-int Hitbox::getHeight() const{
-	return this->y2 - this->y1 + 1;
 }
 
 int Hitbox::getLeft() const{

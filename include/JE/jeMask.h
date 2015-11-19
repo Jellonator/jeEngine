@@ -38,6 +38,9 @@ public:
 	virtual int getTop() const;
 	virtual int getBottom() const;
 	
+	int getWidth() const;
+	int getHeight() const;
+	
 	int getCenterX() const;
 	int getCenterY() const;
 	
