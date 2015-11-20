@@ -27,8 +27,10 @@ public:
 	
 	// Setters
 	void setTile(const std::string& name, int x, int y);
-	void emptyTile(int x, int y);
+	void setTile(const std::shared_ptr<Mask>& mask, int x, int y);
 	void setRect(const std::string& name, int x1, int y1, int x2, int y2);
+	void setRect(const std::shared_ptr<Mask>& mask, int x1, int y1, int x2, int y2);
+	void emptyTile(int x, int y);
 	void emptyRect(int x1, int y1, int x2, int y2);
 	
 	template <class TName, class... TArgs>
@@ -39,6 +41,7 @@ public:
 	}
 	
 	void generateFromPoints(const std::string& name, const std::vector<std::pair<int,int>>& points, int offset_x = 0, int offset_y = 0);
+	void generateFromPoints(const std::shared_ptr<Mask>& mask, const std::vector<std::pair<int,int>>& points, int offset_x = 0, int offset_y = 0);
 private:
 	std::map<std::string, std::shared_ptr<Mask>> mask_type_map;
 	std::vector<std::vector<std::shared_ptr<Mask>>> mask_grid_vec;

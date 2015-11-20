@@ -226,12 +226,28 @@ int Mask::getBottom() const {
 	return this->y;
 }
 
+int Mask::getWidth() const{
+	return this->getRight() - this->getLeft() + 1;
+}
+
+int Mask::getHeight() const{
+	return this->getBottom() - this->getTop() + 1;
+}
+
 void Mask::setX(int value){
 	this->x = value;
 }
 
 void Mask::setY(int value){
 	this->y = value;
+}
+
+int Mask::getCenterX() const {
+	return (this->getLeft() + this->getRight()) / 2;
+}
+
+int Mask::getCenterY() const {
+	return (this->getTop() + this->getBottom()) / 2;
 }
 
 void Mask::draw(int x, int y){

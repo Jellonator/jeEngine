@@ -44,8 +44,8 @@ void Camera::centerTo(float x, float y){
 		ry += this->clip.y / this->sy;
 	}
 
-	this->x = x - this->getWidth() / 2 - rx;
-	this->y = y - this->getHeight() / 2 - ry;
+	this->x = x - (this->getWidth() / 2);// - rx;
+	this->y = y - (this->getHeight() / 2);// - ry;
 }
 void Camera::setScaleZoom(float x, float y){
 	float p_x = this->offX / this->sx;
@@ -205,12 +205,12 @@ float Camera::getRight(){
 	return this->getLeft() + this->getWidth();
 }
 float Camera::getBottom(){
-	return this->getRight() + this->getHeight();
+	return this->getTop() + this->getHeight();
 }
 float Camera::getWidth(){
 	int width_int;
 	if (this->use_size) width_int = this->size.x;
-	else SDL_RenderGetLogicalSize(JE::GRAPHICS::renderer, &width_int, NULL);
+	else SDL_GetWindowSize(JE::GRAPHICS::window, &width_int, NULL);
 	float r = width_int;
 	if (this->use_clip){
 		r = this->clip.w;
@@ -222,7 +222,7 @@ float Camera::getWidth(){
 float Camera::getHeight(){
 	int height_int;
 	if (this->use_size) height_int = this->size.y;
-	else SDL_RenderGetLogicalSize(JE::GRAPHICS::renderer, NULL, &height_int);
+	else SDL_GetWindowSize(JE::GRAPHICS::window, NULL, &height_int);
 	float r = height_int;
 	if (this->use_clip){
 		r = this->clip.h;
@@ -260,13 +260,13 @@ void Camera::getTransforms(float* x, float* y, float* width, float* height, floa
 		*x -= this->x;
 		*x += this->offX;
 		*x *= this->sx * sw;
-		if (this->use_clip) *x += this->clip.x;
+		//if (this->use_clip) *x += this->clip.x;
 	}
 	if (y){
 		*y -= this->y;
 		*y += this->offY;
 		*y *= this->sy * sh;
-		if (this->use_clip) *y += this->clip.y;
+		//if (this->use_clip) *y += this->clip.y;
 	}
 	if (width){
 		*width *= this->sx * sw;

@@ -57,7 +57,6 @@ void Tileset::drawTile(int tilex, int tiley, int x, int y, int parentTileWidth, 
 	rect.y = tiley*this->tileHeight + this->tileOffsetY + tiley*this->tileSpaceY;
 	rect.w = this->tileWidth;
 	rect.h = this->tileHeight;
-	//std::cout << parentTileWidth << ";" << parentTileHeight << std::endl;
 	this->image.clip = rect;
 	this->image.use_clip = true;
 	int tox, toy;
@@ -70,7 +69,6 @@ void Tileset::drawTile(int tilex, int tiley, int x, int y, int parentTileWidth, 
 		tox = x * this->tileWidth;
 		toy = y * this->tileHeight;
 	}
-	//this->image.setScale(1, 1);
 	this->image.draw(tox, toy, 0);
 }
 
@@ -113,7 +111,7 @@ Tilemap::~Tilemap(){
 	//this->tilesets.clear();
 }
 
-std::shared_ptr<Tileset> Tilemap::newTileset(std::string file, int tWidth, int tHeight, int offsetX, int offsetY, int spaceX, int spaceY, int ID){
+std::shared_ptr<Tileset> Tilemap::newTileset(const std::string& name, const std::string& file, int tWidth, int tHeight, int offsetX, int offsetY, int spaceX, int spaceY){
 	if (tWidth <= 0) tWidth = this->tileWidth;
 	if (tHeight <= 0) tHeight = this->tileHeight;
 	if (offsetX <= 0) offsetX = this->tileOffsetX;
@@ -123,52 +121,45 @@ std::shared_ptr<Tileset> Tilemap::newTileset(std::string file, int tWidth, int t
 	//Tileset* tileset = new Tileset(this, file, tWidth, tHeight, offsetX, offsetY, spaceX, spaceY);
 	//return this->addTileset(tileset, ID);
 	auto tileset = std::make_shared<Tileset>(file, tWidth, tHeight, offsetX, offsetY, spaceX, spaceY);
-	this->addTileset(tileset, ID);
+	return this->addTileset(name, tileset);
+}
+
+std::shared_ptr<Tileset> Tilemap::addTileset(const std::string& name, std::shared_ptr<Tileset> tileset){
+	this->tilesets[name] = tileset;
 	return tileset;
 }
 
-std::shared_ptr<Tileset> Tilemap::addTileset(std::shared_ptr<Tileset> tileset, int ID){
-	if (ID < 0) ID = this->tilesets.size();
-	this->tilesets.resize(std::max((int)this->tilesets.size(),ID+1));
-	this->tilesets[ID] = tileset;
-	return tileset;
-}
-
-void Tilemap::newFreeformTile(int tileset, int x, int y, int w, int h, int ID){
+void Tilemap::newFreeformTile(const std::string& tileset, int x, int y, int w, int h, int ID){
 	this->tilesets[tileset]->newFreeformTile(x, y, w, h, ID);
 }
 
-void Tilemap::newTile(int tileset, int x, int y, int ID){
+void Tilemap::newTile(const std::string& tileset, int x, int y, int ID){
 	this->tilesets[tileset]->newTile(x, y, ID);
 }
 
-void Tilemap::drawFreeformTile(int tileset, int tile, float x, float y, float sx, float sy){
+void Tilemap::drawFreeformTile(const std::string& tileset, int tile, float x, float y, float sx, float sy){
 	this->bind();
-		//SDL_Rect* rect = this->tilesets[tileset]->tiles[tile];
-		//this->tilesets[tileset]->image->clip = *rect;
-		//this->tilesets[tileset]->image->setScale(sx, sy);
-		//this->tilesets[tileset]->image->draw(x, y);
 	this->tilesets[tileset]->drawFreeformTile(tile, x, y, sx, sy);
 	this->unbind();
 }
 
-void Tilemap::drawTile(int tileset, int tile, int x, int y){
+void Tilemap::drawTile(const std::string& tileset, int tile, int x, int y){
 	this->bind();
 	this->tilesets[tileset]->drawTileID(tile, x, y, this->tileWidth, this->tileHeight);
 	this->unbind();
 }
 
-void Tilemap::drawTileRect(int tileset, int tile, int x, int y, int w, int h){
+void Tilemap::drawTileRect(const std::string& tileset, int tile, int x, int y, int w, int h){
 	this->bind();
 	this->tilesets[tileset]->drawTileRectID(tile, x, y, w, h, this->tileWidth, this->tileHeight);
 	this->unbind();
 }
-void Tilemap::drawTile(int tileset, int tilex, int tiley, int x, int y){
+void Tilemap::drawTile(const std::string& tileset, int tilex, int tiley, int x, int y){
 	this->bind();
 	this->tilesets[tileset]->drawTile(tilex, tiley, x, y, this->tileWidth, this->tileHeight);
 	this->unbind();
 }
-void Tilemap::drawTileRect(int tileset, int tilex, int tiley, int x, int y, int w, int h){
+void Tilemap::drawTileRect(const std::string& tileset, int tilex, int tiley, int x, int y, int w, int h){
 	this->bind();
 	this->tilesets[tileset]->drawTileRect(tilex, tiley, x, y, w, h, this->tileWidth, this->tileHeight);
 	this->unbind();

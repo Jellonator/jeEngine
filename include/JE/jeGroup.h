@@ -10,14 +10,13 @@
 
 namespace JE{
 
-class World;
 class Entity;
+class Group;
 
-typedef Entity* entity_def;
-typedef std::vector<entity_def> entity_vec;
-typedef std::vector<entity_def>::size_type entity_vec_size;
-typedef std::vector<entity_def>::iterator entity_vec_iter;
-typedef std::map<std::string, entity_vec> group_map;
+typedef std::vector<std::unique_ptr<Entity>> entity_vec;
+typedef std::vector<std::unique_ptr<Entity>>::size_type entity_vec_size;
+typedef std::vector<std::unique_ptr<Entity>>::iterator entity_vec_iter;
+typedef std::map<std::string, std::vector<Entity*>> group_map;
 
 class Group
 {
@@ -30,16 +29,9 @@ public:
 	void draw();
 	
 	template <class EntityType, class... ArgType>
-	EntityType& add(ArgType... args){
-		EntityType* e = new EntityType(args...);
-		this->entities_add.push_back(e);
-		this->needUpdateEntityLayering = true;
-		e->OnAdd(*this);
-		e->_group = this;
-		return *e;
-	}
-	void remove(const Entity& entity);
-	void remove(entity_vec_iter index);
+	EntityType& add(ArgType... args);
+	
+	void remove(Entity& entity);
 	void updateEntities();
 	
 	void clear();
@@ -56,8 +48,8 @@ public:
 	//group functions
 	void addToGroup(const std::string& group, Entity& entity);
 	void removeFromGroup(const std::string& group, Entity& entity);
-	entity_vec::iterator getGroupBegin(const std::string& group);
-	entity_vec::iterator getGroupEnd(const std::string& group);
+	std::vector<Entity*>::iterator getGroupBegin(const std::string& group);
+	std::vector<Entity*>::iterator getGroupEnd(const std::string& group);
 	entity_vec::size_type getGroupSize(const std::string& group);
 	
 	bool getCollideEntity(      JE::Entity& entity,  int move_x, int move_y, int* get_x, int* get_y);
@@ -72,15 +64,35 @@ public:
 	Entity& operator[](entity_vec_size value);
 	const Entity& getEntity(entity_vec_size value) const;
 	const Entity& operator[](entity_vec_size value) const;
+	
+	//Component Callers
+	void callComponents(const std::string& name);
+	void callComponentsGroup(const std::string& group, const std::string& component);
+	
 private:
 	entity_vec entities;
 	entity_vec entities_add;
-	std::vector<entity_vec_iter> entities_remove;
+	std::vector<Entity*> entities_remove;
 	group_map entity_groups;
 	
 	bool needUpdateEntityLayering;
 	bool do_sort;
 	bool correct_remove;
 };
+
+template <class EntityType, class... ArgType>
+EntityType& Group::add(ArgType... args){
+	EntityType* entity_ptr = new EntityType(args...);
+	EntityType& entity_ref = *entity_ptr;
+	
+	this->entities_add.push_back(std::unique_ptr<Entity>(entity_ptr));
+	
+	this->needUpdateEntityLayering = true;
+	
+	entity_ref._group = this;
+	entity_ref.OnAdd(*this);
+	
+	return entity_ref;
+}
 
 }

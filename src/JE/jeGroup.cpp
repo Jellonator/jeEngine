@@ -1,7 +1,6 @@
 #include "JE/jeGroup.h"
 #include "JE/jeEntity.h"
 #include <algorithm>
-#include <iostream>
 namespace JE{
 
 Group::Group(){
@@ -11,58 +10,71 @@ Group::Group(){
 }
 
 Group::~Group(){
-	//this->deleteAll();
+	
 }
 
 void Group::update(float dt){
 	this->updateEntities();
-	for (entity_def& entity : this->entities){
+	for (auto& entity : this->entities){
 		entity->OnUpdate(*this, dt);
 	}
+	this->updateEntities();
 }
 
 void Group::draw(){
 	this->updateEntities();
-	for (entity_def& entity : this->entities){
+	for (auto& entity : this->entities){
 		entity->OnDraw();
 	}
+	this->updateEntities();
 }
 
-void Group::remove(const Entity& entity){
-	entity_vec_iter iter = this->entities.begin();
-	while (iter != this->entities.end()){
-		//dereference iterator -> dereference unique_ptr -> pointer
-		if (*iter == &entity) this->remove(iter);
-		++iter;
-	}
+void Group::remove(Entity& entity){
+	this->entities_remove.push_back(&entity);
 }
 
-void Group::remove(entity_vec_iter index){
-	this->entities_remove.push_back(index);
-}
-
-bool sortEntity(const entity_def& a, const entity_def& b) { 
-	return a->getLayer() < b->getLayer(); 
-}
+struct sort_entity_by_layer
+{
+    inline bool operator() (const Entity& entity_a, const Entity& entity_b)
+    {
+        return (entity_a.getLayer() < entity_b.getLayer());
+    }
+};
 
 void Group::updateEntities(){
-	for (entity_vec_iter iter = this->entities_add.begin(); iter != this->entities_add.end(); ++iter){
-		this->entities.push_back(*iter);
-	}
-	this->entities_add.clear();
-	
-	for (entity_vec::size_type i = 0; i != this->entities_remove.size(); ++i){
-		Entity* entity = this->entities.at(i);
-		for (std::vector<std::string>::iterator iter = entity->_groups_v.begin(); iter != entity->_groups_v.end(); ++iter){
-			this->removeFromGroup(*iter, *entity);
+	//Remove entities that are marked as removed
+	for (std::vector<Entity*>::iterator rm_iter = this->entities_remove.begin(); rm_iter != this->entities_remove.end(); ++rm_iter){
+		Entity* entity = *rm_iter;
+		//Remove entity from groups
+		while (entity->_groups_v.size() > 0){
+			this->removeFromGroup(*entity->_groups_v.begin(), *entity);
 		}
-		delete entity;
-		this->entities.erase(this->entities_remove.at(i));
+		
+		//Actually remove entity
+		entity_vec_iter entity_iter = this->entities.begin();
+		while (entity_iter != this->entities.end()){
+			if (entity_iter->get() == entity){
+				entity_iter = this->entities.erase(entity_iter);
+			} else {
+				++entity_iter;
+			}
+		}
+		
 	}
 	this->entities_remove.clear();
 	
+	//Add entities to entity list
+	for (entity_vec_iter iter = this->entities_add.begin(); iter != this->entities_add.end(); ++iter){
+		this->entities.push_back(std::move(*iter));
+	}
+	this->entities_add.clear();
+	
+	//Sort entities if need sorting
 	if (this->needUpdateEntityLayering && this->do_sort){
-		std::sort(this->entities.begin(), this->entities.end(), sortEntity);
+		std::sort(this->entities.begin(), this->entities.end(),  [ ]( const std::unique_ptr<Entity>& lhs, const std::unique_ptr<Entity>& rhs )
+		{
+		   return lhs->getLayer() < rhs->getLayer();
+		});
 		this->needUpdateEntityLayering = false;
 	}
 }
@@ -123,28 +135,30 @@ void Group::addToGroup(const std::string& group, Entity& entity){
 }
 
 void Group::removeFromGroup(const std::string& group, Entity& entity){
-	for (entity_vec::iterator iter = this->entity_groups[group].begin(); iter != this->entity_groups[group].end(); ++iter){
-		if (*iter == &entity){
-			iter = this->entity_groups[group].erase(iter);
+	std::vector<Entity*>::iterator entity_iter = this->entity_groups[group].begin();
+	while (entity_iter != this->entity_groups[group].end()){
+		if (*entity_iter == &entity){
+			entity_iter = this->entity_groups[group].erase(entity_iter);
 		} else {
-			++iter;
+			++entity_iter;
 		}
 	}
 	
-	for (std::vector<std::string>::iterator iter = entity._groups_v.begin(); iter != entity._groups_v.end(); ++iter){
-		if (*iter == group){
-			iter = entity._groups_v.erase(iter);
+	std::vector<std::string>::iterator group_iter = entity._groups_v.begin();
+	while (group_iter != entity._groups_v.end()){
+		if (*group_iter == group){
+			group_iter = entity._groups_v.erase(group_iter);
 		} else {
-			++iter;
+			++group_iter;
 		}
 	}
 }
 
-entity_vec::iterator Group::getGroupBegin(const std::string& group){
+std::vector<Entity*>::iterator Group::getGroupBegin(const std::string& group){
 	return this->entity_groups[group].begin();
 }
 
-entity_vec::iterator Group::getGroupEnd(const std::string& group){
+std::vector<Entity*>::iterator Group::getGroupEnd(const std::string& group){
 	return this->entity_groups[group].end();
 }
 
@@ -161,7 +175,7 @@ bool Group::getCollideEntity(JE::Entity& entity, int move_x, int move_y, int* ge
 bool Group::getCollideMask(JE::MASK::Mask& mask, int move_x, int move_y, int* get_x, int* get_y){
 	std::vector<JE::MASK::Mask*> mask_vec;
 	
-	for (JE::Entity* entity : this->entities){
+	for (auto& entity : this->entities){
 		JE::MASK::Mask* other_mask = entity->getMask();
 		if (other_mask == nullptr || other_mask == &mask) continue;
 		
@@ -199,16 +213,37 @@ bool Group::getCollideEntityGroups(JE::Entity& entity,  int move_x, int move_y, 
 bool Group::getCollideMaskGroups(JE::MASK::Mask& mask,int move_x, int move_y, int* get_x, int* get_y, const std::vector<std::string>& groups){
 	std::vector<JE::MASK::Mask*> mask_vec;
 	
-	for (const std::string& group_name : groups){
-		for (JE::Entity* entity : this->entity_groups[group_name]){
-			JE::MASK::Mask* other_mask = entity->getMask();
-			if (other_mask == nullptr || other_mask == &mask) continue;
-			
-			mask_vec.push_back(other_mask);
+	for (auto& entity : this->entities){
+		JE::MASK::Mask* other_mask = entity->getMask();
+		if (other_mask == nullptr || other_mask == &mask) continue;
+		
+		bool do_add = false;
+		for (const std::string& entity_group_name : entity->_groups_v){
+			for (const std::string& group_name : groups){
+				if (entity_group_name == group_name){
+					do_add = true;
+				}
+			}
 		}
+		
+		if (!do_add) continue;
+		
+		mask_vec.push_back(other_mask);
 	}
 	
 	return mask.callCollideGroup(mask_vec, move_x, move_y, get_x, get_y);
+}
+
+void Group::callComponents(const std::string& name){
+	for (auto& entity : this->entities){
+		entity->callComponent(name);
+	}
+}
+
+void Group::callComponentsGroup(const std::string& group, const std::string& component){
+	for (auto entity : this->entity_groups[group]){
+		entity->callComponent(component);
+	}
 }
 
 }

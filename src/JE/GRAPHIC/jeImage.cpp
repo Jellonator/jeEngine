@@ -108,6 +108,12 @@ void Image::draw(float x, float y, float angle){
 		glScalef(this->flip_x, this->flip_y, 1.0f);
 		glTranslatef(-x_move,-y_move,-z_move);
 	}
+	//Make sure pixels from the rest of the texture don't get included
+	texture_x += 0.25;
+	texture_y += 0.25;
+	texture_w -= 0.5f;
+	texture_h -= 0.5f;
+	//Outdated OpenGL draw call
 	glBegin( GL_QUADS );//aww yeah work dem (outdated opengl 1.2) quads!
 		glColor4f(forecolor.r, forecolor.g, forecolor.b, forecolor.a);
 		glTexCoord2f(texture_x,           texture_y);

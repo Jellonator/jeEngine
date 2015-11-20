@@ -3,6 +3,8 @@
 #include "../jeMain.h"
 #include "../jeUtil.h"
 #include <memory>
+#include <map>
+#include <vector>
 namespace JE{namespace GRAPHICS{
 class Tileset;
 class Tilemap;
@@ -34,7 +36,7 @@ class Tileset{
 class Tilemap : public Canvas
 {
 	public:
-		std::vector<std::shared_ptr<Tileset>> tilesets;/**<  */
+		std::map<std::string, std::shared_ptr<Tileset>> tilesets;/**<  */
 		int tileWidth;/**< \brief Width of each tile. */
 		int tileHeight;/**< \brief Height of each tile. */
 		int tileOffsetX;/**< \brief X offset of the tileset. */
@@ -66,9 +68,9 @@ class Tilemap : public Canvas
          * \param -1 int spaceX, X spacing between tiles in the tileset.
          * \param -1 int spaceY, Y spacing between tiles in the tileset.
          */
-		std::shared_ptr<Tileset> newTileset(std::string file, int tWidth = -1, int tHeight = -1,
-		int offsetX = -1, int offsetY = -1, int spaceX = -1, int spaceY = -1, int ID = -1);
-		std::shared_ptr<Tileset> addTileset(std::shared_ptr<Tileset> tileset, int ID = -1);
+		std::shared_ptr<Tileset> newTileset(const std::string& name, const std::string& file, int tWidth = -1, int tHeight = -1,
+		int offsetX = -1, int offsetY = -1, int spaceX = -1, int spaceY = -1);
+		std::shared_ptr<Tileset> addTileset(const std::string& name, std::shared_ptr<Tileset> tileset);
 
         /** \brief Creates a new tile.
          * \param tileset int, the tileset to use.
@@ -78,7 +80,7 @@ class Tilemap : public Canvas
          * \param 1 int h, the height of the tile, in tiles.
          * \param -1 int ID, the ID of the tile.  Defaults to appending to the back.
          */
-		void newTile(int tileset, int x, int y, int ID = -1);
+		void newTile(const std::string& tileset, int x, int y, int ID = -1);
 
         /** \brief Creates a new tile, without using a grid.
          * \param tileset int, the tileset to use.
@@ -88,7 +90,7 @@ class Tilemap : public Canvas
          * \param h int, the height of the tile.
          * \param -1 int ID, the ID of the tile.  Defaults to appending to the back.
          */
-		void newFreeformTile(int tileset, int x, int y, int w, int h, int ID = -1);
+		void newFreeformTile(const std::string& tileset, int x, int y, int w, int h, int ID = -1);
 
         /** \brief Draws a tile to the tilemap.
          * \param tileset int, the ID of the tileset to use.
@@ -96,10 +98,10 @@ class Tilemap : public Canvas
          * \param x float, the X position to draw to, in tiles.
          * \param y float, the Y position to draw to, in tiles.
          */
-		void drawTile(int tileset, int tile, int x, int y);
-		void drawTile(int tileset, int tilex, int tiley, int x, int y);
-		void drawTileRect(int tileset, int tilex, int tiley, int x, int y, int w, int h);
-		void drawTileRect(int tileset, int tile, int x, int y, int w, int h);
+		void drawTile(const std::string& tileset, int tile, int x, int y);
+		void drawTile(const std::string& tileset, int tilex, int tiley, int x, int y);
+		void drawTileRect(const std::string& tileset, int tilex, int tiley, int x, int y, int w, int h);
+		void drawTileRect(const std::string& tileset, int tile, int x, int y, int w, int h);
 		//void drawTile(int tileset, int tx, int ty, float x, float y);
 
         /** \brief Draw a freeform tile to the tilemap.
@@ -112,7 +114,7 @@ class Tilemap : public Canvas
          * \param 1 float sx, the X scaling factor.
          * \param 1 float sy, the Y scaling factor.
          */
-		void drawFreeformTile(int tileset, int tile, float x, float y, float sx = 1, float sy = 1);
+		void drawFreeformTile(const std::string& tileset, int tile, float x, float y, float sx = 1, float sy = 1);
 		virtual ~Tilemap();
 	protected:
 	private:

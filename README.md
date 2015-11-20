@@ -1,17 +1,17 @@
 jeEngine
 ========
 jeEngine, or Jello's Engine, is a cross-platform game engine written in C++, currently supporting whatever SDL supports.
-Note that this engine is mostly just a wrapper for SDL2. SDL2 may be replaced with OpenGL for graphics at somepoint to make this engine more dynamic, but currently that is not a priority.
+Note that this engine is mostly just a wrapper for SDL2 and OpenGL. Currently uses the heavily outdated OpenGL 1.2 standard.
+There are plans to impliment OpenGL 3.2 in the future.
 
 ######Libraries/dependancies:######
 - SDL2
 - SDL2_image
 
-Current Version: 0.8.0
+Current Version: 0.9.0
 
 Features
 --------
-- Worlds
 - Entities
 - Groups
 - Collision
@@ -21,22 +21,28 @@ Examples
 --------
 ```C++
 //Hello world
-#include "JE.h"
+#include "JE/JE.h"
+#include <iostream>
+
 class MyEntity : public JE::Entity{
 	public:
 	MyEntity();
-	void OnUpdate();
+	void OnUpdate(JE::Group& group, float dt);
 };
 MyEntity::MyEntity() : JE::Entity(){
 
 }
-void MyEntity::OnUpdate(){
-	JE::print("Hello World!");
+void MyEntity::OnUpdate(JE::Group& group, float dt){
+	std::cout << "Hello World!" << std::endl;
 }
 int main(){
 	JE::init();
-	JE::world->add(new MyEntity());
+	
+	JE::Group world;
+	world.add<MyEntity>();
 	JE::update();
+	world.update(0);
+	
 	return 0;
 }
 ```
@@ -44,9 +50,22 @@ More examples coming soon.
 
 Todo
 --------
+- Impliment OpenGL 3.2
+- Make JE::GRAPHICS::Camera less weird and awkward.
+- Actual documentation.
 
 Update log
 --------
+### Version 0.9.0 ###
+- Revised a lot of things to be more modern and flexible and a few other buzzwords.
+- Added components to the entity system.
+- Reimplimented a new collision system, this time using integer positions.
+- Current types of Mask are PointMask(single point), Hitbox(AABB rectangle), Multimask(Combination of masks), and Grid(optimized Multimask).
+- Particle systems are a lot more optimized, including an option to have a custom Particle system renderer.
+- A lot of systems now use string IDs instead of integer IDs.
+- Entity system is a lot different now. No more groups embedded in groups, there is no World class or global world object anymore.
+- Added and revised a couple math functions
+
 ### Version 0.8 ###
 - Added JE::MATH::toInt(string) and JE::MATH::toString(int)
 - Added JE::TIME::setDeltaTimeLimit to make things not jittery when doing intensive processes
