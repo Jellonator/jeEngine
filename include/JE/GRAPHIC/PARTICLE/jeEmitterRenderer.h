@@ -2,6 +2,7 @@
 #include "../jeImage.h"
 #include "../jeSpritemap.h"
 
+/*
 namespace JE{ namespace GRAPHICS{
 class Emitter;
 class EmitterType;
@@ -35,4 +36,4 @@ private:
 };
 
 }}
-
+*/

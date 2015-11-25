@@ -5,6 +5,7 @@
 #include "JE/GRAPHIC/jeGraphic.h"
 #include "JE/UTIL/jeMath.h"
 
+/*
 namespace JE{ namespace GRAPHICS{
 
 EmitterRenderer::EmitterRenderer(){
@@ -48,3 +49,4 @@ Spritemap& EmitterRendererSpritemap::getSpritemap(){
 }
 
 }}
+*/

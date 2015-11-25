@@ -11,27 +11,63 @@
 
 namespace JE{
 
-void initWindow(std::string name, int w, int h, int wflags, int rflags){
-	init();
+bool do_resize_next_frame;
+int new_window_width;
+int new_window_height;
+
+void initWindow(std::string name, int w, int h, int wflags){
+	JE::init();
 	SDL_SetHint(SDL_HINT_RENDER_OPENGL_SHADERS, "1");
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-
+	
+	// Create window
+	GRAPHICS::window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, wflags | SDL_WINDOW_OPENGL);
+	if (GRAPHICS::window == nullptr) {
+		std::cout << SDL_GetError() << std::endl;
+	}
+	
+	// Set OpenGL attributes
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	
-	GRAPHICS::window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, wflags | SDL_WINDOW_OPENGL);
-	if (GRAPHICS::window == NULL) {std::cout << SDL_GetError() << std::endl;}
-	//GRAPHICS::renderer = SDL_CreateRenderer(GRAPHICS::window, -1, rflags | SDL_RENDERER_TARGETTEXTURE);
-	//if (GRAPHICS::renderer == NULL) {std::cout << SDL_GetError() << std::endl;}
+	// Create context
 	GRAPHICS::glcontext = SDL_GL_CreateContext(GRAPHICS::window);
-	//GRAPHICS::glcontext = SDL_GL_GetCurrentContext();
-
-	GRAPHICS::setColor(255,255,255,255);
-	GRAPHICS::setBackgroundColor(0,0,0,255);
 	
-	SDL_GL_SetSwapInterval(1);
+	// Config OpenGL
+	glEnable( GL_SCISSOR_TEST );
+	glEnable( GL_BLEND );
+	glEnable( GL_DEPTH_TEST );
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthFunc( GL_LEQUAL );
+	
+	// No Vsync
+	SDL_GL_SetSwapInterval(0);
+	
+	// Enable GLEW
+	glewExperimental = GL_TRUE;
+	glewInit();
+	
+	// Set clear color to a nice blue-purple
+	glClearColor(0.2, 0.1, 0.3, 1.0);
+	
+	// Necessary in order to make sure that the viewport gets resized when the
+	// window is resized. Using lambdas because it's cool and futuristic.
+	SDL_AddEventWatch(
+	[](void* userdata, SDL_Event* event) -> int{
+		if (event->type == SDL_WINDOWEVENT){
+			if (event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED){
+				do_resize_next_frame = true;
+				new_window_height = event->window.data2;
+				new_window_width = event->window.data1;
+			}
+		}
+		return 1;
+	}, nullptr);
+	
+	do_resize_next_frame = false;
+	
 }
 
 int target_framerate = -1;
@@ -40,24 +76,30 @@ void setFramerate(int framerate){
 	target_framerate = framerate;
 	time_i = SDL_GetTicks();
 }
+
 void update(){
 	TIME::calculate();
 	JE::TIME::dt = JE::TIME::_dt;
 }
+
 void init(){
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {std::cout << SDL_GetError() << std::endl;}
 	if (IMG_Init(IMG_INIT_PNG) != 0) {std::cout << SDL_GetError() << std::endl;}
 	std::cout << "JE: Initiated Engine." << std::endl;
 	SDL_version ver;
 	SDL_GetVersion(&ver);
-	std::cout << "JE: Using SDL version " << (int)ver.major << "." <<
-		(int)ver.minor << "." << (int)ver.patch << std::endl;
+	
+	std::cout << "JE: Using SDL version " << 
+		(int)ver.major << "." <<
+		(int)ver.minor << "." << 
+		(int)ver.patch << std::endl;
 	
 	srand(time(nullptr));
 }
 
 void quit(){
-	//SDL_GL_DeleteContext(GRAPHICS::glcontext);
+	SDL_GL_DeleteContext(JE::GRAPHICS::glcontext);
+	SDL_DestroyWindow(JE::GRAPHICS::window);
 	std::cout << "JE: Quit Engine." << std::endl;
 	IMG_Quit();
 	SDL_Quit();
@@ -65,7 +107,12 @@ void quit(){
 
 namespace GRAPHICS{
 	void draw(){
-		//screen resizing has to be done a frame later for god knows what reason
+		if (do_resize_next_frame){
+			do_resize_next_frame = false;
+			glViewport(0, 0, new_window_width, new_window_height);
+			glScissor(0, 0, new_window_width, new_window_height);
+		}
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
 }
 

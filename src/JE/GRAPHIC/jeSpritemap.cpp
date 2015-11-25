@@ -5,6 +5,7 @@
 #include "JE/UTIL/jeMath.h"
 #include <algorithm>
 
+/*
 namespace JE{namespace GRAPHICS{
 
 Spritemap::Spritemap(std::string file) : Image(){
@@ -197,3 +198,4 @@ bool Spritemap::doesContainFrame(const Frame& frame, unsigned int* position){
 }
 
 };};
+*/

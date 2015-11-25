@@ -1,5 +1,6 @@
 #include "JE/GRAPHIC/jeTilemap.h"
 #include <iostream>
+/*
 namespace JE{namespace GRAPHICS{
 Tileset::Tileset(std::string file, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY){
 	this->load(file, twidth, theight, offsetX, offsetY, spaceX, spaceY);
@@ -165,3 +166,4 @@ void Tilemap::drawTileRect(const std::string& tileset, int tilex, int tiley, int
 	this->unbind();
 }
 };};
+*/

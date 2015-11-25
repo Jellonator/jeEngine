@@ -251,7 +251,7 @@ int Mask::getCenterY() const {
 }
 
 void Mask::draw(int x, int y){
-	JE::GRAPHICS::drawRect(this->getX() + x, this->getY() + y, 1, 1, true);
+	//JE::GRAPHICS::drawRect(this->getX() + x, this->getY() + y, 1, 1, true);
 }
 
 }}

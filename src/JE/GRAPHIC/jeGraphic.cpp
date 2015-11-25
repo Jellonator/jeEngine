@@ -3,31 +3,19 @@
 #include "JE/GRAPHIC/jeGraphic.h"
 #include "JE/GRAPHIC/jeImage.h"
 
-namespace JE{
-Graphic::Graphic(float x, float y)
-{
-	this->x = x;
-	this->y = y;
-	this->angle = 0;
-	this->ox = 0;
-	this->oy = 0;
-}
+#include "JE/GL/jeShader.h"
+#include "JE/GL/jeModel.h"
 
-Graphic::~Graphic()
-{
+#define GLM_FORCE_RADIANS
+#include <glm/gtc/matrix_transform.hpp>
 
-}
-
-//void Graphic::drawExt(float x, float y, GRAPHICS::Camera* camera, Entity* entity, float angle, SDL_Renderer* renderer){}
-void Graphic::draw(float x, float y, float angle){}
+namespace JE{namespace GRAPHICS{
+	
+Graphic::Graphic(float x, float y) : JE::Point(x, y){}
+Graphic::~Graphic(){}
+void Graphic::draw(float x, float y){}
 void Graphic::update(){}
 
-void Graphic::setOrigin(float x, float y, bool adjustPosition){
-	this->ox = x;
-	this->oy = y;
-	if (adjustPosition) this->set(-x, -y);
-}
-namespace GRAPHICS{
 SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_GLContext glcontext;
@@ -35,71 +23,48 @@ Color backcolor;
 Color forecolor;
 void flip(){
 	SDL_GL_SwapWindow(window);
-	//SDL_RenderPresent(renderer);
-	//glLoadIdentity();
-	glClearColor(backcolor.r, backcolor.g, backcolor.b, backcolor.a);
-	/* Clear The Screen And The Depth Buffer */
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
-void setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a){
-	/*forecolor.r = r;
-	forecolor.g = g;
-	forecolor.b = b;
-	forecolor.a = a;
-	SDL_SetRenderDrawColor(renderer, r, g, b, a);*/
-	setColorF(float(r)/255.0f, float(g)/255.0f, float(b)/255.0f, float(a)/255.0f);
-}
-void setColorF(float r, float g, float b, float a){
-	//setColor(r*255,g*255,b*255,a*255,renderer);
+
+void setColor(float r, float g, float b, float a){
 	forecolor.r = r;
 	forecolor.g = g;
 	forecolor.b = b;
 	forecolor.a = a;
+	JE::GL::Shader& shader = JE::GL::getDefaultShader();
+	shader.setUniform("in_Color", r, g, b, a);
 }
-void setBackgroundColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a){
-	setBackgroundColorF(float(r)/255.0f, float(g)/255.0f, float(b)/255.0f, float(a)/255.0f);
-}
-void setBackgroundColorF(float r, float g, float b, float a){
+
+void setBackgroundColor(float r, float g, float b, float a){
 	backcolor.r = r;
 	backcolor.g = g;
 	backcolor.b = b;
 	backcolor.a = a;
-}
-void drawRect(float x, float y, float w, float h, bool fill){
-	glBegin( fill ? GL_QUADS : GL_LINE_LOOP );            /* Draw A Quad */
-		glColor4f(forecolor.r, forecolor.g, forecolor.b, forecolor.a);
-		glVertex3f( x  , y+h, 0.0f ); /* Bottom Left */
-		glVertex3f( x+w, y+h, 0.0f ); /* Bottom Right */
-		glVertex3f( x+w, y  , 0.0f ); /* Top Right */
-		glVertex3f( x  , y  , 0.0f ); /* Top Left */
-	glEnd( );
+	glClearColor(r, g, b, a);
 }
 
-void drawRect(float x, float y, float w, float h, float angle, bool fill){
-	drawRect(x, y, w, h, angle, w / 2, h / 2, fill);
+void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, float w, float h){
+	drawRect(camera, fill, x, y, w, h, 0);
 }
-void drawRect(float x, float y, float w, float h, float angle, float originx, float originy, bool fill){
-	{
-		float mat[16];
-		glGetFloatv(GL_PROJECTION_MATRIX, mat);
-		float x_move = mat[12] + x + originx;
-		float y_move = mat[13] + y + originy;
-		float z_move = mat[14];
-		glPushMatrix();
-		glTranslatef( x_move, y_move, z_move);
-		glRotatef(angle, 0, 0, 1.0);
-		glTranslatef(-x_move,-y_move,-z_move);
-	}
+
+void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, float w, float h, float angle){
+	drawRect(camera, fill, x, y, w, h, angle, w / 2, h / 2);
+}
+
+void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, float w, float h, float angle, float originx, float originy){
+	JE::GL::Model& model = fill ? JE::GL::getDefaultModel() : JE::GL::getDefaultOutlineModel();
+	JE::GL::Shader& shader = JE::GL::getDefaultShader();
 	
-	glBegin( fill ? GL_QUADS : GL_LINE_LOOP );
-		glColor4f(forecolor.r, forecolor.g, forecolor.b, forecolor.a);
-		glVertex3f( x  , y  , 0.0f );
-		glVertex3f( x+w, y  , 0.0f );
-		glVertex3f( x+w, y+h, 0.0f );
-		glVertex3f( x  , y+h, 0.0f );
-	glEnd( );
+	glm::mat4x4 transform = camera.getTranform();
+	transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
+	transform = glm::translate(transform, glm::vec3(originx, originy, 0.0f));
+	transform = glm::rotate(transform, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+	transform = glm::translate(transform, glm::vec3(-originx, -originy, 0.0f));
+	transform = glm::scale(transform, glm::vec3(w, h, 1.0f));
 	
-	glPopMatrix();
+	shader.setUniformMat("in_Transform", transform);
+	
+	shader.use();
+	model.draw();
 }
 
 void drawLine(float x1, float y1, float x2, float y2){
@@ -121,7 +86,7 @@ void drawCircle(float x, float y, float radius, int points, bool fill){
 		}
 	glEnd();
 }
-
+/*
 void drawImgRectStretch(Image& image, float x, float y, float w, float h, float tileWidth, float tileHeight){
 //store texture width
 	int tw, th;
@@ -181,6 +146,6 @@ void drawImgRectStretch(Image& image, float x, float y, float w, float h, float 
 		image.height = tempHeight;
 		image.use_clip = tempbool;
 	}
-}
+}*/
 
 }}

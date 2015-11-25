@@ -4,45 +4,9 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-
+/*
 namespace JE{namespace GRAPHICS{
 using namespace std;
-
-Texture::Texture(SDL_Texture* tex){
-	this->texture = tex;
-}
-Texture::Texture(std::string file){
-	this->texture = nullptr;
-	this->load(file);
-	SDL_SetTextureBlendMode(this->get(), SDL_BLENDMODE_BLEND);
-}
-Texture::~Texture(){
-	if (this->texture != nullptr) SDL_DestroyTexture(this->texture);
-}
-void Texture::set(SDL_Texture* tex){
-	if (this->texture != nullptr) SDL_DestroyTexture(this->texture);
-	this->texture = tex;
-}
-SDL_Texture* Texture::get() const{
-	return this->texture;
-}
-void Texture::getSize(int* width, int* height){
-	SDL_QueryTexture(this->texture, NULL, NULL, width, height);
-}
-
-void Texture::load(std::string file, SDL_Renderer* renderer){
-	SDL_Surface* s = IMG_Load(file.c_str());
-	if (s == nullptr) {
-		std::cout << SDL_GetError() << std::endl;
-	}else{
-		SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, s);
-		if (tex == nullptr)
-			std::cout << SDL_GetError() << std::endl;
-		else
-			this->set(tex);
-		SDL_FreeSurface(s);
-	}
-}
 
 Image::Image() : Graphic(){
 	this->texture = std::shared_ptr<Texture>(new Texture(NULL));
@@ -216,3 +180,4 @@ void Image::setFlip(bool x, bool y){
 	this->flip_y = y ? -1 : 1;
 }
 };};
+*/

@@ -5,6 +5,8 @@
 #include "SPRITEMAP/jeSpritemapFrame.h"
 #include "jeImage.h"
 #include <vector>
+
+/*
 namespace JE{namespace GRAPHICS{
 class Frame;
 class Anim;
@@ -48,9 +50,9 @@ public:
 	//animation functions
 	void updateClip();
 	void play(const std::string& anim, bool loop = true, bool reset = true, unsigned int frame = 0);
-	void pause();/**< \brief pause the animation. */
-	void resume();/**< \brief resume the animation. */
-	void reset();/**< \brief reset the animation. */
+	void pause();
+	void resume();
+	void reset();
 	void update(float dt = JE::TIME::dt);
 	
 	//drawing functions
@@ -64,12 +66,13 @@ public:
 	
 	
 private:
-	std::shared_ptr<SpritemapData> data;/**<  */
-	float time;/**< \brief The time that the frame has been playing. */
-	std::string anim;/**< \brief The current animation. */
-	unsigned int frame;/**< \brief The current frame of the animation. */
-	bool playing;/**< \brief Is the animation playing? */
-	bool looping;/**< \brief Is the animation looping? */
-	float speed;/**< \brief The speed of the animation. */
+	std::shared_ptr<SpritemapData> data;
+	float time;
+	std::string anim;
+	unsigned int frame;
+	bool playing;
+	bool looping;
+	float speed;
 };
 };};
+ **/

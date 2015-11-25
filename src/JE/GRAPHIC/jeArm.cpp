@@ -191,9 +191,9 @@ void Arm::draw(float x, float y){
 	float end_x, end_y, start_x, start_y;
 	this->getHinge(&start_x, &start_y);
 	this->getEnd(&end_x, &end_y);
-	JE::GRAPHICS::drawLine(start_x + x, start_y + y, end_x + x, end_y + y);
-	JE::GRAPHICS::drawRect(start_x - 1 + x, start_y - 1 + y, 2, 2, true);
-	JE::GRAPHICS::drawRect(end_x - 1 + x, end_y - 1 + y, 2, 2, true);
+	//JE::GRAPHICS::drawLine(start_x + x, start_y + y, end_x + x, end_y + y);
+	//JE::GRAPHICS::drawRect(start_x - 1 + x, start_y - 1 + y, 2, 2, true);
+	//JE::GRAPHICS::drawRect(end_x - 1 + x, end_y - 1 + y, 2, 2, true);
 	for (auto& arm : this->arm_vec){
 		//const std::shared_ptr<Arm>& arm = this->getArm(i);
 		arm->draw(x, y);

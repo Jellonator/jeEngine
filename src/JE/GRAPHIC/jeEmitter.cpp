@@ -3,6 +3,7 @@
 #include "JE/GRAPHIC/jeEmitter.h"
 #include <iostream>
 
+/*
 namespace JE{ namespace GRAPHICS{
 
 Emitter::Emitter(int max_particles){
@@ -93,3 +94,4 @@ void Emitter::draw(){
 }
 
 }}
+*/

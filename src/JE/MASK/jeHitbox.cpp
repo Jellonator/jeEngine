@@ -239,7 +239,7 @@ bool Hitbox::containsRect(const Hitbox& rect) const{
 }
 
 void Hitbox::draw(int x, int y){
-	JE::GRAPHICS::drawRect(this->getLeft() + x, this->getTop() + y, this->getWidth(), this->getHeight(), false);
+	//JE::GRAPHICS::drawRect(this->getLeft() + x, this->getTop() + y, this->getWidth(), this->getHeight(), false);
 }
 
 }}

@@ -5,6 +5,7 @@
 #include "JE/GRAPHIC/jeGraphic.h"
 #include "JE/UTIL/jeMath.h"
 
+/*
 namespace JE{ namespace GRAPHICS{
 
 EmitterType::EmitterType(){
@@ -174,11 +175,11 @@ void EmitterType::getRandomSpeedXY(float& speed_x, float& speed_y) const{
 }
 
 //Particle functions
-/*void EmitterType::update(Particle& particle, float dt){
+void EmitterType::update(Particle& particle, float dt){
 	particle.x += particle.speed_x * dt;
 	particle.y += particle.speed_y * dt;
 	particle.life -= dt;
-}*/
+}
 
 void EmitterType::draw(Particle& particle){
 	if (this->renderer){
@@ -187,3 +188,4 @@ void EmitterType::draw(Particle& particle){
 }
 
 }}
+*/

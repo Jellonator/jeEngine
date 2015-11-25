@@ -1,11 +1,7 @@
 #pragma once
-#define GL_GLEXT_PROTOTYPES
-#define GLEW_STATIC
-//#include <GL/glew.h>
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-//#include <GL/glx.h>
-//#include <GL/glext.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_opengl.h>
 #include <string>
@@ -24,7 +20,7 @@ namespace JE{
  * \param 0 int wflags, the SDL window flags.
  * \param 0 int rflags, the SDL renderer flags.
  */
-void initWindow(std::string name, int w, int h, int wflags = 0, int rflags = 0);
+void initWindow(std::string name, int w, int h, int wflags = 0);
 void init();/**< \brief Initiates jelloEngine. */
 void quit();
 void update();/**< \brief Updates the engine and the active world. */
