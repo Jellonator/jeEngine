@@ -70,6 +70,8 @@ private:
 };
 
 Model& getDefaultModel();
+Model& getDefaultImageModel();
 Model& getDefaultOutlineModel();
+Model& getDefaultCircleModel();
 
 }}

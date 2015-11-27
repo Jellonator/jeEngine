@@ -147,7 +147,9 @@ void Model::bind(){
 }
 
 Model* default_model = nullptr;
+Model* default_circle_model = nullptr;
 Model* default_outline_model = nullptr;
+Model* default_image_model = nullptr;
 
 Model& getDefaultModel(){
 	if (default_model == nullptr){
@@ -169,6 +171,35 @@ Model& getDefaultModel(){
 	return *default_model;
 }
 
+Model& getDefaultImageModel(){
+	if (default_image_model == nullptr){
+		default_image_model = new Model(
+			{
+				0.0f, 0.0f, 0.0f, // top left
+				1.0f, 0.0f, 0.0f, // top right
+				1.0f, 1.0f, 0.0f, // bottom right
+				0.0f, 1.0f, 0.0f, // bottom left
+			},{
+				0, 1, 3, // top left
+				2, 1, 3, // bottom right
+			}
+		);
+		default_image_model->getPointAttribute().setShaderReference("in_Position");
+		default_image_model->addAttribute("texcoord", "in_Texcoord",
+			{
+				0.0f, 0.0f, // top left
+				1.0f, 0.0f, // top right
+				1.0f, 1.0f, // bottom right
+				0.0f, 1.0f, // bottom left
+			}
+		);
+		default_image_model->getAttribute("texcoord").setSize(2);
+		default_image_model->useShader(JE::GL::getDefaultImageShader());
+	}
+	
+	return *default_image_model;
+}
+
 Model& getDefaultOutlineModel(){
 	if (default_outline_model == nullptr){
 		default_outline_model = new Model(
@@ -187,6 +218,27 @@ Model& getDefaultOutlineModel(){
 	}
 	
 	return *default_outline_model;
+}
+
+Model& getDefaultCircleModel(){
+	if (default_circle_model == nullptr){
+		default_circle_model = new Model(
+			{
+				-1.0f, -1.0f, 0.0f, // top left
+				 1.0f, -1.0f, 0.0f, // top right
+				 1.0f,  1.0f, 0.0f, // bottom right
+				-1.0f,  1.0f, 0.0f, // bottom left
+			},{
+				0, 1, 3, // top left
+				2, 1, 3, // bottom right
+			}
+		);
+		default_circle_model->setDrawMode(GL_TRIANGLES);
+		default_circle_model->getPointAttribute().setShaderReference("in_Position");
+		default_circle_model->useShader(JE::GL::getDefaultCircleShader());
+	}
+	
+	return *default_circle_model;
 }
 
 }}

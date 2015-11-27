@@ -13,8 +13,8 @@ namespace JE{namespace GRAPHICS{
 	
 Graphic::Graphic(float x, float y) : JE::Point(x, y){}
 Graphic::~Graphic(){}
-void Graphic::draw(float x, float y){}
-void Graphic::update(){}
+void Graphic::draw(const JE::GRAPHICS::Camera& camera, float x, float y)const{}
+void Graphic::update(float dt){}
 
 SDL_Window* window;
 SDL_Renderer* renderer;
@@ -30,8 +30,8 @@ void setColor(float r, float g, float b, float a){
 	forecolor.g = g;
 	forecolor.b = b;
 	forecolor.a = a;
-	JE::GL::Shader& shader = JE::GL::getDefaultShader();
-	shader.setUniform("in_Color", r, g, b, a);
+	JE::GL::getDefaultShader().setUniform("in_Color", r, g, b, a);
+	JE::GL::getDefaultCircleShader().setUniform("in_Color", r, g, b, a);
 }
 
 void setBackgroundColor(float r, float g, float b, float a){
@@ -43,7 +43,16 @@ void setBackgroundColor(float r, float g, float b, float a){
 }
 
 void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, float w, float h){
-	drawRect(camera, fill, x, y, w, h, 0);
+	JE::GL::Model& model = fill ? JE::GL::getDefaultModel() : JE::GL::getDefaultOutlineModel();
+	JE::GL::Shader& shader = JE::GL::getDefaultShader();
+	
+	glm::mat4x4 transform = camera.getTranform();
+	transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
+	transform = glm::scale(transform, glm::vec3(w, h, 1.0f));
+	
+	shader.setUniformMat("in_Transform", transform);
+	
+	model.draw();
 }
 
 void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, float w, float h, float angle){
@@ -63,28 +72,41 @@ void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, f
 	
 	shader.setUniformMat("in_Transform", transform);
 	
-	shader.use();
 	model.draw();
 }
 
 void drawLine(float x1, float y1, float x2, float y2){
-	glBegin(GL_LINES);
-		glColor4f(forecolor.r, forecolor.g, forecolor.b, forecolor.a);
-		glVertex3f( x1, y1, 0.0f);
-		//glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-		glVertex3f( x2, y2, 0.0f);
-	glEnd();
+	
 }
 
-void drawCircle(float x, float y, float radius, int points, bool fill){
-	if (points <= 2) return;
-	glBegin(fill ? GL_POLYGON : GL_LINE_LOOP);
-		glColor4f(forecolor.r, forecolor.g, forecolor.b, forecolor.a);
-		for (int i = 0; i < points; i ++){
-			float a = float(i) / float(points) * 360;
-			glVertex3f(JE::MATH::Xangle(a, radius, x), JE::MATH::Yangle(a, radius, y), 0.0f);
-		}
-	glEnd();
+void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radius){
+	JE::GL::Model& model = JE::GL::getDefaultCircleModel();
+	JE::GL::Shader& shader = JE::GL::getDefaultCircleShader();
+	
+	glm::mat4x4 transform = camera.getTranform();
+	transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
+	transform = glm::scale(transform, glm::vec3(radius, radius, 1.0f));
+	
+	shader.setUniformMat("in_Transform", transform);
+	shader.setUniform("in_RadiusInner", 0.0f);
+	
+	model.draw();
+}
+
+void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radius, float thickness){
+	thickness = std::max(thickness, camera.getPixelSize());
+	
+	JE::GL::Model& model = JE::GL::getDefaultCircleModel();
+	JE::GL::Shader& shader = JE::GL::getDefaultCircleShader();
+	
+	glm::mat4x4 transform = camera.getTranform();
+	transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
+	transform = glm::scale(transform, glm::vec3(radius, radius, 1.0f));
+	
+	shader.setUniformMat("in_Transform", transform);
+	shader.setUniform("in_RadiusInner", 1.0f-thickness/radius);
+	
+	model.draw();
 }
 /*
 void drawImgRectStretch(Image& image, float x, float y, float w, float h, float tileWidth, float tileHeight){

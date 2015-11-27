@@ -1,183 +1,109 @@
 #include "JE/jeEntity.h"
 #include "JE/GRAPHIC/jeCamera.h"
 #include "JE/GRAPHIC/jeImage.h"
+#include "JE/GL/jeShader.h"
+#include "JE/GL/jeModel.h"
+#include "JE/jeUtil.h"
 #include <iostream>
 #include <cmath>
 #include <vector>
-/*
-namespace JE{namespace GRAPHICS{
-using namespace std;
 
-Image::Image() : Graphic(){
-	this->texture = std::shared_ptr<Texture>(new Texture(NULL));
-	//this->flip = SDL_FLIP_NONE;
-	this->width = -1;
-	this->height = -1;
-	this->use_clip = false;
-	this->flip_x = 1;
-	this->flip_y = 1;
+#define GLM_FORCE_RADIANS
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/mat2x2.hpp>
+
+
+namespace JE{namespace GRAPHICS{
+
+Image::Image() : JE::GRAPHICS::Graphic(){
+	this->width = 1;
+	this->height = 1;
+	this->angle = 0;
 }
 
-Image::Image(std::string file) : Graphic(){
-	this->texture = std::shared_ptr<Texture>(new Texture(NULL));
-	//this->flip = SDL_FLIP_NONE;
-	this->width = -1;
-	this->height = -1;
-	this->use_clip = false;
-	this->flip_x = 1;
-	this->flip_y = 1;
-	this->load(file);
+Image::Image(const std::string& file_name) : Image(){
+	this->loadImage(file_name);
+	//std::cout << JE::fileOpen(file_name) << std::endl;
 }
 
 Image::~Image(){
-
+	
 }
 
-void Image::setColor(int r, int g, int b, int a){
-	if (!this->texture) return;
-	SDL_SetTextureColorMod(this->texture->get(),r,g,b);
-	SDL_SetTextureAlphaMod(this->texture->get(),a);
-}
-void Image::draw(float x, float y, float angle){
-	bool do_rotate = (std::abs(angle + this->angle) > 0.001 || this->flip_x != 1 || this->flip_y != 1);
-	float draw_x, draw_y, draw_w, draw_h, texture_x, texture_y, texture_w, texture_h;
-	draw_x = x + this->x;
-	draw_y = y + this->y;
-	texture_x = 0;
-	texture_y = 0;
-	SDL_GL_BindTexture(this->texture->get(), &texture_w, &texture_h);
-	if (this->use_clip){
-		texture_x = this->clip.x;
-		texture_y = this->clip.y;
-		texture_w = this->clip.w;
-		texture_h = this->clip.h;
-	}
-	//std::cout << "texture size: " << this->width << ", " << this->height << std::endl;
-	draw_w = (this->width > 0) ? this->width : texture_w;
-	draw_h = (this->height> 0) ? this->height: texture_h;
-	//if (this->flip_x == -1) draw_x += (draw_w);
-	//if (this->flip_y == -1) draw_y += (draw_h);
-	//draw_w *= this->flip_x;
-	//draw_h *= this->flip_y;
-	if (do_rotate){
-		float mat[16];
-		glGetFloatv(GL_PROJECTION_MATRIX, mat);
-		//kinda wish I didn't have to do this, but eh, it's not a big deal.
-		float x_move = mat[12] + draw_x + this->ox;
-		float y_move = mat[13] + draw_y + this->oy;
-		float z_move = mat[14];
-		glPushMatrix();
-		glTranslatef( x_move, y_move, z_move);
-		glRotatef(angle, 0, 0, 1.0);
-		glScalef(this->flip_x, this->flip_y, 1.0f);
-		glTranslatef(-x_move,-y_move,-z_move);
-	}
-	//Make sure pixels from the rest of the texture don't get included
-	texture_x += 0.25;
-	texture_y += 0.25;
-	texture_w -= 0.5f;
-	texture_h -= 0.5f;
-	//Outdated OpenGL draw call
-	glBegin( GL_QUADS );//aww yeah work dem (outdated opengl 1.2) quads!
-		glColor4f(forecolor.r, forecolor.g, forecolor.b, forecolor.a);
-		glTexCoord2f(texture_x,           texture_y);
-		glVertex3f(  draw_x,              draw_y,  0.0f );
-
-		glTexCoord2f(texture_x+texture_w, texture_y);
-		glVertex3f(  draw_x   +draw_w,    draw_y,  0.0f );
-
-		glTexCoord2f(texture_x+texture_w, texture_y+texture_h);
-		glVertex3f(  draw_x   +draw_w,    draw_y   +draw_h,  0.0f );
-
-		glTexCoord2f(texture_x,           texture_y+texture_h);
-		glVertex3f(  draw_x,              draw_y   +draw_h,  0.0f );
-	glEnd( );
-	SDL_GL_UnbindTexture(this->texture->get());
-	if (do_rotate){
-		glPopMatrix();
-	}
-}
-
-void Image::load(std::string file, SDL_Renderer* renderer){
-	this->texture->load(file, renderer);
-}
-
-void Image::setClip(float x, float y, float w, float h){
-	this->clip.x = x;
-	this->clip.y = y;
-	this->clip.w = w;
-	this->clip.h = h;
+void Image::setClipRect(int x, int y, int width, int height){
+	this->clip_rect.x = x;
+	this->clip_rect.y = y;
+	this->clip_rect.w = width;
+	this->clip_rect.h = height;
 	this->use_clip = true;
 }
 
-void Image::setScale(float x, float y){
-	int w, h;
-	if (this->use_clip){
-		w = this->clip.w;
-		h = this->clip.h;
-	}else{
-		SDL_QueryTexture(this->texture->get(), NULL, NULL, &w, &h);
+void Image::disableClipRect(){
+	this->use_clip = false;
+}
+
+void Image::loadImage(const std::string& file_name){
+	SDL_Surface* surface = IMG_Load(file_name.c_str());
+	
+	this->texture = std::make_shared<JE::GL::Texture>(surface);
+	
+	this->width = surface->w;
+	this->height = surface->h;
+	
+	SDL_FreeSurface(surface);
+}
+
+void Image::draw(const JE::GRAPHICS::Camera& camera, float x, float y) const{
+	if (this->texture == nullptr) {
+		std::cout << "No Texture" << std::endl;
+		return;
 	}
-	if (y < 0) y = x;
-	this->setSize(w*x, h*y);
+	
+	JE::GL::Shader& shader = JE::GL::getDefaultImageShader();
+	JE::GL::Model& model = JE::GL::getDefaultImageModel();
+	
+	// Transformation for vertex positions
+	glm::mat4x4 transform = camera.getTranform();
+	transform = glm::translate(transform, glm::vec3(this->x + x, this->y + y, 0.0f));
+	
+	// Transformation for texture coordinates so they don't bleed
+	glm::mat4 texcoord_transform = glm::mat4();
+	texcoord_transform = glm::translate(texcoord_transform, glm::vec3(
+		0.5f/this->texture->getWidth(), 
+		0.5f/this->texture->getHeight(), 
+		0.0f
+	));
+	texcoord_transform = glm::scale(texcoord_transform, glm::vec3(
+		(this->texture->getWidth() -1)/this->texture->getWidth(),
+		(this->texture->getHeight()-1)/this->texture->getHeight(),
+		1.0f
+	));
+	
+	if (this->use_clip){
+		transform = glm::scale(transform, glm::vec3(this->clip_rect.w, this->clip_rect.h, 1.0f));
+		texcoord_transform = glm::translate(texcoord_transform, glm::vec3(
+			this->clip_rect.x / this->texture->getWidth(),
+			this->clip_rect.y / this->texture->getHeight(),
+			0.0f
+		));
+		texcoord_transform = glm::scale(texcoord_transform, glm::vec3(
+			this->clip_rect.w / this->texture->getWidth(),
+			this->clip_rect.h / this->texture->getHeight(),
+			1.0f
+		));
+		
+	} else {
+		transform = glm::scale(transform, glm::vec3(this->width, this->height, 1.0f));
+	}
+	
+	shader.setUniformMat("in_Transform", transform);
+	shader.setUniformMat("in_TexcoordTransform", texcoord_transform);
+	
+	this->texture->use();
+	
+	model.draw();
+	
+	this->texture->disable();
 }
 
-void Image::setSize(float w, float h){
-	this->width = w;
-	this->height = h;
-	//std::cout << "setting size to w=" << w << ", h=" << h << std::endl;
-}
-
-void Image::disableSize(){
-	this->setSize(-1, -1);
-}
-
-Image* copyImage(Image* image){
-	if (image == NULL) return NULL;
-	Image* r;
-	r = new Image();
-	r->x       = image->x;
-	r->y       = image->y;
-	r->ox      = image->ox;
-	r->oy      = image->oy;
-	r->angle   = image->angle;
-	//r->flip    = image->flip;
-	r->width   = image->width;
-	r->height  = image->height;
-	r->clip    = image->clip;
-	r->use_clip= image->use_clip;
-	r->texture = image->texture;
-	return r;
-}
-
-void Image::useTexture(std::shared_ptr<Texture> texture){
-	this->texture = texture;
-}
-
-void Image::useTexture(const std::shared_ptr<Image>& img){
-	this->useTexture(img->texture);
-}
-
-void Image::centerOrigin(){
-	int x, y;
-	SDL_QueryTexture(this->texture->get(), NULL, NULL, &x, &y);
-	this->ox = float(x)/2;
-	this->oy = float(y)/2;
-}
-void Image::getSize(int* width, int* height){
-	SDL_QueryTexture(this->texture->get(), NULL, NULL, width, height);
-}
-void Image::drawSection(float x, float y, int section_x, int section_y, int section_width, int section_height){
-	SDL_Rect previous_rect = this->clip;
-	bool previous_bool = this->use_clip;
-	this->setClip(section_x, section_y, section_width, section_height);
-	this->draw(x, y, 0);
-	this->clip = previous_rect;
-	this->use_clip = previous_bool;
-}
-void Image::setFlip(bool x, bool y){
-	this->flip_x = x ? -1 : 1;
-	this->flip_y = y ? -1 : 1;
-}
 };};
-*/

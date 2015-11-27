@@ -18,7 +18,12 @@ public:
 	
 	void setFiltering(GLint min_filter, GLint max_filter);
 	
+	GLfloat getWidth() const;
+	GLfloat getHeight() const;
+	
 private:
+	GLfloat texture_width;
+	GLfloat texture_height;
 	GLuint texture_id;
 };
 

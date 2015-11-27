@@ -311,6 +311,10 @@ bool Shader::setUniformMat(const std::string& uniform, const glm::mat4x4& mat){
 	return false;
 }
 
+Shader* default_image_shader = nullptr;
+Shader* default_shader = nullptr;
+Shader* default_circle_shader = nullptr;
+
 // Textureless
 std::string default_shader_vertex =
 "#version 330\n"
@@ -328,31 +332,6 @@ std::string default_shader_fragment =
 "	gl_FragColor = in_Color;\n"
 "}\n";
 	
-// Textured
-std::string default_image_shader_vertex =
-"#version 330\n"
-"in vec3 in_Position;\n"
-"in vec2 in_Texcoord;\n"
-"uniform mat4 in_Transform;\n"
-"out vec2 ex_Texcoord;\n"
-"void main(void) {\n"
-"	gl_Position = in_Transform * vec4(in_Position, 1.0);\n"
-"	ex_Texcoord = in_Texcoord;\n"
-"}\n";
-
-std::string default_image_shader_fragment =
-"#version 330\n"
-"precision highp float;\n"
-"in vec2 ex_Texcoord;\n"
-"uniform sampler2D texture;\n"
-"uniform vec4 in_Color;\n"
-"void main(void) {\n"
-"	gl_FragColor = in_Color * texture2D(texture, ex_Texcoord);\n"
-"}\n";
-
-Shader* default_image_shader = nullptr;
-Shader* default_shader = nullptr;
-
 Shader& getDefaultShader(){
 	if (default_shader == nullptr){
 		std::cout << "Generating shader" << std::endl;
@@ -377,6 +356,29 @@ Shader& getDefaultShader(){
 	return *default_shader;
 }
 
+// Textured
+std::string default_image_shader_vertex =
+"#version 330\n"
+"in vec3 in_Position;\n"
+"in vec2 in_Texcoord;\n"
+"uniform mat4 in_Transform;\n"
+"uniform mat4 in_TexcoordTransform;\n"
+"out vec2 ex_Texcoord;\n"
+"void main(void) {\n"
+"	gl_Position = in_Transform * vec4(in_Position, 1.0);\n"
+"	ex_Texcoord = (in_TexcoordTransform * vec4(in_Texcoord.xy, 1.0, 1.0)).xy;\n"
+"}\n";
+
+std::string default_image_shader_fragment =
+"#version 330\n"
+"precision highp float;\n"
+"in vec2 ex_Texcoord;\n"
+"uniform sampler2D texture;\n"
+"uniform vec4 in_Color;\n"
+"void main(void) {\n"
+"	gl_FragColor = in_Color * texture2D(texture, ex_Texcoord);\n"
+"}\n";
+
 Shader& getDefaultImageShader(){
 	if (default_image_shader == nullptr){
 		default_image_shader = new Shader(
@@ -386,12 +388,75 @@ Shader& getDefaultImageShader(){
 			}, 
 			false
 		);
-		default_image_shader->linkShaders();
-		default_image_shader->setUniform("in_Color", 1.0, 1.0, 1.0, 1.0);
-		default_image_shader->setUniformMat("in_Transform", glm::mat4x4());
+		if (!default_image_shader->linkShaders()){
+			std::cout << "Failed to link image shader!" << std::endl;
+		}
+		if (!default_image_shader->setUniform("in_Color", 1.0f, 1.0f, 1.0f, 1.0f)){
+			std::cout << "Failed to set image color!" << std::endl;
+		}
+		if (!default_image_shader->setUniformMat("in_Transform", glm::mat4x4())){
+			std::cout << "Failed to set image transform!" << std::endl;
+		}
+		if (!default_image_shader->setUniformMat("in_TexcoordTransform", glm::mat4x4())){
+			std::cout << "Failed to set image texcoord transform!" << std::endl;
+		}
 	}
 	
 	return *default_image_shader;
+}
+
+std::string default_circle_shader_vertex = 
+"#version 330\n"
+"in vec3 in_Position;\n"
+"out vec2 ex_CirclePos;\n"
+"uniform mat4 in_Transform;\n"
+"void main(void) {\n"
+"	gl_Position = in_Transform * vec4(in_Position, 1.0);\n"
+"	ex_CirclePos = in_Position.xy;\n"
+"}\n";
+
+std::string default_circle_shader_fragment = 
+"#version 330\n"
+"precision highp float;\n"
+"in vec2 ex_CirclePos;\n"
+"uniform vec4 in_Color;\n"
+"uniform float in_RadiusInner;\n"
+"void main(void) {\n"
+"	float position = ex_CirclePos.x*ex_CirclePos.x + ex_CirclePos.y* ex_CirclePos.y;\n"
+"	float radius = in_RadiusInner*in_RadiusInner;\n"
+"	if (position <= 1.0"
+"	 && position > radius){"
+"		gl_FragColor = in_Color;\n"
+"	} else {"
+"		gl_FragColor = vec4(0);\n"
+"	}"
+"}\n";
+
+Shader& getDefaultCircleShader(){
+	if (default_circle_shader == nullptr){
+		std::cout << "Generating shader" << std::endl;
+		default_circle_shader = new Shader(
+			{
+				{default_circle_shader_vertex, GL_VERTEX_SHADER},
+				{default_circle_shader_fragment, GL_FRAGMENT_SHADER},
+			}, 
+			false
+		);
+		if (!default_circle_shader->linkShaders()){
+			std::cout << "Failed to link shaders!" << std::endl;
+		}
+		if (!default_circle_shader->setUniform("in_Color", 1.0, 1.0, 1.0, 1.0)){
+			std::cout << "Failed to set Color" << std::endl;
+		}
+		if (!default_circle_shader->setUniformMat("in_Transform", glm::mat4x4())){
+			std::cout << "Failed to set Transform" << std::endl;
+		}
+		if (!default_circle_shader->setUniform("in_RadiusInner", 0.0f)){
+			std::cout << "Failed to set inner radius" << std::endl;
+		}
+	}
+	
+	return *default_circle_shader;
 }
 
 }}

@@ -20,6 +20,7 @@ void initWindow(std::string name, int w, int h, int wflags){
 	SDL_SetHint(SDL_HINT_RENDER_OPENGL_SHADERS, "1");
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 	
+	
 	// Create window
 	GRAPHICS::window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, wflags | SDL_WINDOW_OPENGL);
 	if (GRAPHICS::window == nullptr) {
@@ -36,7 +37,7 @@ void initWindow(std::string name, int w, int h, int wflags){
 	GRAPHICS::glcontext = SDL_GL_CreateContext(GRAPHICS::window);
 	
 	// Config OpenGL
-	glEnable( GL_SCISSOR_TEST );
+	//glEnable( GL_SCISSOR_TEST );
 	glEnable( GL_BLEND );
 	glEnable( GL_DEPTH_TEST );
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -84,7 +85,7 @@ void update(){
 
 void init(){
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {std::cout << SDL_GetError() << std::endl;}
-	if (IMG_Init(IMG_INIT_PNG) != 0) {std::cout << SDL_GetError() << std::endl;}
+	if (IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG) == 0) {std::cout << "IMG_Error: " << IMG_GetError() << std::endl;}
 	std::cout << "JE: Initiated Engine." << std::endl;
 	SDL_version ver;
 	SDL_GetVersion(&ver);

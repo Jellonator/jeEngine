@@ -22,6 +22,7 @@
 #include <vector>
 #include <tuple>
 #include <memory>
+#include <iostream>
 
 namespace JE{ namespace GL{
 
@@ -79,15 +80,16 @@ private:
 	bool _addShader(const std::string& name, const std::string& source, GLenum shader_type, GLuint* shader_ret);
 };
 
-Shader& getDefaultOutlineShader();
 Shader& getDefaultShader();
 Shader& getDefaultImageShader();
+Shader& getDefaultCircleShader();
 
 template <class Type>
 bool Shader::setUniform(const std::string& uniform, Type value){
 	GLenum uniform_type = this->getUniformType(uniform);
 	GLint uniform_pos = this->getUniformPosition(uniform);
 	if (uniform_pos < 0) return false;
+	this->use();
 	
 	switch (uniform_type){
 		case GL_FLOAT:
@@ -115,6 +117,7 @@ bool Shader::setUniform(const std::string& uniform, Type value1, Type value2){
 	GLenum uniform_type = this->getUniformType(uniform);
 	GLint uniform_pos = this->getUniformPosition(uniform);
 	if (uniform_pos < 0) return false;
+	this->use();
 	
 	switch (uniform_type){
 		case GL_FLOAT_VEC2:
@@ -142,6 +145,7 @@ bool Shader::setUniform(const std::string& uniform, Type value1, Type value2, Ty
 	GLenum uniform_type = this->getUniformType(uniform);
 	GLint uniform_pos = this->getUniformPosition(uniform);
 	if (uniform_pos < 0) return false;
+	this->use();
 	
 	switch (uniform_type){
 		case GL_FLOAT_VEC3:
@@ -169,6 +173,7 @@ bool Shader::setUniform(const std::string& uniform, Type value1, Type value2, Ty
 	GLenum uniform_type = this->getUniformType(uniform);
 	GLint uniform_pos = this->getUniformPosition(uniform);
 	if (uniform_pos < 0) return false;
+	this->use();
 	
 	switch (uniform_type){
 		case GL_FLOAT_VEC4:

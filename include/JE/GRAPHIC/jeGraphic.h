@@ -30,8 +30,8 @@ public:
 	Graphic(float x = 0, float y = 0);
 	virtual ~Graphic();
 	
-	virtual void draw(float x = 0, float y = 0);
-	virtual void update();
+	virtual void update(float dt);
+	virtual void draw(const JE::GRAPHICS::Camera& camera, float x = 0, float y = 0) const;
 };
 
 /** \brief Set the color for drawing operations.
@@ -64,7 +64,8 @@ void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, f
 
 void drawLine(float x1, float y1, float x2, float y2);
 
-void drawCircle(float x, float y, float radius, int points, bool fill);
+void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radius);
+void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radius, float thickness);
 
 class Image;
 void drawImgRectStretch(Image& image, float x, float y, float w, float h, float tileWidth, float tileHeight);/**< \brief experimental */
