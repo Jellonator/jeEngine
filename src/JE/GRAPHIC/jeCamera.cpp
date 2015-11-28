@@ -7,6 +7,8 @@
 namespace JE{namespace GRAPHICS{
 
 Camera::Camera() : JE::Point(0, 0){
+	this->set(0, 0);
+	
 	this->angle = 0;
 	this->scale_x = 1;
 	this->scale_y = 1;
@@ -59,7 +61,7 @@ void Camera::setAngle(float value){
 }
 
 void Camera::addAngle(float value){
-	this->angle = JE::MATH::mod(this->angle + value, 360.0f);
+	this->angle = JE::MATH::mod(this->angle + value, JE::MATH::TAU);
 	this->need_update_transform = true;
 }
 
@@ -268,6 +270,13 @@ float Camera::getPixelSize() const{
 	float h_ratio = height / window_height;
 	
 	return std::max(w_ratio, h_ratio);
+}
+
+void Camera::setBounds(float left, float top, float right, float bottom){
+	this->left = left;
+	this->top = top;
+	this->right = right;
+	this->bottom = bottom;
 }
 
 };};

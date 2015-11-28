@@ -32,6 +32,26 @@ Texture::Texture(const std::string& file_name){
 	}
 }
 
+Texture::Texture(int width, int height){
+	glGenTextures(1, &this->texture_id);
+	glBindTexture(GL_TEXTURE_2D, this->texture_id);
+	
+	// Generate empty texture
+	int texture_size = width * height * 4;
+	GLubyte texture_data[texture_size];
+	for (auto& value : texture_data){
+		value = 0;
+	}
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_data);
+	
+	this->texture_width = width;
+	this->texture_height = height;
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
 Texture::Texture(SDL_Surface* surface){
 	glGenTextures(1, &this->texture_id);
 	glBindTexture(GL_TEXTURE_2D, this->texture_id);
@@ -46,19 +66,19 @@ Texture::Texture(SDL_Surface* surface){
 	this->texture_width = surface->w;
 	this->texture_height = surface->h;
 	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 Texture::~Texture(){
 	glDeleteTextures(1, &this->texture_id);
 }
 
-void Texture::use(){
+void Texture::use() const{
 	glBindTexture(GL_TEXTURE_2D, this->texture_id);
 }
 
-void Texture::disable(){
+void Texture::disable() const{
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -74,6 +94,10 @@ GLfloat Texture::getWidth() const{
 
 GLfloat Texture::getHeight() const{
 	return this->texture_height;
+}
+
+GLuint Texture::getTexture() const{
+	return this->texture_id;
 }
 
 }}

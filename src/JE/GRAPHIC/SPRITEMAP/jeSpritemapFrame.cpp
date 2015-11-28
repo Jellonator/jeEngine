@@ -6,38 +6,38 @@
 #include <algorithm>
 namespace JE{namespace GRAPHICS{
 
-Frame::Frame(int x, int y, int w, int h, float length){
+SpritemapFrame::SpritemapFrame(int x, int y, int w, int h, float length){
 	this->rect = {0, 0, 1, 1};
 	this->length = 1;
 	this->setSize(x, y, w, h);
 	this->setLength(length);
 }
 
-Frame::Frame(){
+SpritemapFrame::SpritemapFrame(){
 	this->rect = {0, 0, 1, 1};
 	this->length = 1;
 }
 
-Frame::~Frame(){
+SpritemapFrame::~SpritemapFrame(){
 
 }
 
-void Frame::setSize(int x, int y, int w, int h){
+void SpritemapFrame::setSize(int x, int y, int w, int h){
 	this->rect.x = x;
 	this->rect.y = y;
 	this->rect.w = w;
 	this->rect.h = h;
 }
 
-void Frame::setLength(float length){
+void SpritemapFrame::setLength(float length){
 	this->length = length;
 }
 
-const SDL_Rect& Frame::getRect() const{
+const SDL_Rect& SpritemapFrame::getRect() const{
 	return this->rect;
 }
 
-float Frame::getLength() const{
+float SpritemapFrame::getLength() const{
 	return this->length;
 }
 

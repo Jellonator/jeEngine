@@ -5,10 +5,9 @@
 #include "JE/UTIL/jeMath.h"
 #include <algorithm>
 
-/*
 namespace JE{namespace GRAPHICS{
 
-Spritemap::Spritemap(std::string file) : Image(){
+Spritemap::Spritemap(std::string file) : Image(file){
 	this->playing = false;
 	this->looping = false;
 	this->time = 0;
@@ -16,7 +15,6 @@ Spritemap::Spritemap(std::string file) : Image(){
 	this->frame = 0;
 	this->speed = 1;
 	this->data = std::shared_ptr<SpritemapData>(new SpritemapData());
-	this->load(file);
 }
 
 Spritemap::Spritemap() : Image(){
@@ -33,11 +31,11 @@ Spritemap::~Spritemap(){
 
 }
 
-Anim& Spritemap::getCurrentAnim(){
+SpritemapAnim& Spritemap::getCurrentAnim(){
 	return this->getAnim(this->anim);
 }
 
-Frame& Spritemap::getCurrentFrame(){
+SpritemapFrame& Spritemap::getCurrentFrame(){
 	return this->getFrame(this->anim, this->frame);
 }
 
@@ -51,7 +49,7 @@ unsigned int Spritemap::newFrame(int x, int y, int w, int h, float time){
 }
 
 //new anim
-Anim& Spritemap::newAnim(const std::string& name, float speed){
+SpritemapAnim& Spritemap::newAnim(const std::string& name, float speed){
 	return this->data->newAnim(name, speed);
 }
 
@@ -65,16 +63,16 @@ void Spritemap::addFrameToAnim(const std::string& anim, unsigned int frame){
 }
 
 //get frame
-Frame& Spritemap::getFrame(const std::string& anim, unsigned int frame){
+SpritemapFrame& Spritemap::getFrame(const std::string& anim, unsigned int frame){
 	return this->data->getFrame(anim, frame);
 }
 
-Frame& Spritemap::getFrame(unsigned int frame){
+SpritemapFrame& Spritemap::getFrame(unsigned int frame){
 	return this->data->getFrame(frame);
 }
 
 //get anim
-Anim& Spritemap::getAnim(const std::string& anim){
+SpritemapAnim& Spritemap::getAnim(const std::string& anim){
 	return this->data->getAnim(anim);
 }
 
@@ -111,16 +109,8 @@ void Spritemap::update(float dt){
 	}
 }
 
-void Spritemap::drawWhole(float x, float y, float angle){
-	bool temp = this->use_clip;
-	this->use_clip = false;
-	this->draw(x,y,angle);
-	this->use_clip = temp;
-}
-
 void Spritemap::updateClip(){
-	this->clip = this->getCurrentFrame().getRect();
-	this->use_clip = true;
+	this->setClipRect(this->getCurrentFrame().getRect());
 }
 
 void Spritemap::setFrame(const std::string& name, unsigned int frame){
@@ -135,8 +125,7 @@ void Spritemap::setFrame(unsigned int frame){
 }
 
 void Spritemap::setFrameNoAnim(unsigned int frame){
-	this->use_clip = true;
-	this->clip = this->getFrame(frame).getRect();
+	this->setClipRect(this->getFrame(frame).getRect());
 }
 
 void Spritemap::play(const std::string& anim, bool loop, bool reset, unsigned int frame){
@@ -179,6 +168,7 @@ void Spritemap::useData(std::shared_ptr<SpritemapData> data){
 	this->data = data;
 }
 
+/*
 void Spritemap::drawFrame(const std::string& anim, unsigned int frame, float x, float y, float angle){
 	int temp = this->frame;
 	this->setFrame(frame);
@@ -193,9 +183,15 @@ void Spritemap::drawFrameNoAnim(unsigned int frame, float x, float y, float angl
 	this->setFrameNoAnim(temp);
 }
 
-bool Spritemap::doesContainFrame(const Frame& frame, unsigned int* position){
+void Spritemap::drawWhole(float x, float y, float angle){
+	bool temp = this->use_clip;
+	this->use_clip = false;
+	this->draw(x,y,angle);
+	this->use_clip = temp;
+}
+*/
+bool Spritemap::doesContainFrame(const SpritemapFrame& frame, unsigned int* position){
 	return this->data->doesContainFrame(frame, position);
 }
 
 };};
-*/

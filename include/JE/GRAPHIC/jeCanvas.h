@@ -1,22 +1,26 @@
 #pragma once
 #include "jeImage.h"
-/*
+#include "jeCamera.h"
+
 namespace JE{namespace GRAPHICS{
-class Canvas : public Image
-{
-	public:
-		Canvas(int width, int height);
-		virtual ~Canvas();
-		void bind();
-		void unbind();
-		void clear();
-		bool resize(int width, int height);
-		bool binded;
-		void setPixel(int x, int y, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
-		void setPixelf(int x, int y, float r, float g, float b, float a = 1.0);
-	protected:
-	private:
-		void setPixelp(int x, int y);
+
+class Canvas : public JE::GRAPHICS::Image{
+public:
+	Canvas(int width, int height);
+	virtual ~Canvas();
+	void clear();
+	void drawGraphic(const JE::GRAPHICS::Graphic& graphic, const JE::GRAPHICS::Camera& camera, float x = 0, float y = 0);
+	void drawGraphic(const JE::GRAPHICS::Graphic& graphic, const glm::mat4& transform, float x = 0, float y = 0);
+	const JE::GRAPHICS::Camera& getCamera() const;
+	void bind();
+	void unbind();
+	
+private:
+	GLuint framebuffer_object;
+	GLuint depthbuffer_object;
+	int render_width;
+	int render_height;
+	JE::GRAPHICS::Camera draw_camera;
 };
+
 };};
-*/

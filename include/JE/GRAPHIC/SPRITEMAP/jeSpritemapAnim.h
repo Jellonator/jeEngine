@@ -3,22 +3,22 @@
 #include "../jeImage.h"
 #include <vector>
 namespace JE{namespace GRAPHICS{
-class Frame;
-class Anim;
+class SpritemapFrame;
+class SpritemapAnim;
 class Spritemap;
 class SpritemapData;
 
-class Anim{
+class SpritemapAnim{
 public:
-	Anim();
-	Anim(float speed);
-	virtual ~Anim();
+	SpritemapAnim();
+	SpritemapAnim(float speed);
+	virtual ~SpritemapAnim();
 	
 	//getters
 	float getSpeed() const;
 	unsigned int getFrameID(unsigned int index) const;
 	unsigned int getFrameCount() const;
-	Frame& getFrameFromData(SpritemapData& data, unsigned int index);
+	SpritemapFrame& getFrameFromData(SpritemapData& data, unsigned int index);
 	unsigned int first() const;
 	unsigned int last() const;
 	

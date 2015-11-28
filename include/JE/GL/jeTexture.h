@@ -10,16 +10,18 @@ namespace JE{namespace GL{
 class Texture{
 public:
 	Texture(const std::string& file_name);
+	Texture(int width, int height);
 	Texture(SDL_Surface* surface);
 	~Texture();
 	
-	void use();
-	void disable();
+	void use() const;
+	void disable() const;
 	
 	void setFiltering(GLint min_filter, GLint max_filter);
 	
 	GLfloat getWidth() const;
 	GLfloat getHeight() const;
+	GLuint getTexture() const;
 	
 private:
 	GLfloat texture_width;

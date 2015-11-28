@@ -37,7 +37,6 @@ void initWindow(std::string name, int w, int h, int wflags){
 	GRAPHICS::glcontext = SDL_GL_CreateContext(GRAPHICS::window);
 	
 	// Config OpenGL
-	//glEnable( GL_SCISSOR_TEST );
 	glEnable( GL_BLEND );
 	glEnable( GL_DEPTH_TEST );
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -51,7 +50,7 @@ void initWindow(std::string name, int w, int h, int wflags){
 	glewInit();
 	
 	// Set clear color to a nice blue-purple
-	glClearColor(0.2, 0.1, 0.3, 1.0);
+	JE::GRAPHICS::setBackgroundColor(0.2, 0.1, 0.3, 0.0);
 	
 	// Necessary in order to make sure that the viewport gets resized when the
 	// window is resized. Using lambdas because it's cool and futuristic.

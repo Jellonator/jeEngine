@@ -6,6 +6,8 @@ namespace MATH{
 	extern float RAD;/**< \brief number to convert degrees to radians, i.e. radians = RAD*degrees. */
 	extern float DEG;/**< \brief number to convert radians to degrees, i.e. degrees = DEG*radians. */
 	extern float PI;
+	extern float TAU;
+	
 	inline bool isClose(float value1, float value2 = 0.0f, float epsilon = 1e-5){
 		return (std::abs(value2 - value1) <= epsilon);
 	}
@@ -96,6 +98,7 @@ namespace MATH{
 		if (value > max) return max;
 		return value;
 	}
+	
 	template<typename Type>
 	Type normalize(Type value, Type min, Type max, Type to_min = 0, Type to_max = 1, bool clamp = true){
 		Type a = (to_max - to_min) / (max - min);
@@ -104,10 +107,12 @@ namespace MATH{
 		if (clamp)return JE::MATH::clamp(value, to_min, to_max);
 		return value;
 	}
+	
 	template <typename Type>
 	Type mod(Type value, Type divisor){
 		return value - std::floor(value/divisor) * divisor;
 	}
+	
 	template <typename Type>
 	Type angleDifference(Type angle1, Type angle2){
 		while (angle1 < 0) {
@@ -126,6 +131,7 @@ namespace MATH{
 		a = JE::MATH::mod(a + (Type)180, (Type)360) - (Type)180;
 		return std::abs(a);
 	}
+	
 	template <typename Type>
 	Type angleTo(Type from, Type to, Type speed){
 		while (from < 0) {
@@ -152,6 +158,7 @@ namespace MATH{
 		}
 		return angle;
 	}
+	
 	template <typename Type>
 	bool compareAngle(Type a, Type b){
 		while (a < 0) {
@@ -168,6 +175,7 @@ namespace MATH{
 		}
 		return ((a > b && a < b + 180) || (a > b - 360 && a < b - 180) || (a > b + 360 && a < b + 540));
 	}
+	
 	template <typename Type>
 	Type angleMix(Type from, Type to, double mix){
 		Type speed = JE::MATH::angleDifference(from, to) * mix;

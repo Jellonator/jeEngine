@@ -67,7 +67,7 @@ void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, f
 void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, float w, float h, float angle);
 void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, float w, float h, float angle, float originx, float originy);
 
-void drawLine(float x1, float y1, float x2, float y2);
+//void drawLine(float x1, float y1, float x2, float y2);
 
 void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radius);
 void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radius, float thickness);

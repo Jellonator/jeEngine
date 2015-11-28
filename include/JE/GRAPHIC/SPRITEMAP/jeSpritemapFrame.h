@@ -3,15 +3,15 @@
 #include "../jeImage.h"
 #include <vector>
 namespace JE{namespace GRAPHICS{
-class Frame;
-class Anim;
+class SpritemapFrame;
+class SpritemapAnim;
 class Spritemap;
 class SpritemapData;
-class Frame{
+class SpritemapFrame{
 public:
-	Frame();
-	Frame(int x, int y, int w, int h, float length = 1.0);
-	virtual ~Frame();
+	SpritemapFrame();
+	SpritemapFrame(int x, int y, int w, int h, float length = 1.0);
+	virtual ~SpritemapFrame();
 	
 	//setters
 	void setSize(int x, int y, int w, int h);

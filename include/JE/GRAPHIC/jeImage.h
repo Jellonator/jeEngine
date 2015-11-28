@@ -11,16 +11,28 @@ public:
 	Image();
 	Image(const std::string& file);
 	Image(const Image& image);
+	Image(int width, int height);
 	
 	void setAngle(float value);
 	void addAngle(float value);
 	
+	void setScale(float x, float y);
+	void setScale(float value);
+	void setSize(float width, float height);
+	void setFlip(bool x, bool y);
+	void setFlipX(bool value);
+	void setFlipY(bool value);
+	void setOrigin(float x, float y);
+	
 	void loadImage(const std::string& file_name);
 	void setClipRect(int x, int y, int width, int height);
+	void setClipRect(const SDL_Rect& rect);
 	void disableClipRect();
 	
 	virtual ~Image();
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
+	
+	const JE::GL::Texture& getTexture() const;
 	
 private:
 	std::shared_ptr<JE::GL::Texture> texture;

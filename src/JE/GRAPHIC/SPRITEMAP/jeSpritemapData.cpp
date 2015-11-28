@@ -25,7 +25,7 @@ unsigned int SpritemapData::newFrame(int x, int y, int w, int h, float time){
 	return this->frames.size()-1;
 }
 
-Anim& SpritemapData::newAnim(const std::string& name, float speed){
+SpritemapAnim& SpritemapData::newAnim(const std::string& name, float speed){
 	this->anims.emplace(name, speed);
 	return this->anims.at(name);
 }
@@ -38,15 +38,15 @@ void SpritemapData::addFrameToAnim(const std::string& anim, unsigned int frame){
 	this->getAnim(anim).addFrame(frame);
 }
 
-Frame& SpritemapData::getFrame(const std::string& anim, unsigned int frame){
+SpritemapFrame& SpritemapData::getFrame(const std::string& anim, unsigned int frame){
 	return this->getAnim(anim).getFrameFromData(*this, frame);
 }
 
-Frame& SpritemapData::getFrame(unsigned int frame){
+SpritemapFrame& SpritemapData::getFrame(unsigned int frame){
 	return this->frames.at(frame);
 }
 
-Anim& SpritemapData::getAnim(const std::string& anim){
+SpritemapAnim& SpritemapData::getAnim(const std::string& anim){
 	return this->anims.at(anim);
 }
 
@@ -58,9 +58,9 @@ unsigned int SpritemapData::getFrameCount() const {
 	return this->frames.size();
 }
 
-bool SpritemapData::doesContainFrame(const Frame& frame, unsigned int* position){
-	for (std::vector<Frame>::size_type i = 0; i != this->frames.size(); ++i){
-		Frame& other_frame = this->frames[i];
+bool SpritemapData::doesContainFrame(const SpritemapFrame& frame, unsigned int* position){
+	for (std::vector<SpritemapFrame>::size_type i = 0; i != this->frames.size(); ++i){
+		SpritemapFrame& other_frame = this->frames[i];
 		if (&other_frame == &frame){
 			if (position != nullptr){
 				*position = i;

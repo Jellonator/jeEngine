@@ -1,20 +1,20 @@
 #include "JE/GRAPHIC/jeTilemap.h"
 #include <iostream>
-/*
-namespace JE{namespace GRAPHICS{
-Tileset::Tileset(std::string file, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY){
-	this->load(file, twidth, theight, offsetX, offsetY, spaceX, spaceY);
-}
 
-void Tileset::load(std::string file, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY){
+namespace JE{namespace GRAPHICS{
+Tileset::Tileset(std::string file, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY) : image(file){
+	//this->load(file, twidth, theight, offsetX, offsetY, spaceX, spaceY);
 	this->tileWidth = twidth;
 	this->tileHeight = theight;
 	this->tileOffsetX = offsetX;
 	this->tileOffsetY = offsetY;
 	this->tileSpaceX = spaceX;
 	this->tileSpaceY = spaceY;
-	this->image.load(file);
 }
+
+//void Tileset::load(std::string file, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY){
+//	this->image.loadImage(file);
+//}
 
 void Tileset::newTile(int x, int y, int ID){
 	this->newFreeformTile(
@@ -29,71 +29,67 @@ void Tileset::newFreeformTile(int x, int y, int w, int h, int ID){
 	this->tiles[ID] = {x, y, w, h};
 }
 
-void Tileset::drawFreeformTile(int tile, int x, int y, float sx, float sy){
-	this->image.clip = this->tiles[tile];
-	this->image.use_clip = true;
+void Tileset::drawFreeformTile(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, float sx, float sy){
+	this->image.setClipRect(this->tiles[tile]);
 	this->image.setScale(sx, sy);
-	this->image.draw(x, y, 0);
+	this->image.draw(camera, x, y);
 }
 
-void Tileset::drawTileID(int tile, int x, int y, int parentTileWidth, int parentTileHeight){
-	this->image.clip = this->tiles[tile];
-	this->image.use_clip = true;
+void Tileset::drawTileID(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, int parentTileWidth, int parentTileHeight){
+	this->image.setClipRect(this->tiles[tile]);
 	int tox, toy;
 	if (parentTileWidth > 0 && parentTileHeight > 0){
 		this->image.setSize(parentTileWidth, parentTileHeight);
 		tox = x * parentTileWidth;
 		toy = y * parentTileHeight;
 	}else{
-		this->image.disableSize();
+		this->image.setScale(1);
 		tox = x * this->tileWidth;
 		toy = y * this->tileHeight;
 	}
-	this->image.draw(tox, toy, 0);
+	this->image.draw(camera, tox, toy);
 }
 
-void Tileset::drawTile(int tilex, int tiley, int x, int y, int parentTileWidth, int parentTileHeight){
+void Tileset::drawTile(const JE::GRAPHICS::Camera& camera, int tilex, int tiley, int x, int y, int parentTileWidth, int parentTileHeight){
 	SDL_Rect rect;
 	rect.x = tilex*this->tileWidth + this->tileOffsetX + tilex*this->tileSpaceX;
 	rect.y = tiley*this->tileHeight + this->tileOffsetY + tiley*this->tileSpaceY;
 	rect.w = this->tileWidth;
 	rect.h = this->tileHeight;
-	this->image.clip = rect;
-	this->image.use_clip = true;
+	this->image.setClipRect(rect);
 	int tox, toy;
 	if (parentTileWidth > 0 && parentTileHeight > 0){
-		this->image.setSize(parentTileWidth, parentTileHeight);
+		this->image.setScale(parentTileWidth/this->tileWidth, parentTileHeight/this->tileHeight);
 		tox = x * parentTileWidth;
 		toy = y * parentTileHeight;
 	}else{
-		this->image.disableSize();
+		this->image.setScale(1);
 		tox = x * this->tileWidth;
 		toy = y * this->tileHeight;
 	}
-	this->image.draw(tox, toy, 0);
+	this->image.draw(camera, tox, toy);
 }
 
-void Tileset::drawTileRectID(int tile, int x, int y, int w, int h, int parentTileWidth, int parentTileHeight){
+void Tileset::drawTileRectID(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, int w, int h, int parentTileWidth, int parentTileHeight){
 	for (int ix = x; ix < x + w; ix ++){
 	for (int iy = y; iy < y + h; iy ++){
-		this->drawTileID(tile, ix, iy, parentTileWidth, parentTileHeight);
+		this->drawTileID(camera, tile, ix, iy, parentTileWidth, parentTileHeight);
 	}
 	}
 }
 
-void Tileset::drawTileRect(int tilex, int tiley, int x, int y, int w, int h, int parentTileWidth, int parentTileHeight){
+void Tileset::drawTileRect(const JE::GRAPHICS::Camera& camera, int tilex, int tiley, int x, int y, int w, int h, int parentTileWidth, int parentTileHeight){
 	for (int ix = x; ix < x + w; ix ++){
 	for (int iy = y; iy < y + h; iy ++){
-		this->drawTile(tilex, tiley, ix, iy, parentTileWidth, parentTileHeight);
+		this->drawTile(camera, tilex, tiley, ix, iy, parentTileWidth, parentTileHeight);
 	}
 	}
 }
-
-
 
 Tileset::~Tileset(){
 
 }
+
 Tilemap::Tilemap(int width, int height, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY) : Canvas(width*twidth, height*theight){
 	this->widthInTiles = width;
 	this->heightInTiles = height;
@@ -140,30 +136,29 @@ void Tilemap::newTile(const std::string& tileset, int x, int y, int ID){
 
 void Tilemap::drawFreeformTile(const std::string& tileset, int tile, float x, float y, float sx, float sy){
 	this->bind();
-	this->tilesets[tileset]->drawFreeformTile(tile, x, y, sx, sy);
+	this->tilesets[tileset]->drawFreeformTile(this->getCamera(), tile, x, y, sx, sy);
 	this->unbind();
 }
 
 void Tilemap::drawTile(const std::string& tileset, int tile, int x, int y){
 	this->bind();
-	this->tilesets[tileset]->drawTileID(tile, x, y, this->tileWidth, this->tileHeight);
+	this->tilesets[tileset]->drawTileID(this->getCamera(), tile, x, y, this->tileWidth, this->tileHeight);
 	this->unbind();
 }
 
 void Tilemap::drawTileRect(const std::string& tileset, int tile, int x, int y, int w, int h){
 	this->bind();
-	this->tilesets[tileset]->drawTileRectID(tile, x, y, w, h, this->tileWidth, this->tileHeight);
+	this->tilesets[tileset]->drawTileRectID(this->getCamera(), tile, x, y, w, h, this->tileWidth, this->tileHeight);
 	this->unbind();
 }
 void Tilemap::drawTile(const std::string& tileset, int tilex, int tiley, int x, int y){
 	this->bind();
-	this->tilesets[tileset]->drawTile(tilex, tiley, x, y, this->tileWidth, this->tileHeight);
+	this->tilesets[tileset]->drawTile(this->getCamera(), tilex, tiley, x, y, this->tileWidth, this->tileHeight);
 	this->unbind();
 }
 void Tilemap::drawTileRect(const std::string& tileset, int tilex, int tiley, int x, int y, int w, int h){
 	this->bind();
-	this->tilesets[tileset]->drawTileRect(tilex, tiley, x, y, w, h, this->tileWidth, this->tileHeight);
+	this->tilesets[tileset]->drawTileRect(this->getCamera(), tilex, tiley, x, y, w, h, this->tileWidth, this->tileHeight);
 	this->unbind();
 }
 };};
-*/
