@@ -18,8 +18,8 @@ Camera::Camera() : JE::Point(0, 0){
 	this->top    = -1.0;
 	this->bottom =  1.0;
 	
-	this->near = 0.0f;
-	this->far = 100.0f;
+	this->m_near = 0.0f;
+	this->m_far = 100.0f;
 	
 	this->origin_x = 0;
 	this->origin_y = 0;
@@ -44,8 +44,8 @@ Camera::Camera(const Camera& camera){
 	this->right = camera.right;
 	this->bottom = camera.bottom;
 	
-	this->far = camera.far;
-	this->near = camera.near;
+	this->m_far = camera.m_far;
+	this->m_near = camera.m_near;
 	
 	this->origin_x = camera.origin_x;
 	this->origin_y = camera.origin_y;
@@ -182,7 +182,7 @@ const glm::mat4& Camera::getTranform() const{
 		
 		// Matrices are applied in inverse order, so read bottom to top(it's confusing I know, but it's not my fault!)
 		// Finally, do whatever it is glm::ortho does.
-		glm::mat4 view_matrix = glm::ortho(this->left, this->right, this->bottom, this->top, this->near, this->far);
+		glm::mat4 view_matrix = glm::ortho(this->left, this->right, this->bottom, this->top, this->m_near, this->m_far);
 		
 		// Find origin position
 		float origin_move_x = this->getCenterX();

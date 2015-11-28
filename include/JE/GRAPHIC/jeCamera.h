@@ -65,8 +65,8 @@ private:
 	float top;
 	float bottom;
 	
-	float near;
-	float far;
+	float m_near;
+	float m_far;
 	
 	mutable bool need_update_transform;
 	mutable glm::mat4 transform_cache;
