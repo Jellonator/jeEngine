@@ -50,12 +50,16 @@ More examples coming soon.
 
 Todo
 --------
-- Impliment OpenGL 3.2
-- Make JE::GRAPHICS::Camera less weird and awkward.
 - Actual documentation.
 
 Update log
 --------
+### Version 0.10.0 ###
+- Graphics now use OpenGL 3.2.
+- Camera is a lot less weird and awkward.
+- Not a whole lot of actual API changes, but draw functions now require a camera argument.
+- Group:draw, Entity::OnDraw, and Component::draw also require a camera.
+
 ### Version 0.9.0 ###
 - Revised a lot of things to be more modern and flexible and a few other buzzwords.
 - Added components to the entity system.

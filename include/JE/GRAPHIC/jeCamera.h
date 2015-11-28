@@ -40,6 +40,8 @@ public:
 	float getRight() const;
 	float getTop() const;
 	float getBottom() const;
+	float getWidth() const;
+	float getHeight() const;
 	
 	void useViewport() const;
 	void disableViewport() const;

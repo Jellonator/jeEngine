@@ -256,6 +256,14 @@ float Camera::getBottom() const{
 	return ret;
 }
 
+float Camera::getWidth() const{
+	return this->getRight() - this->getLeft();
+}
+
+float Camera::getHeight() const{
+	return this->getBottom() - this->getTop();
+}
+
 float Camera::getPixelSize() const{
 	// get size of theoretical window
 	float window_width, window_height;
