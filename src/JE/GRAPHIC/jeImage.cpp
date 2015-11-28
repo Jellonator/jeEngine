@@ -22,6 +22,8 @@ Image::Image() : JE::GRAPHICS::Graphic(){
 	this->origin_x = 0;
 	this->origin_y = 0;
 	this->angle = 0;
+	this->use_clip = false;
+	this->clip_rect = {0, 0, 1, 1};
 }
 
 Image::Image(int width, int height) : Image(){
@@ -42,6 +44,8 @@ Image::Image(const Image& image){
 	this->origin_x = image.origin_x;
 	this->origin_y = image.origin_y;
 	this->angle = image.angle;
+	this->use_clip = image.use_clip;
+	this->clip_rect = image.clip_rect;
 }
 
 Image::~Image(){

@@ -36,10 +36,11 @@ void Tileset::drawFreeformTile(const JE::GRAPHICS::Camera& camera, int tile, int
 }
 
 void Tileset::drawTileID(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, int parentTileWidth, int parentTileHeight){
-	this->image.setClipRect(this->tiles[tile]);
+	SDL_Rect& rect = this->tiles[tile];
+	this->image.setClipRect(rect);
 	int tox, toy;
 	if (parentTileWidth > 0 && parentTileHeight > 0){
-		this->image.setSize(parentTileWidth, parentTileHeight);
+		this->image.setScale(float(parentTileWidth)/float(rect.w), float(parentTileWidth)/float(rect.h));
 		tox = x * parentTileWidth;
 		toy = y * parentTileHeight;
 	}else{
@@ -59,7 +60,7 @@ void Tileset::drawTile(const JE::GRAPHICS::Camera& camera, int tilex, int tiley,
 	this->image.setClipRect(rect);
 	int tox, toy;
 	if (parentTileWidth > 0 && parentTileHeight > 0){
-		this->image.setScale(parentTileWidth/this->tileWidth, parentTileHeight/this->tileHeight);
+		this->image.setScale(float(parentTileWidth)/float(rect.w), float(parentTileWidth)/float(rect.h));
 		tox = x * parentTileWidth;
 		toy = y * parentTileHeight;
 	}else{

@@ -195,4 +195,14 @@ void Grid::generateFromPoints(const std::shared_ptr<Mask>& mask, const std::vect
 	}
 }
 
+void Grid::draw(const JE::GRAPHICS::Camera& camera, int x, int y){
+	MaskListIterator iter = this->getMaskList(camera.getLeft() - x, camera.getTop() - y, camera.getRight() - x, camera.getBottom() - y);
+	
+	int offx, offy;
+	while (JE::MASK::Mask* iter_mask = iter.get_next(&offx, &offy)){
+		iter_mask->draw(camera, x + offx, y + offy);
+	}
+	
+}
+
 }}

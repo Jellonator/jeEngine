@@ -42,6 +42,9 @@ public:
 	
 	void generateFromPoints(const std::string& name, const std::vector<std::pair<int,int>>& points, int offset_x = 0, int offset_y = 0);
 	void generateFromPoints(const std::shared_ptr<Mask>& mask, const std::vector<std::pair<int,int>>& points, int offset_x = 0, int offset_y = 0);
+	
+	virtual void draw(const JE::GRAPHICS::Camera& camera, int x, int y);
+	
 private:
 	std::map<std::string, std::shared_ptr<Mask>> mask_type_map;
 	std::vector<std::vector<std::shared_ptr<Mask>>> mask_grid_vec;

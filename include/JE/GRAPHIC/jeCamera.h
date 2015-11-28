@@ -30,6 +30,8 @@ public:
 	void pushScale(float x, float y);
 	void pushScale(float value);
 	
+	void centerTo(float x, float y);
+	
 	void letterBox(float target_width, float target_height, float x_offset = 0.5f, float y_offset = 0.5f, float zoom = 0.0f, bool do_clip = true);
 	
 	const glm::mat4& getTranform() const;
@@ -43,6 +45,10 @@ public:
 	void disableViewport() const;
 	
 	float getPixelSize() const;
+	
+	float getCenterX() const;
+	float getCenterY() const;
+	
 	
 private:
 	float angle;

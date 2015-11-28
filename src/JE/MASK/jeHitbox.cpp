@@ -238,8 +238,8 @@ bool Hitbox::containsRect(const Hitbox& rect) const{
 	return this->containsRect(rect.getX1(), rect.getY1(), rect.getX2(), rect.getY2());
 }
 
-void Hitbox::draw(int x, int y){
-	//JE::GRAPHICS::drawRect(this->getLeft() + x, this->getTop() + y, this->getWidth(), this->getHeight(), false);
+void Hitbox::draw(const JE::GRAPHICS::Camera& camera, int x, int y){
+	JE::GRAPHICS::drawRect(camera, false, this->getLeft() + x, this->getTop() + y, this->getWidth(), this->getHeight());
 }
 
 }}

@@ -39,7 +39,7 @@ public:
 	virtual int getBottom() const;
 	
 	void updateGetters();
-	virtual void draw(int x, int y);
+	virtual void draw(const JE::GRAPHICS::Camera& camera, int x, int y);
 	
 private:
 	int get_left;

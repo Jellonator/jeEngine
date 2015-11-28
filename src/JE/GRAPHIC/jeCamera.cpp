@@ -90,6 +90,13 @@ void Camera::pushScale(float value){
 	this->need_update_transform = true;
 }
 
+// Position functions
+void Camera::centerTo(float x, float y){
+	this->x = x - this->getCenterX();
+	this->y = y - this->getCenterY();
+	this->need_update_transform = true;
+}
+
 // Specific functions
 void Camera::letterBox(float target_width, float target_height, float x_offset, float y_offset, float zoom, bool do_clip){
 	// get size of window
@@ -178,8 +185,8 @@ const glm::mat4& Camera::getTranform() const{
 		glm::mat4 view_matrix = glm::ortho(this->left, this->right, this->bottom, this->top, this->near, this->far);
 		
 		// Find origin position
-		float origin_move_x = this->right  * (this->origin_x+1)/2 + this->left * (-this->origin_x+1)/2;
-		float origin_move_y = this->bottom * (this->origin_y+1)/2 + this->top  * (-this->origin_y+1)/2;
+		float origin_move_x = this->getCenterX();
+		float origin_move_y = this->getCenterY();
 		
 		// Then rotate and scale view with screen center being the origin
 		glm::mat4 model_matrix = glm::mat4()
@@ -202,8 +209,8 @@ const glm::mat4& Camera::getTranform() const{
 void Camera::getPosition(float x, float y, float* ret_x, float* ret_y) const{
 	
 	// Get origin position
-	float origin_move_x = this->right  * (this->origin_x+1)/2 + this->left * (-this->origin_x+1)/2;
-	float origin_move_y = this->bottom * (this->origin_y+1)/2 + this->top  * (-this->origin_y+1)/2;
+	float origin_move_x = this->getCenterX();
+	float origin_move_y = this->getCenterY();
 	
 	// Get unscaled position
 	float pos_x = this->right  * (x+1)/2 + this->left * (-x+1)/2;
@@ -277,6 +284,14 @@ void Camera::setBounds(float left, float top, float right, float bottom){
 	this->top = top;
 	this->right = right;
 	this->bottom = bottom;
+}
+
+float Camera::getCenterX() const{
+	return this->right  * (this->origin_x+1)/2 + this->left * (-this->origin_x+1)/2;
+}
+
+float Camera::getCenterY() const{
+	return this->bottom * (this->origin_y+1)/2 + this->top  * (-this->origin_y+1)/2;
 }
 
 };};

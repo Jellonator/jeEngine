@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "GRAPHIC/jeCamera.h"
 
 namespace JE{ namespace MASK{
 
@@ -44,7 +45,7 @@ public:
 	int getCenterX() const;
 	int getCenterY() const;
 	
-	virtual void draw(int x, int y);
+	virtual void draw(const JE::GRAPHICS::Camera& camera, int x, int y);
 private:
 	int x;
 	int y;

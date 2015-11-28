@@ -234,11 +234,11 @@ MaskListIterator MaskList::getMaskListAll(){
 	return iter;
 }
 
-void MaskList::draw(int x, int y){
+void MaskList::draw(const JE::GRAPHICS::Camera& camera, int x, int y){
 	MaskListIterator iter = this->getMaskListAll();
 	int offset_x, offset_y;
 	while (Mask* child = iter.get_next(&offset_x, &offset_y)){
-		child->draw(x + this->getX() + offset_x, y + this->getY() + offset_y);
+		child->draw(camera, x + this->getX() + offset_x, y + this->getY() + offset_y);
 	}
 }
 

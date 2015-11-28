@@ -250,8 +250,8 @@ int Mask::getCenterY() const {
 	return (this->getTop() + this->getBottom()) / 2;
 }
 
-void Mask::draw(int x, int y){
-	//JE::GRAPHICS::drawRect(this->getX() + x, this->getY() + y, 1, 1, true);
+void Mask::draw(const JE::GRAPHICS::Camera& camera, int x, int y){
+	JE::GRAPHICS::drawRect(camera, true, this->getX() + x, this->getY() + y, 1, 1);
 }
 
 }}

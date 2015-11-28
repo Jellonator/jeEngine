@@ -35,7 +35,7 @@ public:
 	bool containsRect(const Hitbox& rect) const;
 	bool containsRectStretch(const Hitbox& rect, int move_x, int move_y) const;
 	
-	virtual void draw(int x, int y);
+	virtual void draw(const JE::GRAPHICS::Camera& camera, int x, int y);
 private:
 	int x1;
 	int y1;

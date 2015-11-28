@@ -33,6 +33,7 @@ Canvas::Canvas(int width, int height) : Image(width, height){
 	
 	// unbindall
 	this->unbind();
+	this->clear();
 	
 	// Flip canvas(since things are rendered up-side-down)
 	this->setFlipY(true);
