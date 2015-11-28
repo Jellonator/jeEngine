@@ -2,6 +2,10 @@
 #include "../jeMain.h"
 #include "../jePoint.h"
 #include <memory>
+
+#define GLM_FORCE_RADIANS
+#include <glm/mat4x4.hpp>
+
 namespace JE{
 class Entity;
 namespace GRAPHICS{
@@ -24,14 +28,15 @@ class Camera;
 extern Color backcolor;
 extern Color forecolor;
 	
-class Graphic : public JE::Point
-{
+class Graphic : public JE::Point{
 public:
 	Graphic(float x = 0, float y = 0);
 	virtual ~Graphic();
 	
 	virtual void update(float dt);
-	virtual void draw(const JE::GRAPHICS::Camera& camera, float x = 0, float y = 0) const;
+	
+	void draw(const JE::GRAPHICS::Camera& camera, float x = 0, float y = 0) const;
+	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 };
 
 /** \brief Set the color for drawing operations.

@@ -12,8 +12,15 @@
 namespace JE{namespace GRAPHICS{
 	
 Graphic::Graphic(float x, float y) : JE::Point(x, y){}
+
 Graphic::~Graphic(){}
-void Graphic::draw(const JE::GRAPHICS::Camera& camera, float x, float y)const{}
+
+void Graphic::draw(const JE::GRAPHICS::Camera& camera, float x, float y) const{
+	this->drawMatrix(camera.getTranform(), x, y);
+}
+
+void Graphic::drawMatrix(const glm::mat4& camera, float x, float y)const{}
+
 void Graphic::update(float dt){}
 
 SDL_Window* window;

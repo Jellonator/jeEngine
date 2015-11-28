@@ -26,7 +26,7 @@ public:
 	virtual ~Group();
 	
 	void update(float dt);
-	void draw();
+	void draw(const JE::GRAPHICS::Camera& camera);
 	
 	template <class EntityType, class... ArgType>
 	EntityType& add(ArgType... args);

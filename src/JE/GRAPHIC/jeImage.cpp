@@ -10,20 +10,31 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/mat2x2.hpp>
-
 
 namespace JE{namespace GRAPHICS{
 
 Image::Image() : JE::GRAPHICS::Graphic(){
-	this->width = 1;
-	this->height = 1;
+	//this->width = 1;
+	//this->height = 1;
+	this->flip_x = false;
+	this->flip_y = false;
+	this->scale_x = 1;
+	this->scale_y = 1;
 	this->angle = 0;
 }
 
 Image::Image(const std::string& file_name) : Image(){
 	this->loadImage(file_name);
 	//std::cout << JE::fileOpen(file_name) << std::endl;
+}
+
+Image::Image(const Image& image){
+	this->texture = image.texture;
+	this->flip_x = image.flip_x;
+	this->flip_y = image.flip_y;
+	this->scale_x = image.scale_x;
+	this->scale_y = image.scale_y;
+	this->angle = image.angle;
 }
 
 Image::~Image(){
@@ -47,13 +58,13 @@ void Image::loadImage(const std::string& file_name){
 	
 	this->texture = std::make_shared<JE::GL::Texture>(surface);
 	
-	this->width = surface->w;
-	this->height = surface->h;
+	//this->width = surface->w;
+	//this->height = surface->h;
 	
 	SDL_FreeSurface(surface);
 }
 
-void Image::draw(const JE::GRAPHICS::Camera& camera, float x, float y) const{
+void Image::drawMatrix(const glm::mat4& camera, float x, float y) const{
 	if (this->texture == nullptr) {
 		std::cout << "No Texture" << std::endl;
 		return;
@@ -63,8 +74,14 @@ void Image::draw(const JE::GRAPHICS::Camera& camera, float x, float y) const{
 	JE::GL::Model& model = JE::GL::getDefaultImageModel();
 	
 	// Transformation for vertex positions
-	glm::mat4x4 transform = camera.getTranform();
+	float scale_width = this->scale_x * (this->flip_x ? -1 : 1);
+	float scale_height = this->scale_y * (this->flip_y ? -1 : 1);
+	glm::mat4x4 transform = camera;
 	transform = glm::translate(transform, glm::vec3(this->x + x, this->y + y, 0.0f));
+	transform = glm::translate(transform, glm::vec3( this->origin_x,  this->origin_y, 0.0f));
+	transform = glm::rotate(transform, this->angle, glm::vec3(0.0f, 0.0f, 1.0f));
+	transform = glm::scale(transform, glm::vec3(scale_width, scale_height, 1.0f));
+	transform = glm::translate(transform, glm::vec3(-this->origin_x, -this->origin_y, 0.0f));
 	
 	// Transformation for texture coordinates so they don't bleed
 	glm::mat4 texcoord_transform = glm::mat4();
@@ -93,7 +110,7 @@ void Image::draw(const JE::GRAPHICS::Camera& camera, float x, float y) const{
 		));
 		
 	} else {
-		transform = glm::scale(transform, glm::vec3(this->width, this->height, 1.0f));
+		transform = glm::scale(transform, glm::vec3(this->texture->getWidth(), this->texture->getHeight(), 1.0f));
 	}
 	
 	shader.setUniformMat("in_Transform", transform);

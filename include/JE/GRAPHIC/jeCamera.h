@@ -1,7 +1,6 @@
 #pragma once
 #include "../jePoint.h"
 #include "../jeMain.h"
-#include "jeGraphic.h"
 #include <SDL2/SDL_image.h>
 
 #define GLM_FORCE_RADIANS

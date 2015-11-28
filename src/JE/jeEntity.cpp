@@ -25,9 +25,9 @@ void Entity::OnUpdate(Group& group, float dt){
 	}
 }
 
-void Entity::OnDraw(){
+void Entity::OnDraw(const JE::GRAPHICS::Camera& camera){
 	for (auto& component : this->_component_update_list){
-		this->_component_map[component]->draw(*this);
+		this->_component_map[component]->draw(*this, camera);
 	}
 }
 

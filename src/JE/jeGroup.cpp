@@ -21,10 +21,10 @@ void Group::update(float dt){
 	this->updateEntities();
 }
 
-void Group::draw(){
+void Group::draw(const JE::GRAPHICS::Camera& camera){
 	this->updateEntities();
 	for (auto& entity : this->entities){
-		entity->OnDraw();
+		entity->OnDraw(camera);
 	}
 	this->updateEntities();
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "jeMask.h"
+#include "GRAPHIC/jeCamera.h"
 #include <vector>
 #include <string>
 #include <memory>
@@ -19,7 +20,7 @@ friend Group;
 
 	//Callbacks
 	virtual void OnCreate();/**< \brief Called when the entity is created. */
-	virtual void OnDraw();/**< \brief Called when the entity is drawn. */
+	virtual void OnDraw(const JE::GRAPHICS::Camera& camera);/**< \brief Called when the entity is drawn. */
 	virtual void OnAdd(JE::Group& group);/**< \brief Called when the entity is added to the world. */
 	virtual void OnRemove(JE::Group& group);/**< \brief Called when the entity is removed from the world. */
 	virtual void OnUpdate(JE::Group& group, float dt);/**< \brief Called when the entity is updated. */

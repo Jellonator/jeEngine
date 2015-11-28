@@ -1,5 +1,5 @@
 #pragma once
-
+#include "GRAPHIC/jeCamera.h"
 namespace JE{
 	
 class Entity;
@@ -10,11 +10,11 @@ public:
 	Component();
 	virtual ~Component();
 	void update(JE::Entity& entity, JE::Group& group, float dt);
-	void draw(JE::Entity& entity);
+	void draw(JE::Entity& entity, const JE::GRAPHICS::Camera& camera);
 	void call(JE::Entity& entity);
 	virtual void OnCall(JE::Entity& entity);
 	virtual void OnUpdate(JE::Entity& entity, JE::Group& group, float dt);
-	virtual void OnDraw(JE::Entity& entity);
+	virtual void OnDraw(JE::Entity& entity, const JE::GRAPHICS::Camera& camera);
 	
 	void enable();
 	void disable();

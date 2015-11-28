@@ -19,15 +19,15 @@ void Component::update(JE::Entity& entity, JE::Group& group, float dt){
 	if (this->_is_enabled) this->OnUpdate(entity, group, dt);
 }
 
-void Component::draw(JE::Entity& entity){
-	if (this->_is_enabled) this->OnDraw(entity);
+void Component::draw(JE::Entity& entity, const JE::GRAPHICS::Camera& camera){
+	if (this->_is_enabled) this->OnDraw(entity, camera);
 }
 
 void Component::OnCall(JE::Entity& entity){}
 
 void Component::OnUpdate(JE::Entity& entity, JE::Group& group, float dt){}
 
-void Component::OnDraw(JE::Entity& entity){}
+void Component::OnDraw(JE::Entity& entity, const JE::GRAPHICS::Camera& camera){}
 
 void Component::enable(){
 	this->_is_enabled = true;
