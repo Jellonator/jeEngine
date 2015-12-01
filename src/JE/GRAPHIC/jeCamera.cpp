@@ -154,6 +154,24 @@ void Camera::letterBox(float target_width, float target_height, float x_offset, 
 		this->do_clip = false;
 	}
 	
+	// Make sure viewport isn't outside of window
+	if (this->clip_rect.x < 0){
+		this->left += this->clip_rect.x*width_ratio;
+		this->clip_rect.x = 0;
+	}
+	if (this->clip_rect.y < 0){
+		this->top += this->clip_rect.y*height_ratio;
+		this->clip_rect.y = 0;
+	}
+	if (this->clip_rect.x + this->clip_rect.w > window_width){
+		this->right -= (this->clip_rect.x + this->clip_rect.w - window_width)*width_ratio;
+		this->clip_rect.w = window_width - this->clip_rect.x;
+	}
+	if (this->clip_rect.y + this->clip_rect.h > window_height){
+		this->bottom -= (this->clip_rect.y + this->clip_rect.h - window_height)*height_ratio;
+		this->clip_rect.h = window_height - this->clip_rect.y;
+	}
+	
 	this->need_update_transform = true;
 }
 
@@ -300,6 +318,22 @@ float Camera::getCenterX() const{
 
 float Camera::getCenterY() const{
 	return this->bottom * (this->origin_y+1)/2 + this->top  * (-this->origin_y+1)/2;
+}
+
+float Camera::getInternalLeft() const{
+	return this->left;
+}
+
+float Camera::getInternalRight() const{
+	return this->right;
+}
+
+float Camera::getInternalTop() const{
+	return this->top;
+}
+
+float Camera::getInternalBottom() const{
+	return this->bottom;
 }
 
 };};

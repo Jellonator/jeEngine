@@ -21,6 +21,10 @@ public:
 	void setBounds(float left, float top, float right, float bottom);
 	void setNear(float value);
 	void setFar(float value);
+	void setLeft(float value);
+	void setRight(float value);
+	void setTop(float value);
+	void setBottom(float value);
 	
 	void setAngle(float value);
 	void addAngle(float value);
@@ -51,6 +55,10 @@ public:
 	float getCenterX() const;
 	float getCenterY() const;
 	
+	float getInternalLeft() const;
+	float getInternalRight() const;
+	float getInternalTop() const;
+	float getInternalBottom() const;
 	
 private:
 	float angle;
