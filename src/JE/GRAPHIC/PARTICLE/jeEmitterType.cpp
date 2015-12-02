@@ -5,7 +5,6 @@
 #include "JE/GRAPHIC/jeGraphic.h"
 #include "JE/UTIL/jeMath.h"
 
-/*
 namespace JE{ namespace GRAPHICS{
 
 EmitterType::EmitterType(){
@@ -25,6 +24,11 @@ EmitterType::EmitterType(){
 	
 	this->life1 = 1;
 	this->life2 = 1;
+	
+	this->accel_x1 = 0;
+	this->accel_x2 = 0;
+	this->accel_y1 = 0;
+	this->accel_y2 = 0;
 }
 
 EmitterType::~EmitterType(){
@@ -175,17 +179,64 @@ void EmitterType::getRandomSpeedXY(float& speed_x, float& speed_y) const{
 }
 
 //Particle functions
-void EmitterType::update(Particle& particle, float dt){
-	particle.x += particle.speed_x * dt;
-	particle.y += particle.speed_y * dt;
-	particle.life -= dt;
+void EmitterType::create(const std::string& name, float offset_x, float offset_y, float offset_angle){
+	Particle* part = nullptr;
+	// Use dead particle if available
+	if (this->emptyslot_v.size() > 0){
+		auto position = this->emptyslot_v.back();
+		part = &this->particle_v.at(position);
+		this->active_v.push_back(position);
+		this->emptyslot_v.pop_back();
+	
+	// Otherwise create new particle
+	} else {
+		this->particle_v.emplace_back(0, 0, 0);
+		part = &this->particle_v.back();
+		this->active_v.push_back(this->particle_v.size()-1);
+	}
+	
+	// set particle properties
+	float speedx, speedy;
+	
+	this->getRandomSpeedXY(speedx, speedy);
+	part->setSpeed(speedx, speedy);
+	part->setPosition(this->getRandomPositionX() + offset_x, this->getRandomPositionY() + offset_y);
+	part->setAcceleration(this->getRandomAccelX(), this->getRandomAccelY());
+	part->setLife(this->getRandomLife());
+	part->setSlow(this->getRandomSlow());
+	part->setTypeName(name);
+	
+	
 }
 
-void EmitterType::draw(Particle& particle){
-	if (this->renderer){
-		this->renderer->draw(*this, particle);
+int EmitterType::update(float dt){
+	int removed_count = 0;
+	
+	std::vector<std::vector<Particle>::size_type>::iterator i = this->active_v.begin();
+	while (i != this->active_v.end()){
+		Particle& part = this->particle_v.at(*i);
+		part.update(dt);
+		if (part.isDead()){
+			this->emptyslot_v.push_back(*i);
+			i = this->active_v.erase(i);
+			removed_count += 1;
+			
+		} else {
+			++i;
+		}
 	}
+	
+	return removed_count;
+}
+
+void EmitterType::draw(const JE::GRAPHICS::Camera& camera){
+	//if (!this->renderer) return;
+	this->renderer->drawBegin();
+	for (auto& index : this->active_v){
+		Particle& part = this->particle_v[index];
+		this->renderer->draw(camera, part);
+	}
+	this->renderer->drawEnd();
 }
 
 }}
-*/

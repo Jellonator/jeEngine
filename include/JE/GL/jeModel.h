@@ -54,6 +54,9 @@ public:
 	ModelAttribute& getPointAttribute();
 	
 	void setDrawMode(GLenum mode);
+	BufferObject<GLuint>& getElementBuffer();
+	GLenum getDrawMode() const;
+	GLuint getNumElements() const;
 	
 private:
 	GLuint vao;

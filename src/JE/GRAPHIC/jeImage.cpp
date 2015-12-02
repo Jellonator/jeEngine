@@ -113,6 +113,10 @@ const JE::GL::Texture& Image::getTexture() const{
 	return *this->texture;
 }
 
+bool Image::hasTexture() const{
+	return (this->texture != nullptr);
+}
+
 void Image::loadImage(const std::string& file_name){
 	this->texture = std::make_shared<JE::GL::Texture>(file_name);
 }
@@ -126,31 +130,57 @@ void Image::drawMatrix(const glm::mat4& camera, float x, float y) const{
 	JE::GL::Shader& shader = JE::GL::getDefaultImageShader();
 	JE::GL::Model& model = JE::GL::getDefaultImageModel();
 	
-	// Source is texture coordinates
-	float source_x = 0;
-	float source_y = 0;
-	float source_width = this->texture->getWidth();
-	float source_height = this->texture->getHeight();
+	// Get drawing transformations
+	glm::mat4x4 transform = camera;
+	transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
+	transform *= this->getTransform();
 	
+	// Transformation for texture coordinates
+	glm::mat4 texcoord_transform = this->getTexcoordTransform();
+	
+	// Send transformations
+	shader.setUniformMat("in_Transform", transform);
+	shader.setUniformMat("in_TexcoordTransform", texcoord_transform);
+	
+	// Actual draw call
+	this->texture->use();
+	model.draw();
+	this->texture->disable();
+}
+
+glm::mat4 Image::getTransform() const{
 	// Transformation for vertex positions
 	float scale_width = this->scale_x * (this->flip_x ? -1 : 1);
 	float scale_height = this->scale_y * (this->flip_y ? -1 : 1);
 	
 	// Get drawing transformations
-	glm::mat4x4 transform = camera;
-	transform = glm::translate(transform, glm::vec3(this->x + x, this->y + y, 0.0f));
+	glm::mat4x4 transform = glm::mat4();//camera;
+	transform = glm::translate(transform, glm::vec3(this->x, this->y, 0.0f));
 	transform = glm::translate(transform, glm::vec3( this->origin_x,  this->origin_y, 0.0f));
 	transform = glm::rotate(transform, this->angle, glm::vec3(0.0f, 0.0f, 1.0f));
 	transform = glm::scale(transform, glm::vec3(scale_width, scale_height, 1.0f));
 	transform = glm::translate(transform, glm::vec3(-this->origin_x, -this->origin_y, 0.0f));
 	if (this->use_clip){
 		transform = glm::scale(transform, glm::vec3(this->clip_rect.w, this->clip_rect.h, 1.0f));
+	} else {
+		transform = glm::scale(transform, glm::vec3(this->texture->getWidth(), this->texture->getHeight(), 1.0f));
+	}
+	
+	return transform;
+}
+
+glm::mat4 Image::getTexcoordTransform() const{
+	// Source is texture coordinates
+	float source_x = 0;
+	float source_y = 0;
+	float source_width = this->texture->getWidth();
+	float source_height = this->texture->getHeight();
+	
+	if (this->use_clip){
 		source_x = this->clip_rect.x;
 		source_y = this->clip_rect.y;
 		source_width = this->clip_rect.w;
 		source_height = this->clip_rect.h;
-	} else {
-		transform = glm::scale(transform, glm::vec3(this->texture->getWidth(), this->texture->getHeight(), 1.0f));
 	}
 	
 	// Pad source
@@ -159,7 +189,6 @@ void Image::drawMatrix(const glm::mat4& camera, float x, float y) const{
 	source_width -= 1.0f;
 	source_height -= 1.0f;
 	
-	// Transformation for texture coordinates
 	glm::mat4 texcoord_transform = glm::mat4();
 	texcoord_transform = glm::translate(texcoord_transform, glm::vec3(
 		source_x/this->texture->getWidth(), 
@@ -172,14 +201,7 @@ void Image::drawMatrix(const glm::mat4& camera, float x, float y) const{
 		1.0f
 	));
 	
-	// Send transformations
-	shader.setUniformMat("in_Transform", transform);
-	shader.setUniformMat("in_TexcoordTransform", texcoord_transform);
-	
-	// Actual draw call
-	this->texture->use();
-	model.draw();
-	this->texture->disable();
+	return texcoord_transform;
 }
 
 };};

@@ -1,5 +1,7 @@
 #pragma once
+#include "../jeCamera.h"
 #include <memory>
+#include <vector>
 
 namespace JE{ namespace GRAPHICS{
 
@@ -51,8 +53,9 @@ public:
 	float getRandomAngle() const;
 	
 	//Particle functions
-	//void update(Particle& particle, float dt);
-	void draw(Particle& particle);
+	void create(const std::string& name, float offset_x = 0, float offset_y = 0, float offset_angle = 0);
+	int update(float dt);
+	void draw(const JE::GRAPHICS::Camera& camera);
 	
 	template <class RType, class... Args>
 	void setRenderer(Args... arguments){
@@ -68,6 +71,9 @@ private:
 	float life1, life2;
 	float accel_x1, accel_y1, accel_x2, accel_y2;
 	std::unique_ptr<EmitterRenderer> renderer;
+	std::vector<Particle> particle_v;
+	std::vector<std::vector<Particle>::size_type> emptyslot_v;
+	std::vector<std::vector<Particle>::size_type> active_v;
 };
 
 }}

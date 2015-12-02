@@ -33,6 +33,10 @@ public:
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 	
 	const JE::GL::Texture& getTexture() const;
+	bool hasTexture() const;
+	
+	glm::mat4 getTransform() const;
+	glm::mat4 getTexcoordTransform() const;
 	
 private:
 	std::shared_ptr<JE::GL::Texture> texture;

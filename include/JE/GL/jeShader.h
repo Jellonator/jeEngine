@@ -26,6 +26,11 @@
 
 namespace JE{ namespace GL{
 
+struct ShaderUniformDef{
+	GLenum type;
+	GLint position;
+};
+
 class Shader{
 public:
 	Shader();
@@ -44,6 +49,7 @@ public:
 	
 	GLint getUniformPosition(const std::string& uniform);
 	GLenum getUniformType(const std::string& uniform);
+	bool hasUniform(const std::string& uniform);
 	
 	GLint getAttributePosition(const std::string& attribute);
 	GLenum getAttributeType(const std::string& attribute);
@@ -75,6 +81,7 @@ private:
 	std::map<std::string, GLuint> shaders_map;
 	std::vector<std::shared_ptr<GLuint>> shaders_vec;
 	std::shared_ptr<GLuint> program_id;
+	std::map<std::string, ShaderUniformDef> uniform_map;
 	
 	void _logError(GLuint shader_id, const std::string& error_name);
 	bool _addShader(const std::string& name, const std::string& source, GLenum shader_type, GLuint* shader_ret);

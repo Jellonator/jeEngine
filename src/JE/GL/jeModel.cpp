@@ -111,8 +111,6 @@ void Model::draw(){
 	if (this->shader_reference == nullptr) return;
 	
 	this->bind();
-	this->buffer_elements.pushLocal();
-	glUseProgram(*this->shader_reference);
 	
 	glDrawElements(
 		this->draw_mode,
@@ -144,6 +142,22 @@ ModelAttribute& Model::getPointAttribute(){
 void Model::bind(){
 	glBindVertexArray(this->vao);
 	this->buffer_elements.bind();
+	this->buffer_elements.pushLocal();
+	
+	if (this->shader_reference == nullptr) return;
+	glUseProgram(*this->shader_reference);
+}
+
+BufferObject<GLuint>& Model::getElementBuffer(){
+	return this->buffer_elements;
+}
+
+GLenum Model::getDrawMode() const{
+	return this->draw_mode;
+}
+
+GLuint Model::getNumElements() const{
+	return this->buffer_elements.getBufferSize();
 }
 
 Model* default_model = nullptr;

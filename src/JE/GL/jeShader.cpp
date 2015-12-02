@@ -62,8 +62,9 @@ GLuint Shader::addShaderFromData(const std::string& name, const std::string& sou
 }
 
 bool Shader::linkShaders(){
-	glLinkProgram(*this->program_id);
+	this->uniform_map.clear();
 	
+	glLinkProgram(*this->program_id);
 	GLint did_error = 0;
 	glGetProgramiv(*this->program_id, GL_LINK_STATUS, &did_error);
 	if(did_error == GL_FALSE){
@@ -80,6 +81,21 @@ bool Shader::linkShaders(){
 		
 		return false;
 	}
+	
+	// Get list of uniforms
+	GLint count;
+	glGetProgramiv(*this->program_id, GL_ACTIVE_UNIFORMS, &count);
+	int name_len = 50;
+	for (int i = 0; i < count; ++ i){
+		char name[name_len];
+		GLenum type;
+		GLint get_len;
+		GLsizei get_size;
+		glGetActiveUniform(*this->program_id, i, name_len, &get_size, &get_len, &type, name);
+		this->uniform_map[name].position = i;
+		this->uniform_map[name].type = type;
+	}
+	
 	return true;
 }
 
@@ -133,8 +149,13 @@ void Shader::_logError(GLuint shader_id, const std::string& error_name){
 	std::cerr << "------------------------------------" << std::endl;
 }
 
+bool Shader::hasUniform(const std::string& uniform){
+	return (this->uniform_map.count(uniform) > 0);
+}
+
 GLint Shader::getUniformPosition(const std::string& uniform){
-	return glGetUniformLocation(*this->program_id, uniform.c_str());
+	if (!this->hasUniform(uniform)) return -1;
+	return this->uniform_map[uniform].position;
 }
 
 GLint Shader::getAttributePosition(const std::string& attribute){
@@ -142,13 +163,8 @@ GLint Shader::getAttributePosition(const std::string& attribute){
 }
 
 GLenum Shader::getUniformType(const std::string& uniform){
-	GLint pos = this->getUniformPosition(uniform);
-	char name [32];
-	GLint size;
-	GLsizei length;
-	GLenum type;
-	glGetActiveUniform(*this->program_id, pos, 32, &length, &size, &type, name);
-	return type;
+	if (!this->hasUniform(uniform)) return GL_NONE;
+	return this->uniform_map[uniform].type;
 }
 
 std::shared_ptr<GLuint>& Shader::getProgramPtr(){
