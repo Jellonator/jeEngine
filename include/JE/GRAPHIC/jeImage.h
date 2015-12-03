@@ -29,6 +29,8 @@ public:
 	void setClipRect(const SDL_Rect& rect);
 	void disableClipRect();
 	
+	void setTexture(std::shared_ptr<JE::GL::Texture> tex);
+	
 	virtual ~Image();
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 	
@@ -37,6 +39,8 @@ public:
 	
 	glm::mat4 getTransform() const;
 	glm::mat4 getTexcoordTransform() const;
+	
+	bool isClipEnabled() const;
 	
 private:
 	std::shared_ptr<JE::GL::Texture> texture;

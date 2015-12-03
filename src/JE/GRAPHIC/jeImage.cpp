@@ -121,6 +121,10 @@ void Image::loadImage(const std::string& file_name){
 	this->texture = std::make_shared<JE::GL::Texture>(file_name);
 }
 
+void Image::setTexture(std::shared_ptr<JE::GL::Texture> tex){
+	this->texture = tex;
+}
+
 void Image::drawMatrix(const glm::mat4& camera, float x, float y) const{
 	if (this->texture == nullptr) {
 		std::cout << "No Texture" << std::endl;
@@ -202,6 +206,10 @@ glm::mat4 Image::getTexcoordTransform() const{
 	));
 	
 	return texcoord_transform;
+}
+
+bool Image::isClipEnabled() const{
+	return this->use_clip;
 }
 
 };};
