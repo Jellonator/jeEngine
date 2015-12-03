@@ -18,14 +18,14 @@ EmitterRenderer::~EmitterRenderer(){
 }
 
 void EmitterRenderer::draw(const JE::GRAPHICS::Camera& camera, const Particle& particle){
-	//JE::GRAPHICS::drawRect(camera, true, , particle.getY() - 1, 3, 3);
+	//JE::GRAPHICS::drawRect(camera, true, particle.getX() - 1, particle.getY() - 1, 3, 3);
 	
 	JE::GL::Model& model = JE::GL::getDefaultModel();// : JE::GL::getDefaultOutlineModel();
 	JE::GL::Shader& shader = JE::GL::getDefaultShader();
 	
 	glm::mat4x4 transform = camera.getTranform();
-	transform = glm::translate(transform, glm::vec3(particle.getX() - 1, particle.getY() - 1, 0.0f));
-	transform = glm::scale(transform, glm::vec3(3, 3, 1.0f));
+	transform = glm::translate(transform, glm::vec3(particle.getX(), particle.getY(), 0.0f));
+	transform = glm::scale(transform, glm::vec3(1, 1, 1.0f));
 	
 	glUniformMatrix4fv(shader.getUniformPosition("in_Transform"), 1, false, glm::value_ptr(transform));
 	//shader.setUniformMat("in_Transform", transform);
@@ -58,6 +58,7 @@ EmitterRendererImage::EmitterRendererImage(JE::GRAPHICS::Image& image) : Emitter
 EmitterRendererImage::~EmitterRendererImage(){}
 
 void EmitterRendererImage::draw(const JE::GRAPHICS::Camera& camera, const Particle& particle){
+	//this->image.draw(camera, particle.getX(), particle.getY());
 	JE::GL::Shader& shader = JE::GL::getDefaultImageShader();
 	JE::GL::Model& model = JE::GL::getDefaultImageModel();
 	
@@ -97,8 +98,8 @@ void EmitterRendererImage::drawEnd(){
 }
 
 //Spritemap renderer
-EmitterRendererSpritemap::EmitterRendererSpritemap(JE::GRAPHICS::Spritemap& spritemap, const std::string& name) : EmitterRenderer(),
-spritemap(spritemap) {
+EmitterRendererSpritemap::EmitterRendererSpritemap(JE::GRAPHICS::Spritemap& spritemap, const std::string& name)
+ : EmitterRenderer(), spritemap(spritemap) {
 	this->animation = name;
 }
 

@@ -38,9 +38,10 @@ void initWindow(std::string name, int w, int h, int wflags){
 	
 	// Config OpenGL
 	glEnable( GL_BLEND );
-	glEnable( GL_DEPTH_TEST );
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthFunc( GL_LEQUAL );
+	
+	// This is primarily a 2D game, so depth isn't needed. 
+	glDisable( GL_DEPTH_TEST );
 	
 	// No Vsync
 	SDL_GL_SetSwapInterval(0);
