@@ -60,7 +60,7 @@ void SharedImage::disableClipRect(){
 }
 
 void SharedImage::drawMatrix(const glm::mat4& camera, float x, float y) const{
-//	if (this->ignore_texture && this->texture == nullptr) return;
+	if (this->ignore_texture && this->texture == nullptr) return;
 	
 	std::vector<std::weak_ptr<JE::GRAPHICS::Image>>::const_iterator iter;
 	iter = this->image_vec.begin();
@@ -78,7 +78,8 @@ void SharedImage::drawMatrix(const glm::mat4& camera, float x, float y) const{
 	transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
 	
 	// Transformation for texture coordinates
-	glm::mat4 texcoord_transform = this->getTexcoordTransform();
+	glm::mat4 texcoord_transform;
+	if (this->texture != nullptr) texcoord_transform = this->getTexcoordTransform();
 	
 	// Use own texture
 	if (this->texture != nullptr) this->texture->use();
