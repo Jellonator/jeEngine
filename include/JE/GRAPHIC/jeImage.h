@@ -37,8 +37,8 @@ public:
 	const JE::GL::Texture& getTexture() const;
 	bool hasTexture() const;
 	
-	glm::mat4 getTransform() const;
-	glm::mat4 getTexcoordTransform() const;
+	const glm::mat4& getTransform() const;
+	const glm::mat4& getTexcoordTransform() const;
 	
 	bool isClipEnabled() const;
 	
@@ -54,6 +54,11 @@ private:
 	
 	bool use_clip;
 	SDL_Rect clip_rect;
+	
+	mutable bool need_update_transform;
+	mutable bool need_update_texcoord_transform;
+	mutable glm::mat4 transform_cache;
+	mutable glm::mat4 texcoord_transform_cache;
 };
 
 };};

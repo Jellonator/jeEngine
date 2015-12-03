@@ -21,7 +21,12 @@ public:
 	void setClipRect(const SDL_Rect& rect);
 	void disableClipRect();
 	
-	glm::mat4 getTexcoordTransform() const;
+	const glm::mat4& getTexcoordTransform() const;
+	bool doesIgnoreClip() const;
+	bool doesIgnoreTexture() const;
+	
+	void setIgnoreClip(bool value);
+	void setIgnoreTexture(bool value);
 	
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 		
@@ -34,6 +39,9 @@ private:
 	std::shared_ptr<JE::GL::Texture> texture;
 	bool use_clip;
 	SDL_Rect clip_rect;
+	
+	mutable bool need_update_texcoord_transform;
+	mutable glm::mat4 texcoord_transform_cache;
 };
 
 }}

@@ -12,6 +12,7 @@ SharedImage::SharedImage() : JE::GRAPHICS::Graphic(){
 	this->clip_rect = {0, 0, 1, 1};
 	this->ignore_cliprect = false;
 	this->ignore_texture = false;
+	this->need_update_texcoord_transform = true;
 }
 
 SharedImage::SharedImage(const std::string& file_name) : SharedImage(){
@@ -41,6 +42,7 @@ void SharedImage::addImage(std::shared_ptr<JE::GRAPHICS::Image> image){
 
 void SharedImage::loadImage(const std::string& file_name){
 	this->texture = std::make_shared<JE::GL::Texture>(file_name);
+	this->need_update_texcoord_transform = true;
 }
 
 void SharedImage::setClipRect(int x, int y, int width, int height){
@@ -48,15 +50,18 @@ void SharedImage::setClipRect(int x, int y, int width, int height){
 	this->clip_rect.y = y;
 	this->clip_rect.w = width;
 	this->clip_rect.h = height;
+	this->need_update_texcoord_transform = true;
 }
 
 void SharedImage::setClipRect(const SDL_Rect& rect){
 	this->clip_rect = rect;
 	this->use_clip = true;
+	this->need_update_texcoord_transform = true;
 }
 
 void SharedImage::disableClipRect(){
 	this->use_clip = false;
+	this->need_update_texcoord_transform = true;
 }
 
 void SharedImage::drawMatrix(const glm::mat4& camera, float x, float y) const{
@@ -126,39 +131,65 @@ void SharedImage::drawMatrix(const glm::mat4& camera, float x, float y) const{
 	}
 }
 
-glm::mat4 SharedImage::getTexcoordTransform() const{
-	// Source is texture coordinates
-	float source_x = 0;
-	float source_y = 0;
-	float source_width = this->texture->getWidth();
-	float source_height = this->texture->getHeight();
-	
-	if (this->use_clip){
-		source_x = this->clip_rect.x;
-		source_y = this->clip_rect.y;
-		source_width = this->clip_rect.w;
-		source_height = this->clip_rect.h;
+const glm::mat4& SharedImage::getTexcoordTransform() const{
+	if (this->need_update_texcoord_transform){
+		float tex_w = 1;
+		float tex_h = 1;
+		if (this->texture){
+			tex_w = this->texture->getWidth();
+			tex_h = this->texture->getHeight();
+		}
+		// Source is texture coordinates
+		float source_x = 0;
+		float source_y = 0;
+		float source_width = tex_w;
+		float source_height = tex_h;
+		
+		if (this->use_clip){
+			source_x = this->clip_rect.x;
+			source_y = this->clip_rect.y;
+			source_width = this->clip_rect.w;
+			source_height = this->clip_rect.h;
+		}
+		
+		// Pad source
+		source_x += 0.5f;
+		source_y += 0.5f;
+		source_width -= 1.0f;
+		source_height -= 1.0f;
+		
+		glm::mat4 texcoord_transform = glm::mat4();
+		texcoord_transform = glm::translate(texcoord_transform, glm::vec3(
+			source_x/tex_w, 
+			source_y/tex_h, 
+			0.0f
+		));
+		texcoord_transform = glm::scale(texcoord_transform, glm::vec3(
+			source_width/tex_w,
+			source_height/tex_h,
+			1.0f
+		));
+		this->texcoord_transform_cache = texcoord_transform;
+		this->need_update_texcoord_transform = false;
 	}
 	
-	// Pad source
-	source_x += 0.5f;
-	source_y += 0.5f;
-	source_width -= 1.0f;
-	source_height -= 1.0f;
-	
-	glm::mat4 texcoord_transform = glm::mat4();
-	texcoord_transform = glm::translate(texcoord_transform, glm::vec3(
-		source_x/this->texture->getWidth(), 
-		source_y/this->texture->getHeight(), 
-		0.0f
-	));
-	texcoord_transform = glm::scale(texcoord_transform, glm::vec3(
-		source_width/this->texture->getWidth(),
-		source_height/this->texture->getHeight(),
-		1.0f
-	));
-	
-	return texcoord_transform;
+	return this->texcoord_transform_cache;
+}
+
+bool SharedImage::doesIgnoreClip() const{
+	return this->ignore_cliprect;
+}
+
+bool SharedImage::doesIgnoreTexture() const{
+	return this->ignore_texture;
+}
+
+void SharedImage::setIgnoreClip(bool value){
+	this->ignore_cliprect = value;
+}
+
+void SharedImage::setIgnoreTexture(bool value){
+	this->ignore_texture = value;
 }
 
 }}
