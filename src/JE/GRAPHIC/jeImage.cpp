@@ -241,8 +241,77 @@ const glm::mat4& Image::getTexcoordTransform() const{
 	return this->texcoord_transform_cache;
 }
 
+glm::mat4 Image::getTransformCustom(int width, int height) const{
+	return this->getTransformCustom(width, height, this->use_clip, this->getClipRect());
+}
+
+glm::mat4 Image::getTransformCustom(int width, int height, bool custom_use_clip, const SDL_Rect& custom_clip) const{
+		// Transformation for vertex positions
+		float scale_width = this->scale_x * (this->flip_x ? -1 : 1);
+		float scale_height = this->scale_y * (this->flip_y ? -1 : 1);
+		
+		// Get drawing transformations
+		glm::mat4x4 transform = glm::mat4();//camera;
+		transform = glm::translate(transform, glm::vec3(this->x, this->y, 0.0f));
+		transform = glm::translate(transform, glm::vec3( this->origin_x,  this->origin_y, 0.0f));
+		transform = glm::rotate(transform, this->angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		transform = glm::scale(transform, glm::vec3(scale_width, scale_height, 1.0f));
+		transform = glm::translate(transform, glm::vec3(-this->origin_x, -this->origin_y, 0.0f));
+		
+		if (custom_use_clip){
+			transform = glm::scale(transform, glm::vec3(custom_clip.w, custom_clip.h, 1.0f));
+		} else {
+			transform = glm::scale(transform, glm::vec3(width, height, 1.0f));
+		}
+		
+		return transform;
+}
+
+glm::mat4 Image::getTexcoordTransformCustom(int width, int height) const{
+	return this->getTexcoordTransformCustom(width, height, this->use_clip, this->getClipRect());
+}
+
+glm::mat4 Image::getTexcoordTransformCustom(int width, int height, bool custom_use_clip, const SDL_Rect& custom_clip) const{
+	// Source is texture coordinates
+	float source_x = 0;
+	float source_y = 0;
+	float source_width = width;
+	float source_height = height;
+	
+	if (custom_use_clip){
+		source_x = custom_clip.x;
+		source_y = custom_clip.y;
+		source_width = custom_clip.w;
+		source_height = custom_clip.h;
+	}
+	
+	// Pad source
+	source_x += 0.5f;
+	source_y += 0.5f;
+	source_width -= 1.0f;
+	source_height -= 1.0f;
+	
+	glm::mat4 texcoord_transform = glm::mat4();
+	texcoord_transform = glm::translate(texcoord_transform, glm::vec3(
+		source_x/width, 
+		source_y/height, 
+		0.0f
+	));
+	texcoord_transform = glm::scale(texcoord_transform, glm::vec3(
+		source_width/width,
+		source_height/height,
+		1.0f
+	));
+	
+	return texcoord_transform;
+}
+
 bool Image::isClipEnabled() const{
 	return this->use_clip;
+}
+
+const SDL_Rect& Image::getClipRect() const{
+	return this->clip_rect;
 }
 
 };};

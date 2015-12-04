@@ -22,6 +22,9 @@ public:
 	void disableClipRect();
 	
 	const glm::mat4& getTexcoordTransform() const;
+	glm::mat4 getTexcoordTransformCustom(int width, int height) const;
+	glm::mat4 getTexcoordTransformCustom(int width, int height, bool custom_use_clip, const SDL_Rect& custom_clip) const;
+	
 	bool doesIgnoreClip() const;
 	bool doesIgnoreTexture() const;
 	

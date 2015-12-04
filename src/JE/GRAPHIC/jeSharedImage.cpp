@@ -50,6 +50,7 @@ void SharedImage::setClipRect(int x, int y, int width, int height){
 	this->clip_rect.y = y;
 	this->clip_rect.w = width;
 	this->clip_rect.h = height;
+	this->use_clip = true;
 	this->need_update_texcoord_transform = true;
 }
 
@@ -83,17 +84,20 @@ void SharedImage::drawMatrix(const glm::mat4& camera, float x, float y) const{
 	transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
 	
 	// Transformation for texture coordinates
-	glm::mat4 texcoord_transform;
-	if (this->texture != nullptr) texcoord_transform = this->getTexcoordTransform();
+	if (this->ignore_cliprect && this->ignore_texture){
+		shader.setUniformMat("in_TexcoordTransform", this->getTexcoordTransform());
+	}
 	
 	// Use own texture
-	if (this->texture != nullptr) this->texture->use();
+	if (this->ignore_texture) this->texture->use();
 	
 	while (iter != this->image_vec.end()){
+		// Remove non-existant images
 		if (iter->expired()){
 			iter = this->image_vec.erase(iter);
 			continue;
 		}
+		
 		// Actual draw code
 		std::shared_ptr<JE::GRAPHICS::Image> img = iter->lock();
 		++iter;
@@ -107,18 +111,52 @@ void SharedImage::drawMatrix(const glm::mat4& camera, float x, float y) const{
 			}
 		}
 		
-		// Use image's clip rect
+		// Special cases for clip rectangles
 		if (!this->ignore_cliprect){
-			if (img->isClipEnabled()){
+			if (this->ignore_texture){
+				// Custom clip with own texture
+				glm::mat4 local_clip = img->getTexcoordTransformCustom(
+					this->texture->getWidth(), this->texture->getHeight()
+				);
+				shader.setUniformMat("in_TexcoordTransform", local_clip);
+				
+				// Custom clip with custom texture
+			} else {
 				glm::mat4 local_clip = img->getTexcoordTransform();
 				shader.setUniformMat("in_TexcoordTransform", local_clip);
-			} else {
-				shader.setUniformMat("in_TexcoordTransform", texcoord_transform);
 			}
+			
+			// Custom texture with own clip
+		} else if (!this->ignore_texture){
+			glm::mat4 local_clip = this->getTexcoordTransformCustom(
+				img->getTexture().getWidth(), img->getTexture().getHeight()
+			);
+			shader.setUniformMat("in_TexcoordTransform", local_clip);
 		}
 		
 		// Get local transformation of image
-		glm::mat4 local_transform = transform * img->getTransform();
+		glm::mat4 local_transform = transform;
+		if (this->ignore_cliprect){
+			if (this->ignore_texture){
+				local_transform *= img->getTransformCustom(
+					this->texture->getWidth(), this->texture->getHeight(),
+					this->use_clip, this->clip_rect
+				);
+			}  else {
+				local_transform *= img->getTransformCustom(
+					img->getTexture().getWidth(), img->getTexture().getHeight(),
+					this->use_clip, this->clip_rect
+				);
+			}
+		} else {
+			if (this->ignore_texture){
+				local_transform *= img->getTransformCustom(
+					this->texture->getWidth(), this->texture->getHeight()
+				);
+			} else {
+				local_transform *= img->getTransform();
+			}
+		}
 		shader.setUniformMat("in_Transform", local_transform);
 		
 		// Actual draw call
@@ -174,6 +212,45 @@ const glm::mat4& SharedImage::getTexcoordTransform() const{
 	}
 	
 	return this->texcoord_transform_cache;
+}
+
+glm::mat4 SharedImage::getTexcoordTransformCustom(int width, int height) const{
+	return this->getTexcoordTransformCustom(width, height, this->use_clip, this->clip_rect);
+}
+
+glm::mat4 SharedImage::getTexcoordTransformCustom(int width, int height, bool custom_use_clip, const SDL_Rect& custom_clip) const{
+	// Source is texture coordinates
+	float source_x = 0;
+	float source_y = 0;
+	float source_width = width;
+	float source_height = height;
+	
+	if (custom_use_clip){
+		source_x = custom_clip.x;
+		source_y = custom_clip.y;
+		source_width = custom_clip.w;
+		source_height = custom_clip.h;
+	}
+	
+	// Pad source
+	source_x += 0.5f;
+	source_y += 0.5f;
+	source_width -= 1.0f;
+	source_height -= 1.0f;
+	
+	glm::mat4 texcoord_transform = glm::mat4();
+	texcoord_transform = glm::translate(texcoord_transform, glm::vec3(
+		source_x/width, 
+		source_y/height, 
+		0.0f
+	));
+	texcoord_transform = glm::scale(texcoord_transform, glm::vec3(
+		source_width/width,
+		source_height/height,
+		1.0f
+	));
+	
+	return texcoord_transform;
 }
 
 bool SharedImage::doesIgnoreClip() const{

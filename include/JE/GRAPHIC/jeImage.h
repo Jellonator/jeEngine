@@ -40,7 +40,13 @@ public:
 	const glm::mat4& getTransform() const;
 	const glm::mat4& getTexcoordTransform() const;
 	
+	glm::mat4 getTransformCustom(int width, int height) const;
+	glm::mat4 getTexcoordTransformCustom(int width, int height) const;
+	glm::mat4 getTransformCustom(int width, int height, bool custom_use_clip, const SDL_Rect& custom_clip) const;
+	glm::mat4 getTexcoordTransformCustom(int width, int height, bool custom_use_clip, const SDL_Rect& custom_clip) const;
+	
 	bool isClipEnabled() const;
+	const SDL_Rect& getClipRect() const;
 	
 private:
 	std::shared_ptr<JE::GL::Texture> texture;
