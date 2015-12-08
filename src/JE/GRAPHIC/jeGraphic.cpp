@@ -82,9 +82,19 @@ void drawRect(const JE::GRAPHICS::Camera& camera, bool fill, float x, float y, f
 	model.draw();
 }
 
-//void drawLine(float x1, float y1, float x2, float y2){
-//	
-//}
+void drawLine(const JE::GRAPHICS::Camera& camera, float x1, float y1, float x2, float y2){
+	JE::GL::Model& model = JE::GL::getDefaultLineModel();
+	JE::GL::Shader& shader = JE::GL::getDefaultShader();
+	
+	glm::mat4x4 transform = camera.getTranform();
+	transform = glm::translate(transform, glm::vec3(x1, y1, 0.0f));
+	transform = glm::rotate(transform, JE::MATH::getAngle(x1, y1, x2, y2) * JE::MATH::RAD, glm::vec3(0.0f, 0.0f, 1.0f));
+	transform = glm::scale(transform, glm::vec3(JE::MATH::distance(x1, y1, x2, y2), 1.0f, 1.0f));
+	
+	shader.setUniformMat("in_Transform", transform);
+	
+	model.draw();
+}
 
 void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radius){
 	JE::GL::Model& model = JE::GL::getDefaultCircleModel();

@@ -62,6 +62,18 @@ void ModelAttribute::useShader(Shader& shader){
 	);
 }
 
+ModelAttribute& Model::getAttribute(const std::string& name){
+	return this->buffer_extra_map[name];
+}
+
+ModelAttribute& Model::getPointAttribute(){
+	return this->buffer_points;
+}
+
+BufferObject<GLfloat>& ModelAttribute::getBuffer(){
+	return this->buffer_data;
+}
+
 Model::Model() :
  vao(generateOneVertexArrayBuffer()),
  buffer_elements(GL_ELEMENT_ARRAY_BUFFER),
@@ -131,14 +143,6 @@ void Model::addAttribute(const std::string& name, const std::string& shader_refe
 	this->need_update_vertex_attrib = true;
 }
 
-ModelAttribute& Model::getAttribute(const std::string& name){
-	return this->buffer_extra_map[name];
-}
-
-ModelAttribute& Model::getPointAttribute(){
-	return this->buffer_points;
-}
-
 void Model::bind(){
 	glBindVertexArray(this->vao);
 	this->buffer_elements.bind();
@@ -164,6 +168,7 @@ Model* default_model = nullptr;
 Model* default_circle_model = nullptr;
 Model* default_outline_model = nullptr;
 Model* default_image_model = nullptr;
+Model* default_line_model = nullptr;
 
 Model& getDefaultModel(){
 	if (default_model == nullptr){
@@ -232,6 +237,24 @@ Model& getDefaultOutlineModel(){
 	}
 	
 	return *default_outline_model;
+}
+
+Model& getDefaultLineModel(){
+	if (default_line_model == nullptr){
+		default_line_model = new Model(
+			{
+				0.0f, 0.0f, 0.0f, // left
+				1.0f, 0.0f, 0.0f, // right
+			},{
+				0, 1
+			}
+		);
+		default_line_model->setDrawMode(GL_LINES);
+		default_line_model->getPointAttribute().setShaderReference("in_Position");
+		default_line_model->useShader(JE::GL::getDefaultShader());
+	}
+	
+	return *default_line_model;
 }
 
 Model& getDefaultCircleModel(){

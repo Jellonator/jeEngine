@@ -68,7 +68,7 @@ void SharedImage::disableClipRect(){
 void SharedImage::drawMatrix(const glm::mat4& camera, float x, float y) const{
 	if (this->ignore_texture && this->texture == nullptr) return;
 	
-	std::vector<std::weak_ptr<JE::GRAPHICS::Image>>::const_iterator iter;
+	std::vector<std::weak_ptr<JE::GRAPHICS::Image>>::iterator iter;
 	iter = this->image_vec.begin();
 	
 	// Get model and shader

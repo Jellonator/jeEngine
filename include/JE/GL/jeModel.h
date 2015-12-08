@@ -27,6 +27,8 @@ public:
 	
 	void setShaderReference(const std::string& ref);
 	
+	BufferObject<GLfloat>& getBuffer();
+	
 private:
 	int num_elements;
 	int stride;
@@ -75,6 +77,7 @@ private:
 Model& getDefaultModel();
 Model& getDefaultImageModel();
 Model& getDefaultOutlineModel();
+Model& getDefaultLineModel();
 Model& getDefaultCircleModel();
 
 }}

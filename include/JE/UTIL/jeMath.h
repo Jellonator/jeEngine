@@ -37,7 +37,7 @@ namespace MATH{
    * \param x2 float the x of point 2
    * \param y2 float the y of point 2
    */
-	float squareDistance(float x1, float y1, float x2, float y2);
+	float squaredDistance(float x1, float y1, float x2, float y2);
 	/** \brief returns true if the distance between the two points is larger than 'distance,' otherwise, it will return false.
    * \param x1 float the x of point 1
    * \param y1 float the y of point 1

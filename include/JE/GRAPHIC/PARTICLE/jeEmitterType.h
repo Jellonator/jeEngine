@@ -53,7 +53,7 @@ public:
 	float getRandomAngle() const;
 	
 	//Particle functions
-	void create(const std::string& name, float offset_x = 0, float offset_y = 0, float offset_angle = 0);
+	void create(float offset_x = 0, float offset_y = 0, float offset_angle = 0);
 	int update(float dt);
 	void draw(const JE::GRAPHICS::Camera& camera);
 	

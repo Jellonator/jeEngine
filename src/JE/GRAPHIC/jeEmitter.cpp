@@ -31,7 +31,7 @@ void Emitter::create(const std::string& name, int ammount, float offset_x, float
 		if (current_count >= this->max_particles) break;
 		
 		if (this->hasType(name)){
-			this->getType(name).create(name, offset_x, offset_y, offset_angle);
+			this->getType(name).create(offset_x, offset_y, offset_angle);
 			this->current_count += 1;
 		}
 	}

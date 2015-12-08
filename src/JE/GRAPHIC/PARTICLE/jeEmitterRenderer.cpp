@@ -39,7 +39,7 @@ void EmitterRenderer::draw(const JE::GRAPHICS::Camera& camera, const Particle& p
 	);
 }
 
-void EmitterRenderer::drawBegin(){
+void EmitterRenderer::drawBegin(const JE::GRAPHICS::Camera& camera){
 	JE::GRAPHICS::setColor(1, 1, 1);
 
 	JE::GL::Model& model = JE::GL::getDefaultModel();
@@ -48,7 +48,7 @@ void EmitterRenderer::drawBegin(){
 	model.bind();
 }
 
-void EmitterRenderer::drawEnd(){
+void EmitterRenderer::drawEnd(const JE::GRAPHICS::Camera& camera){
 	
 }
 
@@ -79,7 +79,7 @@ void EmitterRendererImage::draw(const JE::GRAPHICS::Camera& camera, const Partic
 	);
 }
 
-void EmitterRendererImage::drawBegin(){
+void EmitterRendererImage::drawBegin(const JE::GRAPHICS::Camera& camera){
 	JE::GL::Model& model = JE::GL::getDefaultImageModel();
 	JE::GL::Shader& shader = JE::GL::getDefaultImageShader();
 	
@@ -93,7 +93,7 @@ void EmitterRendererImage::drawBegin(){
 	this->image.getTexture().use();
 }
 
-void EmitterRendererImage::drawEnd(){
+void EmitterRendererImage::drawEnd(const JE::GRAPHICS::Camera& camera){
 	this->image.getTexture().disable();
 }
 
@@ -115,11 +115,11 @@ Spritemap& EmitterRendererSpritemap::getSpritemap(){
 	return this->spritemap;
 }
 
-void EmitterRendererSpritemap::drawBegin(){
+void EmitterRendererSpritemap::drawBegin(const JE::GRAPHICS::Camera& camera){
 	
 }
 
-void EmitterRendererSpritemap::drawEnd(){
+void EmitterRendererSpritemap::drawEnd(const JE::GRAPHICS::Camera& camera){
 	
 }
 

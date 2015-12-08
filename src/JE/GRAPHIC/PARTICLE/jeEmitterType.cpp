@@ -179,7 +179,7 @@ void EmitterType::getRandomSpeedXY(float& speed_x, float& speed_y) const{
 }
 
 //Particle functions
-void EmitterType::create(const std::string& name, float offset_x, float offset_y, float offset_angle){
+void EmitterType::create(float offset_x, float offset_y, float offset_angle){
 	Particle* part = nullptr;
 	// Use dead particle if available
 	if (this->emptyslot_v.size() > 0){
@@ -204,8 +204,6 @@ void EmitterType::create(const std::string& name, float offset_x, float offset_y
 	part->setAcceleration(this->getRandomAccelX(), this->getRandomAccelY());
 	part->setLife(this->getRandomLife());
 	part->setSlow(this->getRandomSlow());
-	part->setTypeName(name);
-	
 	
 }
 
@@ -231,12 +229,12 @@ int EmitterType::update(float dt){
 
 void EmitterType::draw(const JE::GRAPHICS::Camera& camera){
 	//if (!this->renderer) return;
-	this->renderer->drawBegin();
+	this->renderer->drawBegin(camera);
 	for (auto& index : this->active_v){
 		Particle& part = this->particle_v[index];
 		this->renderer->draw(camera, part);
 	}
-	this->renderer->drawEnd();
+	this->renderer->drawEnd(camera);
 }
 
 }}

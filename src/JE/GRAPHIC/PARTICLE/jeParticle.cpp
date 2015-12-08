@@ -62,20 +62,12 @@ void Particle::update(float dt){
 	}
 }
 
-void Particle::setTypeName(const std::string& name){
-	this->type_name = name;
-}
-
 float Particle::getX() const{
 	return this->x;
 }
 
 float Particle::getY() const{
 	return this->y;
-}
-
-const std::string& Particle::getTypeName() const{
-	return this->type_name;
 }
 
 bool Particle::isDead() const {
