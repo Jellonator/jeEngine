@@ -195,6 +195,11 @@ void Camera::disableViewport() const{
 const glm::mat4& Camera::getTranform() const{
 	// Update cache if needed(It's not that expensive of a calculation, but hey,
 	// it doesn't hurt to save on a few easy cycles
+	if (this->prev_x != this->x || this->prev_y != this->y){
+		this->need_update_transform = true;
+		this->prev_x = this->x;
+		this->prev_y = this->y;
+	}
 	if (need_update_transform){
 		this->need_update_transform = false;
 		
@@ -334,6 +339,22 @@ float Camera::getInternalTop() const{
 
 float Camera::getInternalBottom() const{
 	return this->bottom;
+}
+
+float Camera::getInternalWidth() const{
+	return this->getInternalRight()-this->getInternalLeft();
+}
+
+float Camera::getInternalHeight() const{
+	return this->getInternalBottom()-this->getInternalTop();
+}
+
+float Camera::getScaleX() const{
+	return this->scale_x;
+}
+
+float Camera::getScaleY() const{
+	return this->scale_y;
 }
 
 };};

@@ -74,6 +74,16 @@ bool Point::moveToLinear(float x, float y, float dt, float speed, float snap, fl
 	return false;
 }
 
+void Point::moveBy(float x, float y){
+	this->x += x;
+	this->y += y;
+}
+
+void Point::moveTo(float x, float y){
+	this->x = x;
+	this->y = y;
+}
+
 void Point::operator+=(const JE::Point& point){
 	this->x += point.getX();
 	this->y += point.getY();

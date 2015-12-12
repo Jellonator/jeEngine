@@ -11,6 +11,8 @@ class Point
 		float y;/**< \brief float y, the y position of the point. */
 		bool moveToSmooth(float x, float y, float speed = 20, float dt = dt, float snap = 1, float dead = 0);
 		bool moveToLinear(float x, float y, float speed = 20, float dt = dt, float snap = 1, float dead = 0);
+		void moveBy(float x, float y);
+		void moveTo(float x, float y);
 		
 		void set(float x, float y);
 		void setX(float value);

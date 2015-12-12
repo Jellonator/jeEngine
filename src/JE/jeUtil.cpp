@@ -20,7 +20,7 @@ std::string fileOpen(std::string file){
 		text += "JE: File ";
 		text += file;
 		text += " does not exist!";
-		return (char*)text.c_str();
+		return text;
 	}
 	while (getline (in,temp))
 	{

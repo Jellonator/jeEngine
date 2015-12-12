@@ -116,12 +116,15 @@ namespace EVENT{
 		MouseButton(int button, bool doubleclick = false);
 		virtual ~MouseButton();
 	};
+	enum MOUSEWHEEL{WHEEL_NONE,WHEEL_LEFT,WHEEL_RIGHT,WHEEL_UP,WHEEL_DOWN};
 	struct MouseWheel : public Event {public:
 		virtual void test(Input* input);
 		virtual void reset();
 
 		MouseWheel();
+		MouseWheel(MOUSEWHEEL wheel_direction);
 		virtual ~MouseWheel();
+		MOUSEWHEEL direction;
 	};
 	struct Window : public Event {public:
 		virtual void test(Input* input);

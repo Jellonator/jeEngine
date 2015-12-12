@@ -59,6 +59,11 @@ public:
 	float getInternalRight() const;
 	float getInternalTop() const;
 	float getInternalBottom() const;
+	float getInternalWidth() const;
+	float getInternalHeight() const;
+	
+	float getScaleX() const;
+	float getScaleY() const;
 	
 private:
 	float angle;
@@ -78,6 +83,8 @@ private:
 	
 	mutable bool need_update_transform;
 	mutable glm::mat4 transform_cache;
+	mutable float prev_x;
+	mutable float prev_y;
 	
 	bool do_clip;
 	SDL_Rect clip_rect;

@@ -124,12 +124,38 @@ namespace EVENT{
 	///EVENT MOUSE WHEEL
 	MouseWheel::~MouseWheel(){}
 	MouseWheel::MouseWheel() : Event(){
-
+		this->direction = MOUSEWHEEL::WHEEL_NONE;
+	}
+	MouseWheel::MouseWheel(MOUSEWHEEL wheel_direction) : Event(){
+		this->direction = wheel_direction;
 	}
 	void MouseWheel::test(SDL_Event* input){
 		if (input->type == SDL_MOUSEWHEEL){
 			this->x += input->wheel.x;
 			this->y += input->wheel.y;
+			
+			bool done_did_it = false;
+			switch(this->direction){
+				case MOUSEWHEEL::WHEEL_DOWN:
+					if (input->wheel.y < 0) done_did_it = true;
+					break;
+				case MOUSEWHEEL::WHEEL_LEFT:
+					if (input->wheel.x > 0) done_did_it = true;
+					break;
+				case MOUSEWHEEL::WHEEL_UP:
+					if (input->wheel.y > 0) done_did_it = true;
+					break;
+				case MOUSEWHEEL::WHEEL_RIGHT:
+					if (input->wheel.x < 0) done_did_it = true;
+					break;
+				default:
+					// Do nothing
+					break;
+			}
+			
+			if (done_did_it){
+				this->pressed = true;
+			}
 		}
 	}
 	void MouseWheel::reset(){
