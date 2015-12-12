@@ -43,7 +43,7 @@ void EmitterRenderer::drawBegin(const JE::GRAPHICS::Camera& camera){
 	JE::GRAPHICS::setColor(1, 1, 1);
 
 	JE::GL::Model& model = JE::GL::getDefaultModel();
-	JE::GL::Shader& shader = JE::GL::getDefaultShader();
+	//JE::GL::Shader& shader = JE::GL::getDefaultShader();
 	
 	model.bind();
 }
