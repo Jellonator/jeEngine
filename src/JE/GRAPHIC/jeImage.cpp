@@ -210,7 +210,9 @@ const glm::mat4& Image::getTransform() const{
 		glm::mat4x4 transform = glm::mat4();//camera;
 		transform = glm::translate(transform, glm::vec3(this->x, this->y, 0.0f));
 		transform = glm::translate(transform, glm::vec3( this->origin_x,  this->origin_y, 0.0f));
-		transform = glm::rotate(transform, this->angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		if (!JE::MATH::isClose(this->angle, 0.0f)) {
+			transform = glm::rotate(transform, this->angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		}
 		transform = glm::scale(transform, glm::vec3(scale_width, scale_height, 1.0f));
 		transform = glm::translate(transform, glm::vec3(-this->origin_x, -this->origin_y, 0.0f));
 		if (this->use_clip){
