@@ -195,39 +195,19 @@ const glm::mat4& Image::getTransform() const{
 		tex_w = this->texture->getWidth();
 		tex_h = this->texture->getHeight();
 	}
-	if (this->prev_x != this->x || this->prev_y != this->y) this->need_update_transform = true;
-	if (this->prev_image_w != tex_w || this->prev_image_h != tex_h) {
+	if (this->prev_x != this->x || this->prev_y != this->y
+	 || this->prev_image_w != tex_w || this->prev_image_h != tex_h) {
 		this->need_update_texcoord_transform = true;
 		this->need_update_transform = true;
-	}
-	
-	if (this->need_update_transform){
-		// Transformation for vertex positions
-		float scale_width = this->scale_x * (this->flip_x ? -1 : 1);
-		float scale_height = this->scale_y * (this->flip_y ? -1 : 1);
-		
-		// Get drawing transformations
-		glm::mat4x4 transform = glm::mat4();//camera;
-		transform = glm::translate(transform, glm::vec3(this->x, this->y, 0.0f));
-		transform = glm::translate(transform, glm::vec3( this->origin_x,  this->origin_y, 0.0f));
-		if (!JE::MATH::isClose(this->angle, 0.0f)) {
-			transform = glm::rotate(transform, this->angle, glm::vec3(0.0f, 0.0f, 1.0f));
-		}
-		transform = glm::scale(transform, glm::vec3(scale_width, scale_height, 1.0f));
-		transform = glm::translate(transform, glm::vec3(-this->origin_x, -this->origin_y, 0.0f));
-		if (this->use_clip){
-			transform = glm::scale(transform, glm::vec3(this->clip_rect.w, this->clip_rect.h, 1.0f));
-		} else {
-			transform = glm::scale(transform, glm::vec3(tex_w, tex_h, 1.0f));
-		}
-		
-		this->transform_cache = transform;
-		this->need_update_transform = false;
-		
 		this->prev_x = this->x;
 		this->prev_y = this->y;
 		this->prev_image_w = tex_w;
 		this->prev_image_h = tex_h;
+	}
+	
+	if (this->need_update_transform){
+		this->transform_cache = this->getTransformCustom(tex_w, tex_h, this->use_clip, this->clip_rect);
+		this->need_update_transform = false;
 	}
 	
 	return this->transform_cache;
@@ -247,37 +227,7 @@ const glm::mat4& Image::getTexcoordTransform() const{
 	}
 		
 	if (this->need_update_texcoord_transform){
-		// Source is texture coordinates
-		float source_x = 0;
-		float source_y = 0;
-		float source_width = tex_w;
-		float source_height = tex_h;
-		
-		if (this->use_clip){
-			source_x = this->clip_rect.x;
-			source_y = this->clip_rect.y;
-			source_width = this->clip_rect.w;
-			source_height = this->clip_rect.h;
-		}
-		
-		// Pad source
-		source_x += 0.5f;
-		source_y += 0.5f;
-		source_width -= 1.0f;
-		source_height -= 1.0f;
-		
-		glm::mat4 texcoord_transform = glm::mat4();
-		texcoord_transform = glm::translate(texcoord_transform, glm::vec3(
-			source_x/tex_w, 
-			source_y/tex_h, 
-			0.0f
-		));
-		texcoord_transform = glm::scale(texcoord_transform, glm::vec3(
-			source_width/tex_w,
-			source_height/tex_h,
-			1.0f
-		));
-		this->texcoord_transform_cache = texcoord_transform;
+		this->texcoord_transform_cache = this->getTexcoordTransformCustom(tex_w, tex_h, this->use_clip, this->clip_rect);
 		this->need_update_texcoord_transform = false;
 		
 		this->prev_image_w = tex_w;
@@ -298,14 +248,15 @@ glm::mat4 Image::getTransformCustom(int width, int height, bool custom_use_clip,
 		
 		// Get drawing transformations
 		glm::mat4x4 transform = glm::mat4();//camera;
-		transform = glm::translate(transform, glm::vec3(this->x, this->y, 0.0f));
 		transform = glm::translate(transform, glm::vec3( this->origin_x,  this->origin_y, 0.0f));
-		transform = glm::rotate(transform, this->angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		transform = glm::translate(transform, glm::vec3(this->x, this->y, 0.0f));
+		if (!JE::MATH::isClose(this->angle, 0.0f)) {
+			transform = glm::rotate(transform, this->angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		}
 		transform = glm::scale(transform, glm::vec3(scale_width, scale_height, 1.0f));
 		transform = glm::translate(transform, glm::vec3(-this->origin_x, -this->origin_y, 0.0f));
-		
-		if (custom_use_clip){
-			transform = glm::scale(transform, glm::vec3(custom_clip.w, custom_clip.h, 1.0f));
+		if (this->use_clip){
+			transform = glm::scale(transform, glm::vec3(this->clip_rect.w, this->clip_rect.h, 1.0f));
 		} else {
 			transform = glm::scale(transform, glm::vec3(width, height, 1.0f));
 		}
@@ -318,17 +269,16 @@ glm::mat4 Image::getTexcoordTransformCustom(int width, int height) const{
 }
 
 glm::mat4 Image::getTexcoordTransformCustom(int width, int height, bool custom_use_clip, const SDL_Rect& custom_clip) const{
-	// Source is texture coordinates
 	float source_x = 0;
 	float source_y = 0;
 	float source_width = width;
 	float source_height = height;
 	
-	if (custom_use_clip){
-		source_x = custom_clip.x;
-		source_y = custom_clip.y;
-		source_width = custom_clip.w;
-		source_height = custom_clip.h;
+	if (this->use_clip){
+		source_x = this->clip_rect.x;
+		source_y = this->clip_rect.y;
+		source_width = this->clip_rect.w;
+		source_height = this->clip_rect.h;
 	}
 	
 	// Pad source

@@ -10,8 +10,8 @@ namespace JE{ namespace GRAPHICS{
 SharedImage::SharedImage() : JE::GRAPHICS::Graphic(){
 	this->use_clip = false;
 	this->clip_rect = {0, 0, 1, 1};
-	this->ignore_cliprect = false;
-	this->ignore_texture = false;
+	this->ignore_cliprect = true;
+	this->ignore_texture = true;
 	this->need_update_texcoord_transform = true;
 }
 
@@ -67,6 +67,8 @@ void SharedImage::disableClipRect(){
 
 void SharedImage::drawMatrix(const glm::mat4& camera, float x, float y) const{
 	if (this->ignore_texture && this->texture == nullptr) return;
+	x += this->x;
+	y += this->y;
 	
 	std::vector<std::weak_ptr<JE::GRAPHICS::Image>>::iterator iter;
 	iter = this->image_vec.begin();
