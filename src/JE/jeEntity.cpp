@@ -9,6 +9,7 @@ Entity::Entity(){
 	this->_layer = 0;
 	this->_mask_ptr.reset(nullptr);
 	this->OnCreate();
+	this->_group = nullptr;
 }
 
 Entity::~Entity(){

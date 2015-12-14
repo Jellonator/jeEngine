@@ -82,6 +82,12 @@ void Canvas::unbind(){
 	glViewport(0, 0, w, h);
 }
 
+void Canvas::resize(int width, int height){
+	this->getTexture().reset(width, height);
+	this->render_width = width;
+	this->render_height = height;
+}
+
 Canvas::~Canvas(){
 	this->unbind();
 	glDeleteFramebuffers(1, &this->framebuffer_object);

@@ -40,6 +40,7 @@ public:
 	
 	const glm::mat4& getTranform() const;
 	void getPosition(float x, float y, float* ret_x, float* ret_y) const;
+	void getMousePosition(float* ret_x, float* ret_y) const;
 	float getLeft() const;
 	float getRight() const;
 	float getTop() const;
@@ -64,6 +65,9 @@ public:
 	
 	float getScaleX() const;
 	float getScaleY() const;
+	
+	const SDL_Rect& getClip() const;
+	bool isClipEnabled() const;
 	
 private:
 	float angle;

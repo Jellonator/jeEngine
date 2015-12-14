@@ -9,8 +9,8 @@ Texture::Texture(const std::string& file_name){
 	if (surface == nullptr) {
 		std::cout << SDL_GetError() << std::endl;
 		std::cout << IMG_GetError() << std::endl;
-		this->texture_width = 0;
-		this->texture_height = 0;
+		this->texture_width = 1;
+		this->texture_height = 1;
 		
 	} else {
 		glGenTextures(1, &this->texture_id);
@@ -47,13 +47,6 @@ Texture::Texture(const std::string& file_name){
 Texture::Texture(int width, int height){
 	glGenTextures(1, &this->texture_id);
 	glBindTexture(GL_TEXTURE_2D, this->texture_id);
-	
-	// Generate empty texture
-	/*int texture_size = width * height * 4;
-	GLubyte texture_data[texture_size];
-	for (auto& value : texture_data){
-		value = 0;
-	}*/
 	
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	
@@ -128,6 +121,60 @@ GLfloat Texture::getHeight() const{
 
 GLuint Texture::getTexture() const{
 	return this->texture_id;
+}
+
+void Texture::reset(SDL_Surface* surface){
+	bool do_free = false;
+	
+	if (surface->format->format != SDL_PIXELFORMAT_ABGR8888){
+		// Create a new surface that is guaranteed to have the correct format
+		SDL_Surface* new_surface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_ABGR8888, 0);
+		if (new_surface == nullptr){
+			std::cout << SDL_GetError() << std::endl;
+		}
+		surface = new_surface;
+		do_free = true;
+	}
+	
+	int Mode = GL_RGB;
+	if(surface->format->BytesPerPixel == 4) {
+		Mode = GL_RGBA;
+	}
+	
+	this->use();
+	glTexImage2D(GL_TEXTURE_2D, 0, Mode, surface->w, surface->h, 0, Mode, GL_UNSIGNED_BYTE, surface->pixels);
+	
+	this->texture_width = surface->w;
+	this->texture_height = surface->h;
+	
+	if (do_free){
+		// Note that this is only called when 'surface*' is reassigned.
+		SDL_FreeSurface(surface);
+	}
+}
+
+void Texture::reset(int width, int height){
+	this->use();
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	
+	this->texture_width = width;
+	this->texture_height = height;
+}
+
+void Texture::reset(const std::string& file_name){
+	SDL_Surface* surface = IMG_Load(file_name.c_str());
+	
+	if (surface == nullptr) {
+		std::cout << SDL_GetError() << std::endl;
+		std::cout << IMG_GetError() << std::endl;
+		this->texture_width = 1;
+		this->texture_height = 1;
+		
+	} else {
+		this->reset(surface);
+		
+		SDL_FreeSurface(surface);
+	}
 }
 
 }}

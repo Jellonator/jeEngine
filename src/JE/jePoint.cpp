@@ -180,6 +180,18 @@ float Point::getDistance(JE::Point& p){
 	return this->getDistance(p.x, p.y);
 }
 
+float Point::getAngle(){
+	return this->getAngle(0, 0);
+}
+
+float Point::getAngle(float x, float y){
+	return JE::MATH::getAngle(x, y, this->x, this->y);
+}
+
+float Point::getAngle(JE::Point& p){
+	return this->getAngle(p.x, p.y);
+}
+
 void Point::getAsInt(int* x, int* y) const{
 	if (x) *x = int(this->x);
 	if (y) *y = int(this->y);

@@ -51,6 +51,11 @@ class Point
 		float getDistance(float x, float y);
 		float getDistance(JE::Point& p);
 		
+		//angle
+		float getAngle();
+		float getAngle(float x, float y);
+		float getAngle(JE::Point& p);
+		
 	protected:
 	private:
 };

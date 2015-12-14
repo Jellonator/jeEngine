@@ -26,6 +26,11 @@ Image::Image() : JE::GRAPHICS::Graphic(){
 	this->clip_rect = {0, 0, 1, 1};
 	this->need_update_texcoord_transform = true;
 	this->need_update_transform = true;
+	
+	this->prev_x = this->x;
+	this->prev_y = this->y;
+	this->prev_image_w = 0;
+	this->prev_image_h = 0;
 }
 
 Image::Image(int width, int height) : Image(){
@@ -50,6 +55,11 @@ Image::Image(const Image& image){
 	this->clip_rect = image.clip_rect;
 	this->need_update_texcoord_transform = true;
 	this->need_update_transform = true;
+	
+	this->prev_x = this->x;
+	this->prev_y = this->y;
+	this->prev_image_w = 0;
+	this->prev_image_h = 0;	
 }
 
 Image::~Image(){
@@ -120,12 +130,20 @@ void Image::setClipRect(const SDL_Rect& rect){
 	this->need_update_texcoord_transform = true;
 }
 
+void setImageColor(float r, float g, float b, float a){
+	JE::GL::getDefaultImageShader().setUniform("in_Color", r, g, b, a);
+}
+
 void Image::disableClipRect(){
 	this->use_clip = false;
 	this->need_update_texcoord_transform = true;
 }
 
 const JE::GL::Texture& Image::getTexture() const{
+	return *this->texture;
+}
+
+JE::GL::Texture& Image::getTexture(){
 	return *this->texture;
 }
 
@@ -171,6 +189,18 @@ void Image::drawMatrix(const glm::mat4& camera, float x, float y) const{
 }
 
 const glm::mat4& Image::getTransform() const{
+	float tex_w = 1;
+	float tex_h = 1;
+	if (this->texture){
+		tex_w = this->texture->getWidth();
+		tex_h = this->texture->getHeight();
+	}
+	if (this->prev_x != this->x || this->prev_y != this->y) this->need_update_transform = true;
+	if (this->prev_image_w != tex_w || this->prev_image_h != tex_h) {
+		this->need_update_texcoord_transform = true;
+		this->need_update_transform = true;
+	}
+	
 	if (this->need_update_transform){
 		// Transformation for vertex positions
 		float scale_width = this->scale_x * (this->flip_x ? -1 : 1);
@@ -186,24 +216,35 @@ const glm::mat4& Image::getTransform() const{
 		if (this->use_clip){
 			transform = glm::scale(transform, glm::vec3(this->clip_rect.w, this->clip_rect.h, 1.0f));
 		} else {
-			transform = glm::scale(transform, glm::vec3(this->texture->getWidth(), this->texture->getHeight(), 1.0f));
+			transform = glm::scale(transform, glm::vec3(tex_w, tex_h, 1.0f));
 		}
 		
 		this->transform_cache = transform;
 		this->need_update_transform = false;
+		
+		this->prev_x = this->x;
+		this->prev_y = this->y;
+		this->prev_image_w = tex_w;
+		this->prev_image_h = tex_h;
 	}
 	
 	return this->transform_cache;
 }
 
 const glm::mat4& Image::getTexcoordTransform() const{
+	float tex_w = 1;
+	float tex_h = 1;
+	if (this->texture){
+		tex_w = this->texture->getWidth();
+		tex_h = this->texture->getHeight();
+	}
+	
+	if (this->prev_image_w != tex_w || this->prev_image_h != tex_h) {
+		this->need_update_texcoord_transform = true;
+		this->need_update_transform = true;
+	}
+		
 	if (this->need_update_texcoord_transform){
-		float tex_w = 1;
-		float tex_h = 1;
-		if (this->texture){
-			tex_w = this->texture->getWidth();
-			tex_h = this->texture->getHeight();
-		}
 		// Source is texture coordinates
 		float source_x = 0;
 		float source_y = 0;
@@ -236,6 +277,9 @@ const glm::mat4& Image::getTexcoordTransform() const{
 		));
 		this->texcoord_transform_cache = texcoord_transform;
 		this->need_update_texcoord_transform = false;
+		
+		this->prev_image_w = tex_w;
+		this->prev_image_h = tex_h;
 	}
 	
 	return this->texcoord_transform_cache;

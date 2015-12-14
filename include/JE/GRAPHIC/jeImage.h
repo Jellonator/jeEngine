@@ -11,6 +11,7 @@ public:
 	Image();
 	Image(const std::string& file);
 	Image(const Image& image);
+	Image(std::shared_ptr<JE::GL::Texture>& texture);
 	Image(int width, int height);
 	
 	void setAngle(float value);
@@ -35,6 +36,7 @@ public:
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 	
 	const JE::GL::Texture& getTexture() const;
+	JE::GL::Texture& getTexture();
 	bool hasTexture() const;
 	
 	const glm::mat4& getTransform() const;
@@ -65,6 +67,11 @@ private:
 	mutable bool need_update_texcoord_transform;
 	mutable glm::mat4 transform_cache;
 	mutable glm::mat4 texcoord_transform_cache;
+	mutable float prev_x;
+	mutable float prev_y;
+	mutable GLfloat prev_image_w;
+	mutable GLfloat prev_image_h;
 };
+void setImageColor(float r, float g, float b, float a = 1.0f);
 
 };};

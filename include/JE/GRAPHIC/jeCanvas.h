@@ -14,6 +14,7 @@ public:
 	const JE::GRAPHICS::Camera& getCamera() const;
 	void bind();
 	void unbind();
+	void resize(int width, int height);
 	
 private:
 	GLuint framebuffer_object;

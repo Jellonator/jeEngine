@@ -255,6 +255,29 @@ void Camera::getPosition(float x, float y, float* ret_x, float* ret_y) const{
 	if (ret_y) *ret_y = pos_y;
 }
 
+void Camera::getMousePosition(float* ret_x, float* ret_y) const{
+	int mouse_x, mouse_y;
+	int window_w, window_h;
+	int window_off_x = 0;
+	int window_off_y = 0;
+	
+	if (this->isClipEnabled()){
+		const SDL_Rect& rect = this->getClip();
+		window_w = rect.w;
+		window_h = rect.h;
+		window_off_x = rect.x;
+		window_off_y = rect.y;
+	} else {
+		SDL_GetWindowSize(JE::GRAPHICS::window, &window_w, &window_h);
+	}
+	
+	SDL_GetMouseState(&mouse_x, &mouse_y);
+	float mouse_xf = (float(mouse_x - window_off_x) / float(window_w)) * 2 - 1;
+	float mouse_yf = (float(mouse_y - window_off_y) / float(window_h)) * 2 - 1;
+	
+	this->getPosition(mouse_xf, mouse_yf, ret_x, ret_y);
+}
+
 float Camera::getLeft() const{
 	float ret;
 	this->getPosition(-1, 0, &ret, nullptr);
@@ -355,6 +378,34 @@ float Camera::getScaleX() const{
 
 float Camera::getScaleY() const{
 	return this->scale_y;
+}
+
+const SDL_Rect& Camera::getClip() const{
+	return this->clip_rect;
+}
+
+bool Camera::isClipEnabled() const{
+	return this->do_clip;
+}
+
+void Camera::setLeft(float value){
+	this->x = value - this->getLeft() + this->x;
+	this->need_update_transform = true;
+}
+
+void Camera::setRight(float value){
+	this->x = value - this->getRight() + this->x;
+	this->need_update_transform = true;
+}
+
+void Camera::setBottom(float value){
+	this->y = value - this->getBottom() + this->y;
+	this->need_update_transform = true;
+}
+
+void Camera::setTop(float value){
+	this->y = value - this->getTop() + this->y;
+	this->need_update_transform = true;
 }
 
 };};

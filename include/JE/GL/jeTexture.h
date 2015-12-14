@@ -19,6 +19,10 @@ public:
 	
 	void setFiltering(GLint min_filter, GLint max_filter);
 	
+	void reset(SDL_Surface* surface);
+	void reset(int width, int height);
+	void reset(const std::string& file_name);
+	
 	GLfloat getWidth() const;
 	GLfloat getHeight() const;
 	GLuint getTexture() const;
