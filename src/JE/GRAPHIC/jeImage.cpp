@@ -147,6 +147,10 @@ JE::GL::Texture& Image::getTexture(){
 	return *this->texture;
 }
 
+std::shared_ptr<JE::GL::Texture> Image::getTexturePtr(){
+	return this->texture;
+}
+
 bool Image::hasTexture() const{
 	return (this->texture != nullptr);
 }

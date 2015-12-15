@@ -37,6 +37,7 @@ public:
 	
 	const JE::GL::Texture& getTexture() const;
 	JE::GL::Texture& getTexture();
+	std::shared_ptr<JE::GL::Texture> getTexturePtr();
 	bool hasTexture() const;
 	
 	const glm::mat4& getTransform() const;

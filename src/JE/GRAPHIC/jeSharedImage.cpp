@@ -172,6 +172,9 @@ void SharedImage::drawMatrix(const glm::mat4& camera, float x, float y) const{
 }
 
 const glm::mat4& SharedImage::getTexcoordTransform() const{
+	if (this->image_manager){
+		return this->image_manager->getTexcoordTransform();
+	}
 	if (this->need_update_texcoord_transform){
 		float tex_w = 1;
 		float tex_h = 1;
@@ -221,6 +224,9 @@ glm::mat4 SharedImage::getTexcoordTransformCustom(int width, int height) const{
 }
 
 glm::mat4 SharedImage::getTexcoordTransformCustom(int width, int height, bool custom_use_clip, const SDL_Rect& custom_clip) const{
+	if (this->image_manager){
+		return this->image_manager->getTexcoordTransformCustom(width, height, custom_use_clip, custom_clip);
+	}
 	// Source is texture coordinates
 	float source_x = 0;
 	float source_y = 0;
@@ -269,6 +275,14 @@ void SharedImage::setIgnoreClip(bool value){
 
 void SharedImage::setIgnoreTexture(bool value){
 	this->ignore_texture = value;
+}
+
+void SharedImage::update(float dt){
+	if (this->image_manager){
+		this->image_manager->update(dt);
+		this->clip_rect = this->image_manager->getClipRect();
+		this->use_clip = this->image_manager->isClipEnabled();
+	}
 }
 
 }}

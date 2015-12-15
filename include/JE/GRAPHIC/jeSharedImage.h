@@ -32,9 +32,20 @@ public:
 	void setIgnoreTexture(bool value);
 	
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
+	virtual void update(float dt);
+	
+	template <class ImgType, class... ImgArgs>
+	ImgType& setManager(ImgArgs... args){
+		ImgType* ptr = new ImgType(args...);
 		
+		this->image_manager.reset(ptr);
+		
+		return *ptr;
+	}
+	
 private:
 	mutable std::vector<std::weak_ptr<JE::GRAPHICS::Image>> image_vec;
+	std::unique_ptr<JE::GRAPHICS::Image> image_manager;
 	bool ignore_texture;
 	bool ignore_cliprect;
 	
