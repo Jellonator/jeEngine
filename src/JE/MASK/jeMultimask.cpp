@@ -4,7 +4,10 @@
 namespace JE{ namespace MASK{
 
 Multimask::Multimask(int x, int y) : JE::MASK::MaskList(x, y){
-	
+	this->stored_left = 0;
+	this->stored_right = 0;
+	this->stored_top = 0;
+	this->stored_bottom = 0;
 }
 
 Multimask::~Multimask(){

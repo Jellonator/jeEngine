@@ -179,8 +179,7 @@ namespace MATH{
 	template <typename Type>
 	Type angleMix(Type from, Type to, double mix){
 		Type speed = JE::MATH::angleDifference(from, to) * mix;
-		Type angle = from;
-		angle = JE::MATH::angleTo(from, to, speed);
+		Type angle = JE::MATH::angleTo(from, to, speed);
 		return angle;
 	}
 };};

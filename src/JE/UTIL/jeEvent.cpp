@@ -169,6 +169,8 @@ namespace EVENT{
 		this->type = event;
 		this->use_data = false;
 		if (window == NULL) this->ID = 0; else this->ID = SDL_GetWindowID(window);
+		this->data1 = 0;
+		this->data2 = 0;
 	}
 	Window::Window(int event, int data1, int data2, SDL_Window* window) : Event(){
 		this->type = event;
@@ -206,6 +208,7 @@ namespace EVENT{
 		this->y1 = y1;
 		this->x2 = x2;
 		this->y2 = y2;
+		this->inside = true;
 	}
 	void MouseArea::test(SDL_Event* input){
 		if (input->type == SDL_MOUSEMOTION){
