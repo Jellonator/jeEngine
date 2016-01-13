@@ -7,7 +7,7 @@ Note that this engine is mostly just a wrapper for SDL2 and OpenGL 3.2.
 - SDL2
 - SDL2_image
 
-Current Version: 0.10.0
+Current Version: 0.11.0
 
 Features
 --------
@@ -53,6 +53,12 @@ Todo
 
 Update log
 --------
+### Version 0.11.0 ###
+- Mostly optimizations and fixes
+- Particle optimizations
+- Graphics optimizations
+- Added SharedImage(optimized image)
+
 ### Version 0.10.0 ###
 - Graphics now use OpenGL 3.2.
 - Camera is a lot less weird and awkward.
