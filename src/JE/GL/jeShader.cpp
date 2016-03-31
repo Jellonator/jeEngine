@@ -119,7 +119,9 @@ bool Shader::_addShader(const std::string& name, const std::string& source, GLen
 	int32_t shader_id = glCreateShader(shader_type);
 	glShaderSource(shader_id, 1, &shader_source, &shader_len);
 	glCompileShader(shader_id);
-	*shader_ret = shader_id;
+	if (shader_ret){
+		*shader_ret = shader_id;
+	}
 	
 	GLint did_error = 0;
 	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &did_error);
@@ -437,12 +439,29 @@ std::string default_circle_shader_fragment =
 "in vec2 ex_CirclePos;\n"
 "uniform vec4 in_Color;\n"
 "uniform float in_RadiusInner;\n"
+"uniform float in_AngleA;"
+"uniform float in_AngleB;"
 "void main(void) {\n"
 "	float position = ex_CirclePos.x*ex_CirclePos.x + ex_CirclePos.y* ex_CirclePos.y;\n"
 "	float radius = in_RadiusInner*in_RadiusInner;\n"
 "	if (position <= 1.0"
 "	 && position > radius){"
-"		gl_FragColor = in_Color;\n"
+"		bool is_in_range = false;"
+"		if (in_AngleB - in_AngleA >= 359.99){"
+"			is_in_range = true;"
+"		} else {"
+"			float angle = degrees(atan(ex_CirclePos.y, ex_CirclePos.x));"
+"			if ((angle     >= in_AngleA && angle     <= in_AngleB)"//these checks are pretty cheap, just throw a bunch in to cover a larger range
+"			 || (angle+360 >= in_AngleA && angle+360 <= in_AngleB)"
+"			 || (angle-360 >= in_AngleA && angle-360 <= in_AngleB)) {"
+"				is_in_range = true;"
+"			}"
+"		}"
+"		if (is_in_range){"
+"			gl_FragColor = in_Color;\n"
+"		} else {"
+"			gl_FragColor = vec4(0);\n"
+"		}"
 "	} else {"
 "		gl_FragColor = vec4(0);\n"
 "	}"
@@ -469,6 +488,12 @@ Shader& getDefaultCircleShader(){
 		}
 		if (!default_circle_shader->setUniform("in_RadiusInner", 0.0f)){
 			std::cout << "Failed to set inner radius" << std::endl;
+		}
+		if (!default_circle_shader->setUniform("in_AngleA", 0.0f)){
+			std::cout << "Failed to set first angle" << std::endl;
+		}
+		if (!default_circle_shader->setUniform("in_AngleB", 360.0f)){
+			std::cout << "Failed to set second angle" << std::endl;
 		}
 	}
 	

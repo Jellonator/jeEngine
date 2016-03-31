@@ -45,8 +45,12 @@ const JE::GRAPHICS::Camera& Canvas::getCamera() const{
 }
 
 void Canvas::clear(){
+	this->clear(0,0,0,0);
+}
+
+void Canvas::clear(float r, float g, float b, float a){
 	this->bind();
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClearColor(r, g, b, a);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(backcolor.r, backcolor.g, backcolor.b, backcolor.a);
@@ -66,6 +70,10 @@ void Canvas::drawGraphic(const JE::GRAPHICS::Graphic& graphic, const glm::mat4& 
 	graphic.drawMatrix(matrix, x, y);
 	
 	this->unbind();
+}
+
+void Canvas::drawGraphic(const JE::GRAPHICS::Graphic& graphic, float x, float y){
+	this->drawGraphic(graphic, this->getCamera(), x, y);
 }
 
 void Canvas::bind(){

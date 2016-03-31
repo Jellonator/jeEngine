@@ -13,6 +13,7 @@ public:
 	Image(const Image& image);
 	Image(std::shared_ptr<JE::GL::Texture>& texture);
 	Image(int width, int height);
+	Image(SDL_Surface* surface);
 	
 	void setAngle(float value);
 	void addAngle(float value);
@@ -24,6 +25,7 @@ public:
 	void setFlipX(bool value);
 	void setFlipY(bool value);
 	void setOrigin(float x, float y);
+	void centerOrigin();
 	
 	void loadImage(const std::string& file_name);
 	void setClipRect(int x, int y, int width, int height);

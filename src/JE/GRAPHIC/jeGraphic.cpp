@@ -125,6 +125,18 @@ void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radi
 	
 	model.draw();
 }
+
+void setCircleAngleBounds(float angle1, float angle2){
+	JE::GL::Shader& shader = JE::GL::getDefaultCircleShader();
+	shader.setUniform("in_AngleA", angle1);
+	shader.setUniform("in_AngleB", angle2);
+}
+
+void resetCircleAngleBounds(){
+	setCircleAngleBounds(0, 360);
+}
+
+
 /*
 void drawImgRectStretch(Image& image, float x, float y, float w, float h, float tileWidth, float tileHeight){
 //store texture width

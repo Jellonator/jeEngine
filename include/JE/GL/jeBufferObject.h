@@ -1,10 +1,9 @@
 #pragma once
-
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <vector>
 
 namespace JE{namespace GL{
-
 
 template <class Type>
 class BufferObject{

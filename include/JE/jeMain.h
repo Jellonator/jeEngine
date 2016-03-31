@@ -1,4 +1,5 @@
 #pragma once
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -14,7 +15,7 @@ enum JE_EVENTCOMPARE_MODE{JE_EVENTCOMPARE_TYPE,JE_EVENTCOMPARE_FULL,JE_EVENTCOMP
 namespace JE{
 
 /** \brief Initiates the global window and renderer.
- * \param name std::string, The name of the window.
+ * \param name std::stri6ng, The name of the window.
  * \param 640 int w, the width of the window.
  * \param 480 int h, the height of the window.
  * \param 0 int wflags, the SDL window flags.

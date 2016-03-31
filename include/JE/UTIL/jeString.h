@@ -4,7 +4,7 @@
 namespace JE{
 	namespace STRING{
 		template <class Type>
-		std::string toString(Type value){
+		std::string toString(Type value, bool commas = true){
 			std::stringstream ss;
 			ss << value;
 			std::string ret = ss.str();
@@ -14,9 +14,11 @@ namespace JE{
 			if (i == ret.npos) i = ret.size()-1;
 			i -= 2;
 			
-			while (i > 0 && i < ret.size()){
-				ret.insert(i, ",");
-				i -= 3;
+			if (commas){
+				while (i > 0 && i < ret.size()){
+					ret.insert(i, ",");
+					i -= 3;
+				}
 			}
 			
 			return ret;

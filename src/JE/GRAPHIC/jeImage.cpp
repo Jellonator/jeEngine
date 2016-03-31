@@ -42,6 +42,10 @@ Image::Image(const std::string& file_name) : Image(){
 	//std::cout << JE::fileOpen(file_name) << std::endl;
 }
 
+Image::Image(SDL_Surface* surface) : Image(){
+	this->texture = std::make_shared<JE::GL::Texture>(surface);
+}
+
 Image::Image(const Image& image){
 	this->texture = image.texture;
 	this->flip_x = image.flip_x;
@@ -114,6 +118,11 @@ void Image::setOrigin(float x, float y){
 	this->origin_x = x;
 	this->origin_y = y;
 	this->need_update_transform = true;
+}
+
+void Image::centerOrigin(){
+	this->setOrigin(this->texture->getWidth()/2, this->texture->getHeight()/2);
+	this->set(-this->texture->getWidth()/2, -this->texture->getHeight()/2);
 }
 
 void Image::setClipRect(int x, int y, int width, int height){

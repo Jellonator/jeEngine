@@ -71,6 +71,8 @@ void drawLine(const JE::GRAPHICS::Camera& camera, float x1, float y1, float x2, 
 
 void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radius);
 void drawCircle(const JE::GRAPHICS::Camera& camera, float x, float y, float radius, float thickness);
+void setCircleAngleBounds(float angle1, float angle2);
+void resetCircleAngleBounds();
 
 class Image;
 void drawImgRectStretch(Image& image, float x, float y, float w, float h, float tileWidth, float tileHeight);/**< \brief experimental */
