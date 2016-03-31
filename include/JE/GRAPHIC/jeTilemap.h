@@ -7,60 +7,77 @@
 #include <vector>
 
 namespace JE{namespace GRAPHICS{
-class Tileset;
-class Tilemap;
+
 class Tileset{
 public:
-	Tileset(std::string file, int twidth, int theight, int offsetX = 0, int offsetY = 0, int spaceX = 0, int spaceY = 0);
-	//Tileset(Tilemap* parent, std::string file, int twidth, int theight, int offsetX = 0, int offsetY = 0, int spaceX = 0, int spaceY = 0);
-	//void load(std::string file, int twidth, int theight, int offsetX = 0, int offsetY = 0, int spaceX = 0, int spaceY = 0);
-	virtual ~Tileset();
-	void newTile(int x, int y, int ID = -1);
-	void newFreeformTile(int x, int y, int w, int h, int ID = -1);
-	void drawFreeformTile(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, float sx = 1, float sy = 1);
-	void drawTileID(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, int parentTileWidth = -1, int parentTileHeight = -1);
-	void drawTile(const JE::GRAPHICS::Camera& camera, int tilex, int tiley, int x, int y, int parentTileWidth = -1, int parentTileHeight = -1);
-	void drawTileRect(const JE::GRAPHICS::Camera& camera, int tilex, int tiley, int x, int y, int w, int h, int parentTileWidth = -1, int parentTileHeight = -1);
-	void drawTileRectID(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, int w, int h, int parentTileWidth = -1, int parentTileHeight = -1);
+	Tileset(const std::string& file,
+		int tile_width, int tile_height,
+		int offset_x = 0, int offset_y = 0,
+		int space_x = 0, int space_y = 0);
+		
+	Tileset(SDL_Surface* surface,
+		int tile_width, int tile_height,
+		int offset_x = 0, int offset_y = 0,
+		int space_x = 0, int space_y = 0);
+		
+	Tileset(std::shared_ptr<JE::GL::Texture>& texture,
+		int tile_width, int tile_height,
+		int offset_x = 0, int offset_y = 0,
+		int space_x = 0, int space_y = 0);
+	
+	SDL_Rect getRect(int x, int y) const;
+	SDL_Rect getRectId(int id, int width) const;
+	int getWidth() const;
+	int getHeight() const;
+	int getTileWidth() const;
+	int getTileheight() const;
+	
+	std::shared_ptr<JE::GL::Texture>& getTexture();
+	
 private:
-	int tileWidth;
-	int tileHeight;
-	int tileOffsetX;
-	int tileOffsetY;
-	int tileSpaceX;
-	int tileSpaceY;
-	Image image;
-	std::vector<SDL_Rect> tiles;
+	int tile_width;
+	int tile_height;
+	int offset_x;
+	int offset_y;
+	int space_x;
+	int space_y;
+	std::shared_ptr<JE::GL::Texture> texture;
+	
+	//private constructor
+	Tileset(int tile_width, int tile_height,
+		int offset_x = 0, int offset_y = 0,
+		int space_x = 0, int space_y = 0);
 };
 
-class Tilemap : public Canvas
-{
+class TilemapTile {
 public:
-	Tilemap(int width, int height, int twidth, int theight, int offsetX=0, int offsetY=0, int spaceX=0, int spaceY=0);
-	virtual ~Tilemap();
+	TilemapTile(int width, int height);
+	SDL_Rect& getRect();
+	bool isEmpty();
 	
-	std::shared_ptr<Tileset> newTileset(const std::string& name, const std::string& file, 
-	int tWidth=-1, int tHeight=-1, int offsetX=-1, int offsetY=-1, int spaceX=-1, int spaceY=-1);
-	std::shared_ptr<Tileset> addTileset(const std::string& name, std::shared_ptr<Tileset> tileset);
+	void setRect(SDL_Rect& rect);
+	void setEmpty(bool empty);
 	
-	void newTile(const std::string& tileset, int x, int y, int ID = -1);
-	void newFreeformTile(const std::string& tileset, int x, int y, int w, int h, int ID = -1);
+	bool empty;
+	SDL_Rect rect;
+};
+
+class TilemapLayer : public Graphic {
+public:
+	TilemapLayer(std::shared_ptr<Tileset>& tileset, int width, int height);
+	TilemapLayer(std::shared_ptr<Tileset>& tileset, int width, int height, int tile_width, int tile_height);
+	virtual ~TilemapLayer();
 	
-	void drawTile(const std::string& tileset, int tile, int x, int y);
-	void drawTile(const std::string& tileset, int tilex, int tiley, int x, int y);
-	void drawTileRect(const std::string& tileset, int tilex, int tiley, int x, int y, int w, int h);
-	void drawTileRect(const std::string& tileset, int tile, int x, int y, int w, int h);
-	void drawFreeformTile(const std::string& tileset, int tile, float x, float y, float sx = 1, float sy = 1);
+	virtual void update(float dt);
+	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 	
 private:
-	std::map<std::string, std::shared_ptr<Tileset>> tilesets;
-	int tileWidth;
-	int tileHeight;
-	int tileOffsetX;
-	int tileOffsetY;
-	int tileSpaceX;
-	int tileSpaceY;
-	int widthInTiles;
-	int heightInTiles;
+	std::shared_ptr<Tileset> tileset;
+	std::vector<std::vector<TilemapTile>> tiles;
+	int tile_width;
+	int tile_height;
+	int width;
+	int height;
 };
+
 };};

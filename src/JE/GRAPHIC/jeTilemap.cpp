@@ -1,165 +1,105 @@
 #include "JE/GRAPHIC/jeTilemap.h"
 #include <iostream>
 
+
+
 namespace JE{namespace GRAPHICS{
-Tileset::Tileset(std::string file, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY) : image(file){
-	//this->load(file, twidth, theight, offsetX, offsetY, spaceX, spaceY);
-	this->tileWidth = twidth;
-	this->tileHeight = theight;
-	this->tileOffsetX = offsetX;
-	this->tileOffsetY = offsetY;
-	this->tileSpaceX = spaceX;
-	this->tileSpaceY = spaceY;
+
+//Tileset
+Tileset::Tileset(const std::string& file, int tile_width, int tile_height,
+	int offset_x, int offset_y, int space_x, int space_y)
+	: Tileset(tile_width, tile_height, offset_x, offset_y, space_x, space_y){
+	this->texture = std::make_shared<JE::GL::Texture>(file);
+}
+		
+Tileset::Tileset(SDL_Surface* surface, int tile_width, int tile_height,
+	int offset_x, int offset_y, int space_x, int space_y)
+	: Tileset(tile_width, tile_height, offset_x, offset_y, space_x, space_y){
+	this->texture = std::make_shared<JE::GL::Texture>(surface);
+}
+		
+Tileset::Tileset(std::shared_ptr<JE::GL::Texture>& texture, int tile_width, int tile_height,
+	int offset_x, int offset_y, int space_x, int space_y)
+	: Tileset(tile_width, tile_height, offset_x, offset_y, space_x, space_y){
+	this->texture = texture;
 }
 
-//void Tileset::load(std::string file, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY){
-//	this->image.loadImage(file);
-//}
-
-void Tileset::newTile(int x, int y, int ID){
-	this->newFreeformTile(
-		x*this->tileWidth + this->tileOffsetX + x*this->tileSpaceX,
-		y*this->tileHeight + this->tileOffsetY + y*this->tileSpaceY,
-		this->tileWidth, this->tileHeight, ID);
+Tileset::Tileset(int tile_width, int tile_height, int offset_x, int offset_y, int space_x, int space_y) : 
+	tile_width(tile_width),
+	tile_height(tile_height),
+	offset_x(offset_x),
+	offset_y(offset_y),
+	space_x(space_x),
+	space_y(space_y){
+	
 }
 
-void Tileset::newFreeformTile(int x, int y, int w, int h, int ID){
-	if (ID < 0) ID = this->tiles.size();
-	this->tiles.resize(std::max((int)this->tiles.size(),ID+1));
-	this->tiles[ID] = {x, y, w, h};
+SDL_Rect Tileset::getRect(int x, int y) const{
+	SDL_Rect ret = {
+		x * (this->tile_width + this->space_x) + this->offset_x, 
+		y * (this->tile_height+ this->space_y) + this->offset_y, 
+		this->tile_width, 
+		this->tile_height
+	};
+	
+	return ret;
 }
 
-void Tileset::drawFreeformTile(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, float sx, float sy){
-	this->image.setClipRect(this->tiles[tile]);
-	this->image.setScale(sx, sy);
-	this->image.draw(camera, x, y);
+SDL_Rect Tileset::getRectId(int id, int width) const{
+	int ix = id % width;
+	int iy = id / width;
+	return this->getRect(ix, iy);
 }
 
-void Tileset::drawTileID(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, int parentTileWidth, int parentTileHeight){
-	SDL_Rect& rect = this->tiles[tile];
-	this->image.setClipRect(rect);
-	int tox, toy;
-	if (parentTileWidth > 0 && parentTileHeight > 0){
-		this->image.setScale(float(parentTileWidth)/float(rect.w), float(parentTileWidth)/float(rect.h));
-		tox = x * parentTileWidth;
-		toy = y * parentTileHeight;
-	}else{
-		this->image.setScale(1);
-		tox = x * this->tileWidth;
-		toy = y * this->tileHeight;
-	}
-	this->image.draw(camera, tox, toy);
+int Tileset::getWidth() const{
+	return this->texture->getWidth();
 }
 
-void Tileset::drawTile(const JE::GRAPHICS::Camera& camera, int tilex, int tiley, int x, int y, int parentTileWidth, int parentTileHeight){
-	SDL_Rect rect;
-	rect.x = tilex*this->tileWidth + this->tileOffsetX + tilex*this->tileSpaceX;
-	rect.y = tiley*this->tileHeight + this->tileOffsetY + tiley*this->tileSpaceY;
-	rect.w = this->tileWidth;
-	rect.h = this->tileHeight;
-	this->image.setClipRect(rect);
-	int tox, toy;
-	if (parentTileWidth > 0 && parentTileHeight > 0){
-		this->image.setScale(float(parentTileWidth)/float(rect.w), float(parentTileWidth)/float(rect.h));
-		tox = x * parentTileWidth;
-		toy = y * parentTileHeight;
-	}else{
-		this->image.setScale(1);
-		tox = x * this->tileWidth;
-		toy = y * this->tileHeight;
-	}
-	this->image.draw(camera, tox, toy);
+int Tileset::getHeight() const{
+	return this->texture->getHeight();
 }
 
-void Tileset::drawTileRectID(const JE::GRAPHICS::Camera& camera, int tile, int x, int y, int w, int h, int parentTileWidth, int parentTileHeight){
-	for (int ix = x; ix < x + w; ix ++){
-	for (int iy = y; iy < y + h; iy ++){
-		this->drawTileID(camera, tile, ix, iy, parentTileWidth, parentTileHeight);
-	}
-	}
+int Tileset::getTileWidth() const{
+	return this->tile_width;
 }
 
-void Tileset::drawTileRect(const JE::GRAPHICS::Camera& camera, int tilex, int tiley, int x, int y, int w, int h, int parentTileWidth, int parentTileHeight){
-	for (int ix = x; ix < x + w; ix ++){
-	for (int iy = y; iy < y + h; iy ++){
-		this->drawTile(camera, tilex, tiley, ix, iy, parentTileWidth, parentTileHeight);
-	}
-	}
+int Tileset::getTileheight() const{
+	return this->tile_height;
 }
 
-Tileset::~Tileset(){
-
+std::shared_ptr<JE::GL::Texture>& Tileset::getTexture(){
+	return this->texture;
 }
 
-Tilemap::Tilemap(int width, int height, int twidth, int theight, int offsetX, int offsetY, int spaceX, int spaceY) : Canvas(width*twidth, height*theight){
-	this->widthInTiles = width;
-	this->heightInTiles = height;
-	this->tileWidth = twidth;
-	this->tileHeight = theight;
-	this->tileOffsetX = offsetX;
-	this->tileOffsetY = offsetY;
-	this->tileSpaceX = spaceX;
-	this->tileSpaceY = spaceY;
+//Tilemap tile
+TilemapTile::TilemapTile(int width, int height):
+	empty(true),
+	rect({0,0,width,height}){}
+
+//Tilemap Layer
+TilemapLayer::TilemapLayer(std::shared_ptr<Tileset>& tileset, int width, int height) : 
+	TilemapLayer(tileset, width, height, tileset->getTileWidth(), tileset->getTileheight()){}
+
+TilemapLayer::TilemapLayer(std::shared_ptr<Tileset>& tileset, int width, int height, int tile_width, int tile_height) : 
+	tile_width(tile_width),
+	tile_height(tile_height),
+	width(width),
+	height(height),
+	tileset(tileset),
+	tiles(width, std::vector<TilemapTile>(height, TilemapTile(tile_width, tile_height))){
+	
 }
 
-Tilemap::~Tilemap(){
-	//for (unsigned int i = 0; i < this->tilesets.size(); i ++){
-	//	this->tilesets[i]->kill(this);
-	//}
-	//this->tilesets.clear();
+TilemapLayer::~TilemapLayer(){
+	
 }
 
-std::shared_ptr<Tileset> Tilemap::newTileset(const std::string& name, const std::string& file, int tWidth, int tHeight, int offsetX, int offsetY, int spaceX, int spaceY){
-	if (tWidth <= 0) tWidth = this->tileWidth;
-	if (tHeight <= 0) tHeight = this->tileHeight;
-	if (offsetX <= 0) offsetX = this->tileOffsetX;
-	if (offsetY <= 0) offsetY = this->tileOffsetY;
-	if (spaceX <= 0) spaceX = this->tileSpaceX;
-	if (spaceY <= 0) spaceY = this->tileSpaceY;
-	//Tileset* tileset = new Tileset(this, file, tWidth, tHeight, offsetX, offsetY, spaceX, spaceY);
-	//return this->addTileset(tileset, ID);
-	auto tileset = std::make_shared<Tileset>(file, tWidth, tHeight, offsetX, offsetY, spaceX, spaceY);
-	return this->addTileset(name, tileset);
+void TilemapLayer::update(float dt){
+	
 }
 
-std::shared_ptr<Tileset> Tilemap::addTileset(const std::string& name, std::shared_ptr<Tileset> tileset){
-	this->tilesets[name] = tileset;
-	return tileset;
+void TilemapLayer::drawMatrix(const glm::mat4& camera, float x, float y) const{
+	
 }
 
-void Tilemap::newFreeformTile(const std::string& tileset, int x, int y, int w, int h, int ID){
-	this->tilesets[tileset]->newFreeformTile(x, y, w, h, ID);
-}
-
-void Tilemap::newTile(const std::string& tileset, int x, int y, int ID){
-	this->tilesets[tileset]->newTile(x, y, ID);
-}
-
-void Tilemap::drawFreeformTile(const std::string& tileset, int tile, float x, float y, float sx, float sy){
-	this->bind();
-	this->tilesets[tileset]->drawFreeformTile(this->getCamera(), tile, x, y, sx, sy);
-	this->unbind();
-}
-
-void Tilemap::drawTile(const std::string& tileset, int tile, int x, int y){
-	this->bind();
-	this->tilesets[tileset]->drawTileID(this->getCamera(), tile, x, y, this->tileWidth, this->tileHeight);
-	this->unbind();
-}
-
-void Tilemap::drawTileRect(const std::string& tileset, int tile, int x, int y, int w, int h){
-	this->bind();
-	this->tilesets[tileset]->drawTileRectID(this->getCamera(), tile, x, y, w, h, this->tileWidth, this->tileHeight);
-	this->unbind();
-}
-void Tilemap::drawTile(const std::string& tileset, int tilex, int tiley, int x, int y){
-	this->bind();
-	this->tilesets[tileset]->drawTile(this->getCamera(), tilex, tiley, x, y, this->tileWidth, this->tileHeight);
-	this->unbind();
-}
-void Tilemap::drawTileRect(const std::string& tileset, int tilex, int tiley, int x, int y, int w, int h){
-	this->bind();
-	this->tilesets[tileset]->drawTileRect(this->getCamera(), tilex, tiley, x, y, w, h, this->tileWidth, this->tileHeight);
-	this->unbind();
-}
 };};
