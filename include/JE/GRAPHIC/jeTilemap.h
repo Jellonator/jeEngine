@@ -2,6 +2,7 @@
 #include "jeCanvas.h"
 #include "../jeMain.h"
 #include "../jeUtil.h"
+#include "../GL/jeModel.h"
 #include <memory>
 #include <map>
 #include <vector>
@@ -72,12 +73,12 @@ public:
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 	
 private:
-	std::shared_ptr<Tileset> tileset;
-	std::vector<std::vector<TilemapTile>> tiles;
 	int tile_width;
 	int tile_height;
 	int width;
 	int height;
+	std::shared_ptr<Tileset> tileset;
+	std::vector<std::vector<TilemapTile>> tiles;
 };
 
 };};

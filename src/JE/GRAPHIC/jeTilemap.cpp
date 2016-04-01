@@ -31,7 +31,6 @@ Tileset::Tileset(int tile_width, int tile_height, int offset_x, int offset_y, in
 	offset_y(offset_y),
 	space_x(space_x),
 	space_y(space_y){
-	
 }
 
 SDL_Rect Tileset::getRect(int x, int y) const{
@@ -74,7 +73,24 @@ std::shared_ptr<JE::GL::Texture>& Tileset::getTexture(){
 //Tilemap tile
 TilemapTile::TilemapTile(int width, int height):
 	empty(true),
-	rect({0,0,width,height}){}
+	rect({0,0,width,height}){
+}
+
+SDL_Rect& TilemapTile::getRect(){
+	return this->rect;
+}
+
+bool TilemapTile::isEmpty(){
+	return this->empty;
+}
+
+void TilemapTile::setRect(SDL_Rect& rect){
+	this->rect = rect;
+}
+
+void TilemapTile::setEmpty(bool empty){
+	this->empty = empty;
+}
 
 //Tilemap Layer
 TilemapLayer::TilemapLayer(std::shared_ptr<Tileset>& tileset, int width, int height) : 
