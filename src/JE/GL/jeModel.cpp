@@ -121,13 +121,12 @@ void Model::setDrawMode(GLenum mode){
 
 void Model::draw(){
 	if (this->shader_reference == nullptr) return;
-	
 	this->bind();
 	
 	glDrawElements(
 		this->draw_mode,
 		this->buffer_elements.getBufferSize(),
-		GL_UNSIGNED_INT,
+		GL_UNSIGNED_INT, 
 		0
 	);
 }

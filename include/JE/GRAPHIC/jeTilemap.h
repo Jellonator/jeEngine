@@ -32,7 +32,7 @@ public:
 	int getWidth() const;
 	int getHeight() const;
 	int getTileWidth() const;
-	int getTileheight() const;
+	int getTileHeight() const;
 	
 	std::shared_ptr<JE::GL::Texture>& getTexture();
 	
@@ -72,6 +72,9 @@ public:
 	void setTile(int x, int y, int tile_x, int tile_y);
 	void emptyTile(int x, int y);
 	
+	const glm::mat4& getTransform() const;
+	const glm::mat4& getTexcoordTransform() const;
+	
 private:
 	void updateModel() const;
 	
@@ -79,10 +82,21 @@ private:
 	int tile_height;
 	int width;
 	int height;
+	
 	std::shared_ptr<Tileset> tileset;
 	std::vector<std::vector<TilemapTile>> tiles;
+	
 	mutable JE::GL::Model model;
 	mutable bool need_update_model;
+	
+	mutable bool need_update_transform;
+	mutable bool need_update_texcoord_transform;
+	mutable glm::mat4 transform_cache;
+	mutable glm::mat4 texcoord_transform_cache;
+	mutable float prev_x;
+	mutable float prev_y;
+	mutable GLfloat prev_image_w;
+	mutable GLfloat prev_image_h;
 };
 
 };};
