@@ -46,10 +46,23 @@ SDL_Rect Tileset::getRect(int x, int y) const{
 	return ret;
 }
 
-SDL_Rect Tileset::getRectId(int id, int width) const{
+SDL_Rect Tileset::getRectId(int id) const{
+	int width = this->getWidthInTiles();
+	
 	int ix = id % width;
 	int iy = id / width;
 	return this->getRect(ix, iy);
+}
+
+SDL_Point Tileset::getTileId(int id) const{
+	int width = this->getWidthInTiles();
+	
+	SDL_Point ret = {
+		id % width, // x
+		id / width  // y
+	};
+	
+	return ret;
 }
 
 int Tileset::getWidth() const{
@@ -66,6 +79,18 @@ int Tileset::getTileWidth() const{
 
 int Tileset::getTileHeight() const{
 	return this->tile_height;
+}
+
+int Tileset::getWidthInTiles() const {
+	return this->getWidth() / (this->tile_width+this->space_x);
+}
+
+int Tileset::getHeightInTiles() const{
+	return this->getHeight() / (this->tile_height+this->space_y);
+}
+
+int Tileset::getNumTiles() const{
+	return this->getWidthInTiles() * this->getHeightInTiles();
 }
 
 std::shared_ptr<JE::GL::Texture>& Tileset::getTexture(){
@@ -96,7 +121,7 @@ in vec2 ex_Texcoord;
 uniform sampler2D texture;
 uniform vec4 in_Color;
 void main(void) {
-	gl_FragColor = in_Color * vec4(texture2D(texture, ex_Texcoord).xyz, 1);
+	gl_FragColor = in_Color * texture2D(texture, ex_Texcoord);
 }
 );
 
@@ -107,26 +132,42 @@ in vec2 vx_Texcoord[];
 out vec2 ex_Texcoord;
 uniform mat4 in_Transform;
 uniform mat4 in_TexcoordTransform;
+uniform float in_Width;
+uniform float in_Height;
 void main(){
 	for(int i = 0; i < gl_in.length(); i++){
 		 // copy attributes
 		vec4 pos = gl_in[i].gl_Position;
 		vec4 texc = vec4(vx_Texcoord[i].xy, 1.0, 1.0);
 		
+		float w_scale = 1;
+		float x_pos = 0;
+		if (in_Width > 1){
+			x_pos = 1 / in_Width;
+			w_scale = (in_Width - 1) / in_Width;
+		}
+		
+		float h_scale = 1;
+		float y_pos = 0;
+		if (in_Height > 1){
+			y_pos = 1 / in_Height;
+			h_scale = (in_Height - 1) / in_Height;
+		}
+		
 		gl_Position = in_Transform * (pos + vec4(0.0, 0.0, 0, 0));
-		ex_Texcoord = (in_TexcoordTransform * (texc + vec4(0.0, 0.0, 0.0, 0.0))).xy;
+		ex_Texcoord = (in_TexcoordTransform * (texc + vec4(  x_pos, y_pos, 0.0, 0.0))).xy;
 		EmitVertex();
 		
 		gl_Position = in_Transform * (pos + vec4(1.0, 0.0, 0, 0));
-		ex_Texcoord = (in_TexcoordTransform * (texc + vec4(1.0, 0.0, 0.0, 0.0))).xy;
+		ex_Texcoord = (in_TexcoordTransform * (texc + vec4(w_scale, y_pos, 0.0, 0.0))).xy;
 		EmitVertex();
 		
 		gl_Position = in_Transform * (pos + vec4(0.0, 1.0, 0, 0));
-		ex_Texcoord = (in_TexcoordTransform * (texc + vec4(0.0, 1.0, 0.0, 0.0))).xy;
+		ex_Texcoord = (in_TexcoordTransform * (texc + vec4(  x_pos, h_scale, 0.0, 0.0))).xy;
 		EmitVertex();
 		
 		gl_Position = in_Transform * (pos + vec4(1.0, 1.0, 0, 0));
-		ex_Texcoord = (in_TexcoordTransform * (texc + vec4(1.0, 1.0, 0.0, 0.0))).xy;
+		ex_Texcoord = (in_TexcoordTransform * (texc + vec4(w_scale, h_scale, 0.0, 0.0))).xy;
 		EmitVertex();
 		
 		EndPrimitive();
@@ -150,6 +191,12 @@ JE::GL::Shader& getTilemapShader(){
 		if (!tilemap_shader->setUniform("in_Color", 1.0f, 1.0f, 1.0f, 1.0f)){
 			std::cout << "Failed to set tilemap color!" << std::endl;
 		}
+		if (!tilemap_shader->setUniform("in_Width", 1.0f)){
+			std::cout << "Failed to set tilemap width!" << std::endl;
+		}
+		if (!tilemap_shader->setUniform("in_Height", 1.0f)){
+			std::cout << "Failed to set tilemap height!" << std::endl;
+		}
 		if (!tilemap_shader->setUniformMat("in_Transform", glm::mat4x4())){
 			std::cout << "Failed to set tilemap transform!" << std::endl;
 		}
@@ -162,10 +209,10 @@ JE::GL::Shader& getTilemapShader(){
 }
 
 //Tilemap Layer
-TilemapLayer::TilemapLayer(std::shared_ptr<Tileset>& tileset, int width, int height) : 
-	TilemapLayer(tileset, width, height, tileset->getTileWidth(), tileset->getTileHeight()){}
+TileLayer::TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height) : 
+	TileLayer(tileset, width, height, tileset->getTileWidth(), tileset->getTileHeight()){}
 
-TilemapLayer::TilemapLayer(std::shared_ptr<Tileset>& tileset, int width, int height, int tile_width, int tile_height) : 
+TileLayer::TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height, int tile_width, int tile_height) : 
 		Graphic(),
 		tile_width(tile_width),
 		tile_height(tile_height),
@@ -194,15 +241,15 @@ TilemapLayer::TilemapLayer(std::shared_ptr<Tileset>& tileset, int width, int hei
 	this->texcoord_transform_cache = glm::mat4();
 }
 
-TilemapLayer::~TilemapLayer() {
+TileLayer::~TileLayer() {
 	
 }
 
-void TilemapLayer::update(float dt) {
+void TileLayer::update(float dt) {
 	
 }
 
-void TilemapLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
+void TileLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
 	if (this->need_update_model){
 		this->updateModel();
 	}
@@ -219,6 +266,8 @@ void TilemapLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
 	// Send transformations
 	shader.setUniformMat("in_Transform", transform);
 	shader.setUniformMat("in_TexcoordTransform", this->getTexcoordTransform());
+	shader.setUniform("in_Width", this->tileset->getTileWidth());
+	shader.setUniform("in_Height", this->tileset->getTileHeight());
 	
 	// Actual draw call
 	this->tileset->getTexture()->use();
@@ -226,7 +275,7 @@ void TilemapLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
 	this->tileset->getTexture()->disable();
 }
 
-void TilemapLayer::updateModel() const {
+void TileLayer::updateModel() const {
 	JE::GL::ModelAttribute& texcoord_attr     = this->model.getAttribute("texcoord");
 	JE::GL::ModelAttribute& point_attr        = this->model.getPointAttribute();
 	
@@ -274,7 +323,7 @@ void TilemapLayer::updateModel() const {
 	this->need_update_model = false;
 }
 
-bool TilemapLayer::isInBounds(int x, int y) const {
+bool TileLayer::isInBounds(int x, int y) const {
 	return (
 		x >= 0 && 
 		y >= 0 && 
@@ -283,7 +332,7 @@ bool TilemapLayer::isInBounds(int x, int y) const {
 	);
 }
 
-bool TilemapLayer::isTileInBounds(int tile_x, int tile_y) const {
+bool TileLayer::isTileInBounds(int tile_x, int tile_y) const {
 	return (
 		tile_x >= 0 && 
 		tile_y >= 0 && 
@@ -292,7 +341,7 @@ bool TilemapLayer::isTileInBounds(int tile_x, int tile_y) const {
 	);
 }
 
-void TilemapLayer::setTile(int x, int y, int tile_x, int tile_y) {
+void TileLayer::setTile(int x, int y, int tile_x, int tile_y) {
 	if (!this->isInBounds(x, y)) return;
 	if (!this->isTileInBounds(tile_x, tile_y)) return;
 	
@@ -304,7 +353,7 @@ void TilemapLayer::setTile(int x, int y, int tile_x, int tile_y) {
 	this->need_update_model = true;
 }
 
-void TilemapLayer::emptyTile(int x, int y) {
+void TileLayer::emptyTile(int x, int y) {
 	if (!this->isInBounds(x, y)) return;
 	
 	TilemapTile& t = this->tiles[x][y];
@@ -313,7 +362,7 @@ void TilemapLayer::emptyTile(int x, int y) {
 	this->need_update_model = true;
 }
 
-const glm::mat4& TilemapLayer::getTransform() const{
+const glm::mat4& TileLayer::getTransform() const{
 	float tex_w = 1;
 	float tex_h = 1;
 	float tile_w = 1;
@@ -344,7 +393,7 @@ const glm::mat4& TilemapLayer::getTransform() const{
 	return this->transform_cache;
 }
 
-const glm::mat4& TilemapLayer::getTexcoordTransform() const{
+const glm::mat4& TileLayer::getTexcoordTransform() const{
 	float tex_w = 1;
 	float tex_h = 1;
 	float tile_w = 1;
@@ -363,7 +412,15 @@ const glm::mat4& TilemapLayer::getTexcoordTransform() const{
 		
 	if (this->need_update_texcoord_transform){
 		this->texcoord_transform_cache = glm::mat4();
-		this->texcoord_transform_cache = glm::scale(this->texcoord_transform_cache, glm::vec3(tile_w / tex_w, tile_h / tex_h, 1.0f));
+		float scale_x = (tile_w) / tex_w;
+		float scale_y = (tile_h) / tex_h;
+		this->texcoord_transform_cache = glm::scale(this->texcoord_transform_cache, glm::vec3(scale_x, scale_y, 1.0f));
+//		this->texcoord_transform_cache = glm::translate(this->texcoord_transform_cache, glm::vec3(0.5f/tex_w, 0.5f/tex_h, 0.0f));
+//		this->texcoord_transform_cache = glm::translate(this->texcoord_transform_cache, glm::vec3(0.5f/tile_w, 0.5f/tile_h, 1.0));
+//		this->texcoord_transform_cache = glm::scale(this->texcoord_transform_cache, glm::vec3((tile_w-1)/tile_w, (tile_h-1)/tile_h, 1.0f));
+//		this->texcoord_transform_cache = glm::scale(this->texcoord_transform_cache, glm::vec3((tile_w-1) / tex_w, (tile_h-1) / tex_h, 1.0f));
+//		this->texcoord_transform_cache = glm::scale(this->texcoord_transform_cache, glm::vec3((tile_w-1)/tile_w, (tile_h-1)/tile_h, 1.0f));
+		
 		this->need_update_texcoord_transform = false;
 		
 		this->prev_image_w = tex_w;
