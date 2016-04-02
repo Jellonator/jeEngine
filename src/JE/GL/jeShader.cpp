@@ -69,14 +69,14 @@ bool Shader::linkShaders(){
 	glGetProgramiv(*this->program_id, GL_LINK_STATUS, &did_error);
 	if(did_error == GL_FALSE){
 		GLint log_len = 0;
-		glGetProgramiv(*this->program_id, GL_INFO_LOG_LENGTH, &did_error);
+		glGetProgramiv(*this->program_id, GL_INFO_LOG_LENGTH, &log_len);
 		
 		char infolog[log_len];
-		glGetProgramInfoLog(*this->program_id,log_len,&log_len,infolog);
+		glGetProgramInfoLog(*this->program_id,log_len,nullptr,infolog);
 		
 		std::cout << "The program failed to link" << std::endl;
 		std::cout << "====================================" << std::endl;
-		std::cout << infolog << std::endl;
+		std::cout << infolog;
 		std::cout << "------------------------------------" << std::endl;
 		
 		return false;
@@ -140,14 +140,14 @@ bool Shader::_addShader(const std::string& name, const std::string& source, GLen
 void Shader::_logError(GLuint shader_id, const std::string& error_name){
 	GLint log_len;
 	glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &log_len);
-	if (log_len <= 0) return;
+	//if (log_len <= 0) return;
 	
 	char infolog[log_len];
 	
 	glGetShaderInfoLog(shader_id, log_len, &log_len, infolog);
 	std::cerr << error_name << std::endl;
 	std::cerr << "====================================" << std::endl;
-	std::cerr << infolog << std::endl;
+	std::cerr << infolog;
 	std::cerr << "------------------------------------" << std::endl;
 }
 

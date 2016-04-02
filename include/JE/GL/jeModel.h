@@ -17,7 +17,7 @@ public:
 	friend Model;
 	ModelAttribute();
 	ModelAttribute(const std::vector<GLfloat>& data);
-	~ModelAttribute();
+	virtual ~ModelAttribute();
 	
 	void useShader(Shader& shader);
 	
@@ -43,7 +43,7 @@ class Model{
 public:
 	Model();
 	Model(const std::vector<GLfloat>& points, const std::vector<GLuint>& elements);
-	~Model();
+	virtual ~Model();
 	
 	void useShader(Shader& shader);
 	void draw();

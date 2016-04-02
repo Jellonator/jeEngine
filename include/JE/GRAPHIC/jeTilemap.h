@@ -4,6 +4,7 @@
 #include "../jeUtil.h"
 #include "../GL/jeModel.h"
 #include <memory>
+#include <tuple>
 #include <map>
 #include <vector>
 
@@ -50,17 +51,11 @@ private:
 		int space_x = 0, int space_y = 0);
 };
 
-class TilemapTile {
-public:
-	TilemapTile(int width, int height);
-	SDL_Rect& getRect();
-	bool isEmpty();
-	
-	void setRect(SDL_Rect& rect);
-	void setEmpty(bool empty);
-	
+struct TilemapTile {
+	int x;
+	int y;
 	bool empty;
-	SDL_Rect rect;
+	TilemapTile(int x, int y, bool empty);
 };
 
 class TilemapLayer : public Graphic {
@@ -72,13 +67,22 @@ public:
 	virtual void update(float dt);
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 	
+	bool isInBounds(int x, int y) const;
+	bool isTileInBounds(int tile_x, int tile_y) const;
+	void setTile(int x, int y, int tile_x, int tile_y);
+	void emptyTile(int x, int y);
+	
 private:
+	void updateModel() const;
+	
 	int tile_width;
 	int tile_height;
 	int width;
 	int height;
 	std::shared_ptr<Tileset> tileset;
 	std::vector<std::vector<TilemapTile>> tiles;
+	mutable JE::GL::Model model;
+	mutable bool need_update_model;
 };
 
 };};
