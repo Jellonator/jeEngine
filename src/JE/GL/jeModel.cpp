@@ -144,6 +144,10 @@ void Model::addAttribute(const std::string& name, const std::string& shader_refe
 
 void Model::bind(){
 	glBindVertexArray(this->vao);
+	this->buffer_points.getBuffer().pushLocal();
+	for (auto& buffer : this->buffer_extra_map){
+		buffer.second.getBuffer().pushLocal();
+	}
 	this->buffer_elements.bind();
 	this->buffer_elements.pushLocal();
 	

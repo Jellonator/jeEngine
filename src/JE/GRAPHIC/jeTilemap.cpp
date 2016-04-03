@@ -140,6 +140,8 @@ void main(){
 		vec4 pos = gl_in[i].gl_Position;
 		vec4 texc = vec4(vx_Texcoord[i].xy, 1.0, 1.0);
 		
+		if (texc.x < 0 || texc.y < 0) continue;
+		
 		float w_scale = 1;
 		float x_pos = 0;
 		if (in_Width > 1){
@@ -210,16 +212,10 @@ JE::GL::Shader& getTilemapShader(){
 
 //Tilemap Layer
 TileLayer::TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height) : 
-	TileLayer(tileset, width, height, tileset->getTileWidth(), tileset->getTileHeight()){}
-
-TileLayer::TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height, int tile_width, int tile_height) : 
 		Graphic(),
-		tile_width(tile_width),
-		tile_height(tile_height),
 		width(width),
 		height(height),
 		tileset(tileset),
-		tiles(width, std::vector<TilemapTile>(height, TilemapTile(0, 0, true))),
 		model() {
 	
 	this->model.getPointAttribute().setShaderReference("in_Position");
@@ -228,7 +224,6 @@ TileLayer::TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height, i
 	this->model.useShader(getTilemapShader());
 	this->model.setDrawMode(GL_POINTS);
 	
-	this->need_update_model = true;
 	this->need_update_transform = true;
 	this->need_update_texcoord_transform = true;
 	
@@ -239,6 +234,38 @@ TileLayer::TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height, i
 	
 	this->transform_cache = glm::mat4();
 	this->texcoord_transform_cache = glm::mat4();
+	
+	JE::GL::BufferObject<GLuint>&  element_buf  = this->model.getElementBuffer();
+	JE::GL::BufferObject<GLfloat>& texcoord_buf = this->model.getAttribute("texcoord").getBuffer();
+	JE::GL::BufferObject<GLfloat>& point_buf    = this->model.getPointAttribute().getBuffer();
+	
+	std::vector<GLuint>  element_vec;
+	std::vector<GLfloat> point_vec;
+	std::vector<GLfloat> texcoord_vec;
+	
+	GLuint element_num = 0;
+	
+	for (int iy = 0; iy < height; ++iy){
+		for (int ix = 0; ix < width; ++ix) {
+			element_vec.push_back(element_num);
+			++element_num;
+			
+			point_vec.push_back(ix);
+			point_vec.push_back(iy);
+			point_vec.push_back(0.0);
+			
+			texcoord_vec.push_back(-1);
+			texcoord_vec.push_back(-1);
+		}
+	}
+	
+	element_buf.setData(element_vec);
+	point_buf.setData(point_vec);
+	texcoord_buf.setData(texcoord_vec);
+	
+	element_buf.pushLocal();
+	point_buf.pushLocal();
+	texcoord_buf.pushLocal();
 }
 
 TileLayer::~TileLayer() {
@@ -250,18 +277,12 @@ void TileLayer::update(float dt) {
 }
 
 void TileLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
-	if (this->need_update_model){
-		this->updateModel();
-	}
-	
 	JE::GL::Shader& shader = getTilemapShader();
 	
 	// Get drawing transformations
 	glm::mat4x4 transform = camera;
 	transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
 	transform *= this->getTransform();
-	
-//	const glm::mat4x4& texcoord_transform = this->getTexcoordTransform();
 	
 	// Send transformations
 	shader.setUniformMat("in_Transform", transform);
@@ -273,54 +294,6 @@ void TileLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
 	this->tileset->getTexture()->use();
 	this->model.draw();
 	this->tileset->getTexture()->disable();
-}
-
-void TileLayer::updateModel() const {
-	JE::GL::ModelAttribute& texcoord_attr     = this->model.getAttribute("texcoord");
-	JE::GL::ModelAttribute& point_attr        = this->model.getPointAttribute();
-	
-	JE::GL::BufferObject<GLuint>&  element_buf  = this->model.getElementBuffer();
-	JE::GL::BufferObject<GLfloat>& texcoord_buf = texcoord_attr.getBuffer();
-	JE::GL::BufferObject<GLfloat>& point_buf    = point_attr.getBuffer();
-	
-	std::vector<GLuint>  element_vec;
-	std::vector<GLfloat> point_vec;
-	std::vector<GLfloat> texcoord_vec;
-	
-	GLuint element_num = 0;
-	
-	int ix = 0;
-	int iy = 0;
-	for (const std::vector<TilemapTile>& vec : this->tiles) {
-		for (const TilemapTile& tile : vec){
-			if (!tile.empty){
-				std::cout << "Adding point: " << ix << ", " << iy << std::endl;
-				element_vec.push_back(element_num);
-				++element_num;
-				
-				point_vec.push_back(ix);
-				point_vec.push_back(iy);
-				point_vec.push_back(0.0);
-				
-				texcoord_vec.push_back(tile.x);
-				texcoord_vec.push_back(tile.y);
-				
-			}
-			iy ++;
-		}
-		iy = 0;
-		ix ++;
-	}
-	
-	element_buf.setData(element_vec);
-	point_buf.setData(point_vec);
-	texcoord_buf.setData(texcoord_vec);
-	
-	element_buf.pushLocal();
-	point_buf.pushLocal();
-	texcoord_buf.pushLocal();
-	
-	this->need_update_model = false;
 }
 
 bool TileLayer::isInBounds(int x, int y) const {
@@ -345,21 +318,21 @@ void TileLayer::setTile(int x, int y, int tile_x, int tile_y) {
 	if (!this->isInBounds(x, y)) return;
 	if (!this->isTileInBounds(tile_x, tile_y)) return;
 	
-	TilemapTile& t = this->tiles[x][y];
-	t.x = tile_x;
-	t.y = tile_y;
-	t.empty = false;
+	JE::GL::BufferObject<GLfloat>& texcoord_buf = this->model.getAttribute("texcoord").getBuffer();
 	
-	this->need_update_model = true;
+	GLfloat data[] = {(GLfloat)tile_x, (GLfloat)tile_y};
+	int pos = 2*(x + y*this->width);
+	texcoord_buf.setElements(pos, 2, data);
 }
 
 void TileLayer::emptyTile(int x, int y) {
 	if (!this->isInBounds(x, y)) return;
 	
-	TilemapTile& t = this->tiles[x][y];
-	t.empty = true;
+	JE::GL::BufferObject<GLfloat>& texcoord_buf = this->model.getAttribute("texcoord").getBuffer();
 	
-	this->need_update_model = true;
+	GLfloat data[] = {-1.0f, -1.0f};
+	int pos = 2*(x + y*this->width);
+	texcoord_buf.setElements(pos, 2, data);
 }
 
 const glm::mat4& TileLayer::getTransform() const{
@@ -415,11 +388,6 @@ const glm::mat4& TileLayer::getTexcoordTransform() const{
 		float scale_x = (tile_w) / tex_w;
 		float scale_y = (tile_h) / tex_h;
 		this->texcoord_transform_cache = glm::scale(this->texcoord_transform_cache, glm::vec3(scale_x, scale_y, 1.0f));
-//		this->texcoord_transform_cache = glm::translate(this->texcoord_transform_cache, glm::vec3(0.5f/tex_w, 0.5f/tex_h, 0.0f));
-//		this->texcoord_transform_cache = glm::translate(this->texcoord_transform_cache, glm::vec3(0.5f/tile_w, 0.5f/tile_h, 1.0));
-//		this->texcoord_transform_cache = glm::scale(this->texcoord_transform_cache, glm::vec3((tile_w-1)/tile_w, (tile_h-1)/tile_h, 1.0f));
-//		this->texcoord_transform_cache = glm::scale(this->texcoord_transform_cache, glm::vec3((tile_w-1) / tex_w, (tile_h-1) / tex_h, 1.0f));
-//		this->texcoord_transform_cache = glm::scale(this->texcoord_transform_cache, glm::vec3((tile_w-1)/tile_w, (tile_h-1)/tile_h, 1.0f));
 		
 		this->need_update_texcoord_transform = false;
 		

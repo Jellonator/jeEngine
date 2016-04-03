@@ -65,7 +65,6 @@ struct TilemapTile {
 class TileLayer : public Graphic {
 public:
 	TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height);
-	TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height, int tile_width, int tile_height);
 	virtual ~TileLayer();
 	
 	virtual void update(float dt);
@@ -80,18 +79,12 @@ public:
 	const glm::mat4& getTexcoordTransform() const;
 	
 private:
-	void updateModel() const;
-	
-	int tile_width;
-	int tile_height;
 	int width;
 	int height;
 	
 	std::shared_ptr<Tileset> tileset;
-	std::vector<std::vector<TilemapTile>> tiles;
 	
 	mutable JE::GL::Model model;
-	mutable bool need_update_model;
 	
 	mutable bool need_update_transform;
 	mutable bool need_update_texcoord_transform;

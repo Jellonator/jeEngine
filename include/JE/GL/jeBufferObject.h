@@ -15,6 +15,8 @@ public:
 	void setData(const std::vector<Type>& data);
 	void appendData(const std::vector<Type>& data);
 	void prependData(const std::vector<Type>& data);
+	void setElement(int pos, Type value);
+	void setElements(int pos, int size, Type* values);
 	
 	void bind();
 	
@@ -101,6 +103,29 @@ template <class Type>
 void BufferObject<Type>::prependData(const std::vector<Type>& data){
 	this->loadLocal();
 	this->local_vec.insert(this->local_vec.begin(), data.begin(), data.end());
+}
+
+template <class Type>
+void BufferObject<Type>::setElement(int pos, Type value){
+	if (this->is_local_loaded){
+		this->local_vec[pos] = value;
+	} else {
+		this->bind();
+		glBufferSubData(this->buffer_type, pos * sizeof(Type), sizeof(Type), &value);
+	}
+}
+
+template <class Type>
+void BufferObject<Type>::setElements(int pos, int size, Type* values){
+	if (this->is_local_loaded){
+		//this->local_vec[pos] = value;
+		for (int i = 0; i < size; ++i){
+			this->local_vec[pos+i] = values[i];
+		}
+	} else {
+		this->bind();
+		glBufferSubData(this->buffer_type, pos * sizeof(Type), size * sizeof(Type), values);
+	}
 }
 
 template <class Type>
