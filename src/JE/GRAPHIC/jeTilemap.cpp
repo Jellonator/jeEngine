@@ -48,6 +48,7 @@ SDL_Rect Tileset::getRect(int x, int y) const{
 
 SDL_Rect Tileset::getRectId(int id) const{
 	int width = this->getWidthInTiles();
+	if (width == 0) return SDL_Rect{0,0,0,0};
 	
 	int ix = id % width;
 	int iy = id / width;
@@ -56,6 +57,7 @@ SDL_Rect Tileset::getRectId(int id) const{
 
 SDL_Point Tileset::getTileId(int id) const{
 	int width = this->getWidthInTiles();
+	if (width == 0) return SDL_Point{0,0};
 	
 	SDL_Point ret = {
 		id % width, // x
@@ -66,10 +68,12 @@ SDL_Point Tileset::getTileId(int id) const{
 }
 
 int Tileset::getWidth() const{
+	if (this->texture == nullptr) return 1;
 	return this->texture->getWidth();
 }
 
 int Tileset::getHeight() const{
+	if (this->texture == nullptr) return 1;
 	return this->texture->getHeight();
 }
 
@@ -277,6 +281,7 @@ void TileLayer::update(float dt) {
 }
 
 void TileLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
+	if (this->tileset->getTexture() == nullptr) return;
 	JE::GL::Shader& shader = getTilemapShader();
 	
 	// Get drawing transformations
@@ -293,7 +298,6 @@ void TileLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
 	// Actual draw call
 	this->tileset->getTexture()->use();
 	this->model.draw();
-	this->tileset->getTexture()->disable();
 }
 
 bool TileLayer::isInBounds(int x, int y) const {
@@ -309,8 +313,8 @@ bool TileLayer::isTileInBounds(int tile_x, int tile_y) const {
 	return (
 		tile_x >= 0 && 
 		tile_y >= 0 && 
-		tile_x < this->tileset->getWidth() && 
-		tile_y < this->tileset->getHeight()
+		tile_x < this->tileset->getWidthInTiles() && 
+		tile_y < this->tileset->getHeightInTiles()
 	);
 }
 
@@ -323,6 +327,11 @@ void TileLayer::setTile(int x, int y, int tile_x, int tile_y) {
 	GLfloat data[] = {(GLfloat)tile_x, (GLfloat)tile_y};
 	int pos = 2*(x + y*this->width);
 	texcoord_buf.setElements(pos, 2, data);
+}
+
+void TileLayer::setTileID(int x, int y, int id){
+	SDL_Point tile_pos = this->tileset->getTileId(id);
+	this->setTile(x, y, tile_pos.x, tile_pos.y);
 }
 
 void TileLayer::emptyTile(int x, int y) {
@@ -396,6 +405,14 @@ const glm::mat4& TileLayer::getTexcoordTransform() const{
 	}
 	
 	return this->texcoord_transform_cache;
+}
+
+int TileLayer::getWidth() const {
+	return this->width;
+}
+
+int TileLayer::getHeight() const {
+	return this->height;
 }
 
 };};

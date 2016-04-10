@@ -73,10 +73,14 @@ public:
 	bool isInBounds(int x, int y) const;
 	bool isTileInBounds(int tile_x, int tile_y) const;
 	void setTile(int x, int y, int tile_x, int tile_y);
+	void setTileID(int x, int y, int id);
 	void emptyTile(int x, int y);
 	
 	const glm::mat4& getTransform() const;
 	const glm::mat4& getTexcoordTransform() const;
+	
+	int getWidth() const;
+	int getHeight() const;
 	
 private:
 	int width;
