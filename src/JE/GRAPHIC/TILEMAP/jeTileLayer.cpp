@@ -118,8 +118,11 @@ JE::GL::Shader& getTilemapShader(){
 }
 
 //Tilemap Layer
-TileLayer::TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height) : 
-		Graphic(),
+TileLayer::TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height) :
+TileLayer(tileset, 0, 0, width, height){}
+
+TileLayer::TileLayer(std::shared_ptr<Tileset>& tileset, int x, int y, int width, int height) : 
+		Graphic(x, y),
 		width(width),
 		height(height),
 		tileset(tileset),

@@ -14,6 +14,7 @@ namespace JE{namespace GRAPHICS{
 class TileLayer : public Graphic {
 public:
 	TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height);
+	TileLayer(std::shared_ptr<Tileset>& tileset, int x, int y, int width, int height);
 	virtual ~TileLayer();
 	
 	virtual void update(float dt);
