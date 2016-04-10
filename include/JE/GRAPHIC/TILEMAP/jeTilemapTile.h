@@ -9,6 +9,11 @@
 
 namespace JE{namespace GRAPHICS{
 
-
+struct TilemapTile {
+	int x;
+	int y;
+	bool empty;
+	TilemapTile(int x, int y, bool empty);
+};
 
 };};
