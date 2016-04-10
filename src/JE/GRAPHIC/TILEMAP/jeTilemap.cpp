@@ -1,4 +1,4 @@
-#include "JE/GRAPHIC/jeTilemap.h"
+#include "JE/GRAPHIC/TILEMAP/jeTilemap.h"
 #include "JE/GL/jeShader.h"
 #include <iostream>
 

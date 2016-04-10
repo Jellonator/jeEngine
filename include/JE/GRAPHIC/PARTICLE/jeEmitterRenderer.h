@@ -1,6 +1,6 @@
 #pragma once
 #include "../jeImage.h"
-#include "../jeSpritemap.h"
+#include "../SPRITEMAP/jeSpritemap.h"
 #include "../jeCamera.h"
 
 namespace JE{ namespace GRAPHICS{

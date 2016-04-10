@@ -1,6 +1,6 @@
 #include "JE/UTIL/jeMath.h"
 #include "JE/GRAPHIC/jeGraphic.h"
-#include "JE/GRAPHIC/jeArm.h"
+#include "JE/GRAPHIC/ARMATURE/jeArm.h"
 #include <iostream>
 
 namespace JE{namespace ARM{

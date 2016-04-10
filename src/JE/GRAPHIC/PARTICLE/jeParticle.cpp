@@ -1,6 +1,6 @@
 #include "JE/GRAPHIC/PARTICLE/jeEmitterType.h"
 #include "JE/GRAPHIC/PARTICLE/jeParticle.h"
-#include "JE/GRAPHIC/jeEmitter.h"
+#include "JE/GRAPHIC/PARTICLE/jeEmitter.h"
 #include "JE/UTIL/jeMath.h"
 
 namespace JE{ namespace GRAPHICS{

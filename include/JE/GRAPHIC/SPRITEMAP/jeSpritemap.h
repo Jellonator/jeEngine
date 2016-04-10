@@ -1,9 +1,9 @@
 #pragma once
-#include "../UTIL/jeTime.h"
-#include "SPRITEMAP/jeSpritemapAnim.h"
-#include "SPRITEMAP/jeSpritemapData.h"
-#include "SPRITEMAP/jeSpritemapFrame.h"
-#include "jeImage.h"
+#include "../../UTIL/jeTime.h"
+#include "../jeImage.h"
+#include "jeSpritemapAnim.h"
+#include "jeSpritemapData.h"
+#include "jeSpritemapFrame.h"
 #include <vector>
 
 

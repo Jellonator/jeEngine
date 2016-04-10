@@ -1,8 +1,8 @@
 #pragma once
-#include "ARMATURE/jeKeyFrame.h"
-#include "ARMATURE/jeAnimation.h"
-#include "../UTIL/jeTime.h"
-#include "../jePoint.h"
+#include "jeKeyFrame.h"
+#include "jeAnimation.h"
+#include "../../UTIL/jeTime.h"
+#include "../../jePoint.h"
 #include <map>
 #include <vector>
 #include <memory>

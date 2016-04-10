@@ -1,7 +1,7 @@
 #include "JE/GRAPHIC/PARTICLE/jeEmitterType.h"
 #include "JE/GRAPHIC/PARTICLE/jeParticle.h"
 #include "JE/GRAPHIC/PARTICLE/jeEmitterRenderer.h"
-#include "JE/GRAPHIC/jeEmitter.h"
+#include "JE/GRAPHIC/PARTICLE/jeEmitter.h"
 #include "JE/GRAPHIC/jeGraphic.h"
 #include "JE/UTIL/jeMath.h"
 

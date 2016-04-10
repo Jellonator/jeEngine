@@ -1,7 +1,7 @@
 #pragma once
 #include "../../UTIL/jeTime.h"
 #include "../../jePoint.h"
-#include "../jeArm.h"
+#include "jeArm.h"
 #include "jeKeyFrame.h"
 #include <map>
 #include <vector>

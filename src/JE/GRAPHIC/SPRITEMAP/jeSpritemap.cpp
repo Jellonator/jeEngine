@@ -1,4 +1,4 @@
-#include "JE/GRAPHIC/jeSpritemap.h"
+#include "JE/GRAPHIC/SPRITEMAP/jeSpritemap.h"
 #include "JE/GRAPHIC/SPRITEMAP/jeSpritemapAnim.h"
 #include "JE/GRAPHIC/SPRITEMAP/jeSpritemapData.h"
 #include "JE/GRAPHIC/SPRITEMAP/jeSpritemapFrame.h"

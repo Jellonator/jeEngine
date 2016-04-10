@@ -3,7 +3,7 @@
 #include <map>
 #include <memory>
 #include "../../jePoint.h"
-#include "../jeArm.h" 
+#include "jeArm.h" 
 namespace JE{namespace ARM{
 	class Arm;
 	class Keyframe{public:
