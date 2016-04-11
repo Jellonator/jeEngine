@@ -121,10 +121,10 @@ TileLayer::TileLayer(int width, int height) :
 TileLayer(0, 0, width, height){}
 
 TileLayer::TileLayer(int x, int y, int width, int height) : 
-		Graphic(x, y),
-		width(width),
-		height(height),
-		metadata(width, std::vector<TileMetaData>(height, {"", 0, false})){
+	Graphic(x, y),
+	width(width),
+	height(height),
+	metadata(width, std::vector<TileMetaData>(height, {"", 0, false})){
 }
 
 //destructor
