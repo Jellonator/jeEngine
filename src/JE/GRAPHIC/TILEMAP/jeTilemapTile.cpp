@@ -4,6 +4,6 @@
 
 namespace JE{namespace GRAPHICS{
 
-TilemapTile::TilemapTile(int x, int y, bool empty): x(x), y(y), empty(empty){}
+TilemapTile::TilemapTile(int x, int y): x(x), y(y){}
 
 };};

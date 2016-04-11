@@ -13,41 +13,62 @@ namespace JE{namespace GRAPHICS{
 
 class TileLayer : public Graphic {
 public:
-	TileLayer(std::shared_ptr<Tileset>& tileset, int width, int height);
-	TileLayer(std::shared_ptr<Tileset>& tileset, int x, int y, int width, int height);
+	TileLayer(int width, int height);
+	TileLayer(int x, int y, int width, int height);
 	virtual ~TileLayer();
 	
+	//callbacks
 	virtual void update(float dt);
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 	
+	//bounds
 	bool isInBounds(int x, int y) const;
-	bool isTileInBounds(int tile_x, int tile_y) const;
-	void setTile(int x, int y, int tile_x, int tile_y);
-	void setTileID(int x, int y, int id);
+	bool isTileInBounds(const std::string& tileset, int tile_x, int tile_y) const;
+	
+	//tile management
+	void setTile(int x, int y, const std::string& tileset, int tile_x, int tile_y);
+	void setTileID(int x, int y, const std::string& tileset, int id);
 	void emptyTile(int x, int y);
 	
-	const glm::mat4& getTransform() const;
-	const glm::mat4& getTexcoordTransform() const;
+	//tileset management
+	bool hasTileset(const std::string& name) const;
+	void addTileset(const std::string& name, std::shared_ptr<Tileset>& tileset);
+	std::shared_ptr<Tileset> getTileset(const std::string& name);
+	
+	glm::mat4 getTransform(const Tileset& tileset) const;
+	glm::mat4 getTexcoordTransform(const Tileset& tileset) const;
 	
 	int getWidth() const;
 	int getHeight() const;
 	
 private:
+	struct TilePoint {
+		int x;
+		int y;
+		int tile_x;
+		int tile_y;
+	};
+	struct TileLayerSet{
+		std::shared_ptr<Tileset> tileset;
+		std::vector<TilePoint> tiles;
+		//has to be unique_ptr, Model doesn't like move semantics as of yet. 
+		mutable std::unique_ptr<JE::GL::Model> model;
+		mutable bool need_remodel;
+	};
+	struct TileMetaData {
+		std::string tile_layer_set;
+		int index;
+		bool is_owned;
+	};
+	
 	int width;
 	int height;
 	
-	std::shared_ptr<Tileset> tileset;
+	std::map<std::string, TileLayerSet> tileset_map;
+	std::vector<std::vector<TileMetaData>> metadata;
 	
-	mutable JE::GL::Model model;
-	
-	mutable bool need_update_transform;
-	mutable bool need_update_texcoord_transform;
-	mutable glm::mat4 transform_cache;
-	mutable glm::mat4 texcoord_transform_cache;
-	mutable float prev_x;
-	mutable float prev_y;
-	mutable GLfloat prev_image_w;
-	mutable GLfloat prev_image_h;
+	void _clearTile(TileMetaData& data);
+	void _updateTileset(const TileLayerSet& name) const;
 };
 
 };};

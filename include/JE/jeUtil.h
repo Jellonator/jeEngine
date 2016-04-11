@@ -33,4 +33,15 @@ void clearPointerMap(std::map<KType, VType*>* vector){
 	}
 	vector->clear();
 }
+
+template<typename Type>
+void eraseNoOrder(std::vector<Type>& vec, size_t index){
+	if (index >= vec.size()) return;
+	if (index+1 != vec.size()){
+		vec[index] = vec.back();
+	}
+	
+	vec.pop_back();
+}
+
 }

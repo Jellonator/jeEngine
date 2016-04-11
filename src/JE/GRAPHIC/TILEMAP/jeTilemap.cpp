@@ -13,22 +13,15 @@ Tilemap::Tilemap(float x, float y, int width, int height) :
 	JE::GRAPHICS::Graphic(x, y), width(width), height(height){
 }
 
-TileLayer& Tilemap::createLayer(const std::string& name, std::shared_ptr<Tileset>& tileset){
-	TileLayer* layer = new TileLayer(tileset, this->width, this->height);
+TileLayer& Tilemap::createLayer(const std::string& name){
+	TileLayer* layer = new TileLayer(this->width, this->height);
 	this->layers[name] = std::unique_ptr<TileLayer>(layer);
 	return *layer;
 }
 
 TileLayer* Tilemap::getLayer(const std::string& name){
-	TileLayer* ret = this->layers[name].get();
-	
-	if (ret == nullptr) {
-		//Don't clog up layers with nullptrs please
-		this->layers.erase(name);
-		return nullptr;
-	}
-	
-	return ret;
+	if (this->layers.count(name) == 0) return nullptr;
+	return this->layers[name].get();
 }
 
 void Tilemap::update(float dt){

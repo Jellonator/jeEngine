@@ -16,7 +16,7 @@ public:
 	Tilemap(float x, float y, int width, int height);
 	Tilemap(int width, int height);
 	
-	TileLayer& createLayer(const std::string& name, std::shared_ptr<Tileset>& tileset);
+	TileLayer& createLayer(const std::string& name);
 	TileLayer* getLayer(const std::string& name);
 	
 	virtual void update(float dt);
