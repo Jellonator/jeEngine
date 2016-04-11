@@ -46,7 +46,7 @@ std::string tilemap_geometry_shader = GLSL(
 			vec4 pos = gl_in[i].gl_Position;
 			vec4 texc = vec4(vx_Texcoord[i].xy, 1.0, 1.0);
 			
-			float padding = 0.1;
+			float padding = 0.5;
 			
 			float w_scale = 1;
 			float x_pos = 0;
@@ -176,7 +176,6 @@ void TileLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
 	JE::GL::Shader& shader = getTilemapShader();
 	
 	for (auto& pair : this->tileset_map){
-		const std::string& name = pair.first;
 		const TileLayerSet& set = pair.second;
 		
 		this->_updateTileset(set);
@@ -279,8 +278,6 @@ void TileLayer::emptyTile(int x, int y) {
 
 //transforms
 glm::mat4 TileLayer::getTransform(const Tileset& set) const{
-	float tex_w = set.getWidth();
-	float tex_h = set.getHeight();
 	float tile_w = set.getTileWidth();
 	float tile_h = set.getTileHeight();
 	

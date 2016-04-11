@@ -16,14 +16,19 @@ public:
 	Tilemap(float x, float y, int width, int height);
 	Tilemap(int width, int height);
 	
-	TileLayer& createLayer(const std::string& name);
+	TileLayer& createLayer(const std::string& name, int layer);
 	TileLayer* getLayer(const std::string& name);
 	
 	virtual void update(float dt);
 	virtual void drawMatrix(const glm::mat4& camera, float x = 0, float y = 0) const;
 	
 private:
-	std::map<std::string, std::unique_ptr<TileLayer> > layers;
+	struct TilemapLayerDef{
+		int layer;
+		std::unique_ptr<TileLayer> tilemap;
+	};
+	std::map<std::string, TilemapLayerDef> layers;
+	std::vector<TilemapLayerDef*> layers_vec;
 	int width;
 	int height;
 };
