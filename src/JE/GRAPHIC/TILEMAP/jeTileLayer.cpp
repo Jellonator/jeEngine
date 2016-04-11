@@ -46,20 +46,20 @@ std::string tilemap_geometry_shader = GLSL(
 			vec4 pos = gl_in[i].gl_Position;
 			vec4 texc = vec4(vx_Texcoord[i].xy, 1.0, 1.0);
 			
-			if (texc.x < 0 || texc.y < 0) continue;
+			float padding = 0.1;
 			
 			float w_scale = 1;
 			float x_pos = 0;
 			if (in_Width > 1){
-				x_pos = 1 / in_Width;
-				w_scale = (in_Width - 1) / in_Width;
+				x_pos = padding / in_Width;
+				w_scale = (in_Width - padding) / in_Width;
 			}
 			
 			float h_scale = 1;
 			float y_pos = 0;
 			if (in_Height > 1){
-				y_pos = 1 / in_Height;
-				h_scale = (in_Height - 1) / in_Height;
+				y_pos = padding / in_Height;
+				h_scale = (in_Height - padding) / in_Height;
 			}
 			
 			gl_Position = in_Transform * (pos + vec4(0.0, 0.0, 0, 0));
