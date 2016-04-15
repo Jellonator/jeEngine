@@ -307,7 +307,7 @@ bool TileLayer::hasTileset(const std::string& name) const{
 	return (this->tileset_map.count(name) > 0);
 }
 
-void TileLayer::addTileset(const std::string& name, std::shared_ptr<Tileset>& tileset){
+void TileLayer::addTileset(const std::string& name, std::shared_ptr<Tileset> tileset){
 	if (tileset == nullptr) return;//cannot use null tileset
 	if (this->hasTileset(name)){
 		this->tileset_map[name].tileset = tileset;

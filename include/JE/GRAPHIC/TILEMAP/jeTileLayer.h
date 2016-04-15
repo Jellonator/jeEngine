@@ -32,7 +32,7 @@ public:
 	
 	//tileset management
 	bool hasTileset(const std::string& name) const;
-	void addTileset(const std::string& name, std::shared_ptr<Tileset>& tileset);
+	void addTileset(const std::string& name, std::shared_ptr<Tileset> tileset);
 	std::shared_ptr<Tileset> getTileset(const std::string& name);
 	
 	glm::mat4 getTransform(const Tileset& tileset) const;

@@ -21,7 +21,7 @@ TileLayer& Tilemap::createLayer(const std::string& name, int layer){
 	
 	std::sort(this->layers_vec.begin(), this->layers_vec.end(), 
 		[](TilemapLayerDef* a, TilemapLayerDef* b) -> bool{
-			return (a->layer > b->layer);
+			return (a->layer < b->layer);
 		}
 	);
 	
