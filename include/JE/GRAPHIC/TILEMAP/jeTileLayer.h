@@ -13,8 +13,8 @@ namespace JE{namespace GRAPHICS{
 
 class TileLayer : public Graphic {
 public:
-	TileLayer(int width, int height);
-	TileLayer(int x, int y, int width, int height);
+	TileLayer(int width, int height, int tile_width, int tile_height);
+	TileLayer(int x, int y, int width, int height, int tile_width, int tile_height);
 	virtual ~TileLayer();
 	
 	//callbacks
@@ -63,6 +63,9 @@ private:
 	
 	int width;
 	int height;
+	
+	int tile_width;
+	int tile_height;
 	
 	std::map<std::string, TileLayerSet> tileset_map;
 	std::vector<std::vector<TileMetaData>> metadata;

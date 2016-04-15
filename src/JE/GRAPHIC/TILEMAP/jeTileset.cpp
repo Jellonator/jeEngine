@@ -83,11 +83,11 @@ int Tileset::getTileHeight() const{
 }
 
 int Tileset::getWidthInTiles() const {
-	return this->getWidth() / (this->tile_width+this->space_x);
+	return (this->getWidth()-this->offset_x+this->space_x) / (this->tile_width+this->space_x);
 }
 
 int Tileset::getHeightInTiles() const{
-	return this->getHeight() / (this->tile_height+this->space_y);
+	return (this->getHeight()-this->offset_y+this->space_y) / (this->tile_height+this->space_y);
 }
 
 int Tileset::getNumTiles() const{

@@ -8,14 +8,19 @@
 
 namespace JE{namespace GRAPHICS{
 
-Tilemap::Tilemap(int width, int height) : Tilemap(0, 0, width, height) {}
+Tilemap::Tilemap(int width, int height, int tile_width, int tile_height) 
+: Tilemap(0, 0, width, height, tile_width, tile_height) {}
 
-Tilemap::Tilemap(float x, float y, int width, int height) : 
-	JE::GRAPHICS::Graphic(x, y), width(width), height(height){
+Tilemap::Tilemap(float x, float y, int width, int height, int tile_width, int tile_height) : 
+	JE::GRAPHICS::Graphic(x, y), width(width), height(height), tile_width(tile_width), tile_height(tile_height){
 }
 
-TileLayer& Tilemap::createLayer(const std::string& name, int layer){
-	TileLayer* tilelayer = new TileLayer(this->width, this->height);
+TileLayer& Tilemap::createLayer(const std::string& name, int layer, float offset_x, float offset_y){
+	TileLayer* tilelayer = new TileLayer(
+		offset_x,         offset_y, 
+		this->width,      this->height,
+		this->tile_width, this->tile_height
+	);
 	this->layers[name] = {layer, std::unique_ptr<TileLayer>(tilelayer)};
 	this->layers_vec.push_back(&this->layers[name]);
 	

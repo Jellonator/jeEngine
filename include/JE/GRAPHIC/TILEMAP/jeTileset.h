@@ -11,6 +11,7 @@ namespace JE{namespace GRAPHICS{
 
 class Tileset{
 public:
+	friend class TileLayer;
 	Tileset(const std::string& file,
 		int tile_width, int tile_height,
 		int offset_x = 0, int offset_y = 0,

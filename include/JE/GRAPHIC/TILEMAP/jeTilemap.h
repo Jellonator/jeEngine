@@ -13,10 +13,10 @@ namespace JE{namespace GRAPHICS{
 
 class Tilemap : public JE::GRAPHICS::Graphic{
 public:
-	Tilemap(float x, float y, int width, int height);
-	Tilemap(int width, int height);
+	Tilemap(float x, float y, int width, int height, int tile_width, int tile_height);
+	Tilemap(int width, int height, int tile_width, int tile_height);
 	
-	TileLayer& createLayer(const std::string& name, int layer);
+	TileLayer& createLayer(const std::string& name, int layer, float offset_x = 0, float offset_y = 0);
 	TileLayer* getLayer(const std::string& name);
 	
 	virtual void update(float dt);
@@ -31,6 +31,8 @@ private:
 	std::vector<TilemapLayerDef*> layers_vec;
 	int width;
 	int height;
+	int tile_width;
+	int tile_height;
 };
 
 };};

@@ -1,6 +1,7 @@
 #include "JE/TMX/jeLoader.h"
 #include "JE/UTIL/jeString.h"
 #include <iostream>
+#include <algorithm>
 
 namespace JE{namespace TMX{
 
@@ -22,13 +23,20 @@ JE::GRAPHICS::Tilemap Loader::createTilemap() const {
 }
 
 JE::GRAPHICS::Tilemap Loader::createTilemap(std::function<bool(Tmx::TileLayer*)> func) const {
-	JE::GRAPHICS::Tilemap tilemap(this->map.GetWidth(), this->map.GetHeight());
-	
+	JE::GRAPHICS::Tilemap tilemap(this->map.GetWidth(), this->map.GetHeight(), this->map.GetTileWidth(), this->map.GetTileHeight());
+	Tmx::TileLayer* tilelayer;
 	for (Tmx::TileLayer* tilelayer : this->map.GetTileLayers()) {
 		if (tilelayer == nullptr) continue;
 		
 		if (func(tilelayer)){
-			JE::GRAPHICS::TileLayer& map_layer = tilemap.createLayer(tilelayer->GetName(), tilelayer->GetZOrder());
+			JE::GRAPHICS::TileLayer& map_layer = tilemap.createLayer(
+				tilelayer->GetName(), 
+				tilelayer->GetZOrder(),
+				tilelayer->GetX(),
+				tilelayer->GetY()
+			);
+			
+			std::cout << tilelayer->GetX() << ", " << tilelayer->GetY() << std::endl;
 			
 			//iterate each x,y pair
 			for (int ix = 0; ix < tilelayer->GetWidth(); ix ++){
@@ -78,6 +86,35 @@ JE::GRAPHICS::Tilemap Loader::createTilemap(std::function<bool(Tmx::TileLayer*)>
 	}
 	
 	return tilemap;
+}
+
+void Loader::foreachObject(std::function<void(Tmx::ObjectGroup*,Tmx::Object*)> func) const {
+	this->foreachObject(
+		[](Tmx::ObjectGroup*_)->bool{return true;},
+		{},
+		func
+	);
+}
+
+void Loader::foreachObject(
+	std::function<bool(Tmx::ObjectGroup*)> group_filter, 
+	const std::vector<std::string>& object_types,
+	std::function<void(Tmx::ObjectGroup*,Tmx::Object*)> func
+) const {
+	for (Tmx::ObjectGroup* group : this->map.GetObjectGroups()) {
+		if (group == nullptr) continue;
+		if (!group_filter(group)) continue;
+		
+		for (Tmx::Object* object : group->GetObjects()) {
+			if (object_types.size() > 0){
+				if (std::find(object_types.begin(), object_types.end(), object->GetType()) == object_types.end()){
+					continue;
+				}
+			}
+			
+			func(group, object);
+		}
+	}
 }
 
 Tmx::Map& Loader::getMap() {

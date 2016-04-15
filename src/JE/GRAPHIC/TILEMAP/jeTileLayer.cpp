@@ -13,7 +13,6 @@ std::string tilemap_vertex_shader = GLSL(
 	in vec3 in_Position;
 	in vec2 in_Texcoord;
 	uniform mat4 in_Transform;
-	uniform mat4 in_TexcoordTransform;
 	out vec2 vx_Texcoord;
 	void main(void) {
 		gl_Position = vec4(in_Position, 1.0);
@@ -37,45 +36,41 @@ std::string tilemap_geometry_shader = GLSL(
 	in vec2 vx_Texcoord[];
 	out vec2 ex_Texcoord;
 	uniform mat4 in_Transform;
-	uniform mat4 in_TexcoordTransform;
-	uniform float in_Width;
-	uniform float in_Height;
+	uniform vec2 in_Size;
+	uniform vec2 in_TileSize;
+	uniform vec2 in_Offset;
+	uniform vec2 in_Spacing;
 	void main(){
 		for(int i = 0; i < gl_in.length(); i++){
 			 // copy attributes
 			vec4 pos = gl_in[i].gl_Position;
-			vec4 texc = vec4(vx_Texcoord[i].xy, 1.0, 1.0);
+			vec2 texc = vx_Texcoord[i];
 			
 			float padding = 0.5;
 			
-			float w_scale = 1;
-			float x_pos = 0;
-			if (in_Width > 1){
-				x_pos = padding / in_Width;
-				w_scale = (in_Width - padding) / in_Width;
-			}
+			vec2 pos1 = vec2(0, 0);
+			vec2 pos2 = vec2(1, 1);
 			
-			float h_scale = 1;
-			float y_pos = 0;
-			if (in_Height > 1){
-				y_pos = padding / in_Height;
-				h_scale = (in_Height - padding) / in_Height;
-			}
+			pos1 = in_Offset + (in_Spacing + in_TileSize) * texc;
+			pos2 = pos1 + in_TileSize;
+			
+			pos1 /= in_Size;
+			pos2 /= in_Size;
 			
 			gl_Position = in_Transform * (pos + vec4(0.0, 0.0, 0, 0));
-			ex_Texcoord = (in_TexcoordTransform * (texc + vec4(  x_pos, y_pos, 0.0, 0.0))).xy;
+			ex_Texcoord = vec2(pos1.x, pos1.y);
 			EmitVertex();
 			
 			gl_Position = in_Transform * (pos + vec4(1.0, 0.0, 0, 0));
-			ex_Texcoord = (in_TexcoordTransform * (texc + vec4(w_scale, y_pos, 0.0, 0.0))).xy;
+			ex_Texcoord = vec2(pos2.x, pos1.y);
 			EmitVertex();
 			
 			gl_Position = in_Transform * (pos + vec4(0.0, 1.0, 0, 0));
-			ex_Texcoord = (in_TexcoordTransform * (texc + vec4(  x_pos, h_scale, 0.0, 0.0))).xy;
+			ex_Texcoord = vec2(pos1.x, pos2.y);
 			EmitVertex();
 			
 			gl_Position = in_Transform * (pos + vec4(1.0, 1.0, 0, 0));
-			ex_Texcoord = (in_TexcoordTransform * (texc + vec4(w_scale, h_scale, 0.0, 0.0))).xy;
+			ex_Texcoord = vec2(pos2.x, pos2.y);
 			EmitVertex();
 			
 			EndPrimitive();
@@ -99,17 +94,8 @@ JE::GL::Shader& getTilemapShader(){
 		if (!tilemap_shader->setUniform("in_Color", 1.0f, 1.0f, 1.0f, 1.0f)){
 			std::cout << "Failed to set tilemap color!" << std::endl;
 		}
-		if (!tilemap_shader->setUniform("in_Width", 1.0f)){
-			std::cout << "Failed to set tilemap width!" << std::endl;
-		}
-		if (!tilemap_shader->setUniform("in_Height", 1.0f)){
-			std::cout << "Failed to set tilemap height!" << std::endl;
-		}
 		if (!tilemap_shader->setUniformMat("in_Transform", glm::mat4x4())){
 			std::cout << "Failed to set tilemap transform!" << std::endl;
-		}
-		if (!tilemap_shader->setUniformMat("in_TexcoordTransform", glm::mat4x4())){
-			std::cout << "Failed to set tilemap texcoord transform!" << std::endl;
 		}
 	}
 	
@@ -117,13 +103,15 @@ JE::GL::Shader& getTilemapShader(){
 }
 
 //constructor
-TileLayer::TileLayer(int width, int height) :
-TileLayer(0, 0, width, height){}
+TileLayer::TileLayer(int width, int height, int tile_width, int tile_height) :
+TileLayer(0, 0, width, height, tile_width, tile_height){}
 
-TileLayer::TileLayer(int x, int y, int width, int height) : 
+TileLayer::TileLayer(int x, int y, int width, int height, int tile_width, int tile_height) : 
 	Graphic(x, y),
 	width(width),
 	height(height),
+	tile_width(tile_width),
+	tile_height(tile_height),
 	metadata(width, std::vector<TileMetaData>(height, {"", 0, false})){
 }
 
@@ -188,9 +176,13 @@ void TileLayer::drawMatrix(const glm::mat4& camera, float x, float y) const {
 		
 		//send transformations
 		shader.setUniformMat("in_Transform", transform);
-		shader.setUniformMat("in_TexcoordTransform", this->getTexcoordTransform(*set.tileset));
-		shader.setUniform("in_Width", set.tileset->getTileWidth());
-		shader.setUniform("in_Height", set.tileset->getTileHeight());
+		//shader.setUniformMat("in_TexcoordTransform", this->getTexcoordTransform(*set.tileset));
+		//shader.setUniform("in_Width", set.tileset->getTileWidth());
+		//shader.setUniform("in_Height", set.tileset->getTileHeight());
+		shader.setUniform("in_Offset", set.tileset->offset_x, set.tileset->offset_y);
+		shader.setUniform("in_Spacing",set.tileset->space_x,  set.tileset->space_y);
+		shader.setUniform("in_Size",set.tileset->getWidth(), set.tileset->getHeight());
+		shader.setUniform("in_TileSize", set.tileset->getTileWidth(), set.tileset->getTileHeight());
 		
 		//draw call
 		set.tileset->getTexture()->use();
@@ -278,8 +270,8 @@ void TileLayer::emptyTile(int x, int y) {
 
 //transforms
 glm::mat4 TileLayer::getTransform(const Tileset& set) const{
-	float tile_w = set.getTileWidth();
-	float tile_h = set.getTileHeight();
+	float tile_w = this->tile_width;
+	float tile_h = this->tile_height;
 	
 	glm::mat4 transform = glm::mat4();
 	transform = glm::scale(transform, glm::vec3(tile_w, tile_h, 1.0f));
