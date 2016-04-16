@@ -24,7 +24,7 @@ JE::GRAPHICS::Tilemap Loader::createTilemap() const {
 
 JE::GRAPHICS::Tilemap Loader::createTilemap(std::function<bool(Tmx::TileLayer*)> func) const {
 	JE::GRAPHICS::Tilemap tilemap(this->map.GetWidth(), this->map.GetHeight(), this->map.GetTileWidth(), this->map.GetTileHeight());
-	Tmx::TileLayer* tilelayer;
+	
 	for (Tmx::TileLayer* tilelayer : this->map.GetTileLayers()) {
 		if (tilelayer == nullptr) continue;
 		
@@ -44,7 +44,7 @@ JE::GRAPHICS::Tilemap Loader::createTilemap(std::function<bool(Tmx::TileLayer*)>
 				const Tmx::MapTile& tile = tilelayer->GetTile(ix, iy);
 				
 				//skip tile if it's empty
-				if (tile.gid < 0 || tile.id < 0) continue;
+				if (tile.gid <= 0 || tile.id < 0) continue;
 				
 				//Make sure tileset exists
 				if (tile.tilesetId < 0 || tile.tilesetId >= this->map.GetNumTilesets()) continue;
@@ -88,6 +88,35 @@ JE::GRAPHICS::Tilemap Loader::createTilemap(std::function<bool(Tmx::TileLayer*)>
 	return tilemap;
 }
 
+void Loader::foreachTile(
+	std::function<bool(Tmx::TileLayer*)> layer_filter, 
+	std::function<void(Tmx::TileLayer*,const Tmx::MapTile*,int,int)> tile_func,
+	bool skip_empty
+) const {
+	for (Tmx::TileLayer* layer : this->map.GetTileLayers()){
+		if (layer == nullptr) continue;
+		if (!layer_filter(layer)) continue;
+		
+		this->foreachTileInLayer(tile_func, layer, skip_empty);
+	}
+}
+
+void Loader::foreachTileInLayer(
+	std::function<void(Tmx::TileLayer*,const Tmx::MapTile*,int,int)> tile_func,
+	Tmx::TileLayer* layer, bool skip_empty
+) const {
+	if (layer == nullptr) return;
+	
+	for (int ix = 0; ix < layer->GetWidth(); ++ix){
+	for (int iy = 0; iy < layer->GetHeight(); ++iy){
+		const Tmx::MapTile& tile = layer->GetTile(ix, iy);
+		if (skip_empty && tile.gid <= 0) continue;
+		
+		tile_func(layer, &tile, ix, iy);
+	}
+	}
+}
+
 void Loader::foreachObject(std::function<void(Tmx::ObjectGroup*,Tmx::Object*)> func) const {
 	this->foreachObject(
 		[](Tmx::ObjectGroup*_)->bool{return true;},
@@ -117,8 +146,55 @@ void Loader::foreachObject(
 	}
 }
 
+void Loader::foreachObjectInGroup(
+	std::function<void(Tmx::ObjectGroup*,Tmx::Object*)> func,
+	Tmx::ObjectGroup* group
+) const {
+	if (group == nullptr) return;
+	
+	for (Tmx::Object* object : group->GetObjects()) {
+		func(group, object);
+	}
+}
+
 Tmx::Map& Loader::getMap() {
 	return this->map;
+}
+
+int Loader::getWidth() const{
+	return this->map.GetWidth();
+}
+
+int Loader::getHeight() const{
+	return this->map.GetHeight();
+}
+
+int Loader::getTileWidth() const{
+	return this->map.GetTileWidth();
+}
+
+int Loader::getTileHeight() const{
+	return this->map.GetTileHeight();
+}
+
+const std::vector<Tmx::TileLayer*>& Loader::getTileLayers() const{
+	return this->map.GetTileLayers();
+}
+
+const std::vector<Tmx::ObjectGroup*>& Loader::getObjectGroups() const{
+	return this->map.GetObjectGroups();
+}
+
+const Tmx::Tileset* Loader::getTileset(int index) const{
+	if (index < 0 || index >= this->map.GetNumTilesets()) return nullptr;
+	return this->map.GetTileset(index);
+}
+
+const Tmx::Tile* Loader::getTileData(int tileset, int index) const{
+	const Tmx::Tileset* set = this->getTileset(tileset);
+	if (set == nullptr) return nullptr;
+	if (index < 0 || index >= (int)set->GetTiles().size());
+	return set->GetTile(index);
 }
 
 }}
