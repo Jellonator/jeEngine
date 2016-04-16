@@ -32,7 +32,7 @@ std::string tilemap_fragment_shader = GLSL(
 
 std::string tilemap_geometry_shader = GLSL(
 	layout(points) in;
-	layout(triangle_strip, max_vertices=6) out;
+	layout(triangle_strip, max_vertices=4) out;
 	in vec2 vx_Texcoord[];
 	out vec2 ex_Texcoord;
 	uniform mat4 in_Transform;
@@ -53,6 +53,9 @@ std::string tilemap_geometry_shader = GLSL(
 			
 			pos1 = in_Offset + (in_Spacing + in_TileSize) * texc;
 			pos2 = pos1 + in_TileSize;
+			
+			pos1 += padding;
+			pos2 -= padding;
 			
 			pos1 /= in_Size;
 			pos2 /= in_Size;
