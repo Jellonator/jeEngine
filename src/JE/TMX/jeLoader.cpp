@@ -65,11 +65,13 @@ JE::GRAPHICS::Tilemap Loader::createTilemap(std::function<bool(Tmx::TileLayer*)>
 						continue;
 						
 					} else {
+						std::string full_path = this->map.GetFilepath() + image->GetSource();
+						
 						//create and add tileset
 						map_layer.addTileset(
 							tileset->GetName(), 
 							std::make_shared<JE::GRAPHICS::Tileset>(
-								image->GetSource(), 
+								full_path,
 								tileset->GetTileWidth(), tileset->GetTileHeight(),
 								tileset->GetMargin(),    tileset->GetMargin(),
 								tileset->GetSpacing(),   tileset->GetSpacing()
