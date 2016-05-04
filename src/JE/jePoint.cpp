@@ -198,6 +198,13 @@ JE::Point Point::round() const{
 	return JE::Point(std::round(this->x), std::round(this->y));
 }
 
+JE::Point Point::lerp(const JE::Point& other, float value) const{
+	return JE::Point(
+		other.x * value + x * (1-value), 
+		other.y * value + y * (1-value)
+	);
+}
+
 float Point::getDistance() const{
 	return this->getDistance(0, 0);
 }

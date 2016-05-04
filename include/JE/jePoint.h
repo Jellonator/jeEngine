@@ -52,6 +52,7 @@ class Point
 		JE::Point floor() const;
 		JE::Point ceil() const;
 		JE::Point round() const;
+		JE::Point lerp(const JE::Point& other, float value) const;
 		
 		//distance
 		float getDistance() const;
