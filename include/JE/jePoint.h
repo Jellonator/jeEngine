@@ -40,23 +40,27 @@ class Point
 		//math operations with numbers
 		friend JE::Point operator *(const JE::Point& a, float b);
 		friend JE::Point operator /(const JE::Point& a, float b);
+		friend JE::Point operator %(const JE::Point& a, float b);
 		friend JE::Point operator *(float a, const JE::Point& b);
 		friend JE::Point operator /(float a, const JE::Point& b);
+		friend JE::Point operator %(float a, const JE::Point& b);
 		void operator *=(float value);
 		void operator /=(float value);
 		void modulate(float value);
+		JE::Point modulous(float value) const;
+		JE::Point clamp(float length) const;
+		JE::Point floor() const;
+		JE::Point ceil() const;
+		JE::Point round() const;
 		
 		//distance
-		float getDistance();
-		float getDistance(float x, float y);
-		float getDistance(JE::Point& p);
+		float getDistance() const;
+		float getDistance(float x, float y) const;
+		float getDistance(const JE::Point& p) const;
 		
 		//angle
-		float getAngle();
-		float getAngle(float x, float y);
-		float getAngle(JE::Point& p);
-		
-	protected:
-	private:
+		float getAngle() const;
+		float getAngle(float x, float y) const;
+		float getAngle(const JE::Point& p) const;
 };
 };

@@ -182,4 +182,29 @@ namespace MATH{
 		Type angle = JE::MATH::angleTo(from, to, speed);
 		return angle;
 	}
+	
+	template <typename Type> // ha, puns
+	bool interator(Type to_x, Type to_y, Type& ix, Type& iy){
+		if (ix == to_x && iy == to_y) return false;
+		
+		int diff_x = std::abs(ix - to_x);
+		int diff_y = std::abs(iy - to_y);
+		
+		if (diff_x >= diff_y){
+			if (ix > to_x) {
+				-- ix;
+			} else {
+				++ ix;
+			}
+			
+		} else {
+			if (iy > to_y) {
+				-- iy;
+			} else {
+				++ iy;
+			}
+		}
+		
+		return true;
+	}
 };};
